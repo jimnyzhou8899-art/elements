@@ -1,0 +1,886 @@
+<!doctype html>
+<html lang="zh-Hans">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="欧几里得《几何原本》第一卷：定义、公设、公理与 48 个命题，可拖动的尺规作图和逐步证明动画。">
+<style>
+  :root { color-scheme: light; padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
+  body { margin: 0; font: 14px system-ui, -apple-system, "Segoe UI", sans-serif; }
+  img { max-width: 100%; }
+  [hidden] { display: none !important; }
+</style>
+<title>几何原本 · 卷一</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,500;1,400;1,500&family=Noto+Serif+SC:wght@400;600;900&display=swap">
+<style>
+/* Layout: book index on the left, a figure "plate" beside its proof, colored after Byrne's 1847 Euclid (red, yellow, blue on paper). */
+:root {
+  --paper: #f7f7f3;
+  --plate: #ffffff;
+  --ink: #1d2027;
+  --muted: #6b6f78;
+  --rule: #dcddd6;
+  --soft: #eeefe9;
+  --red: #c4262e;
+  --blue: #1f5aa6;
+  --yellow: #d9a514;
+  --aux: #a9adb4;
+  --f-red: rgba(196, 38, 46, .22);
+  --f-blue: rgba(31, 90, 166, .22);
+  --f-yel: rgba(217, 165, 20, .30);
+  --serif: "Noto Serif SC", "Songti SC", "SimSun", serif;
+  --latin: "EB Garamond", "Times New Roman", serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #15171b; --plate: #1c1f25; --ink: #e8e6df; --muted: #9a9ea6; --rule: #30343c; --soft: #252930;
+    --red: #ec5a5f; --blue: #6b9be0; --yellow: #f0c040; --aux: #5d626b;
+    --f-red: rgba(236, 90, 95, .25); --f-blue: rgba(107, 155, 224, .25); --f-yel: rgba(240, 192, 64, .25);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #15171b; --plate: #1c1f25; --ink: #e8e6df; --muted: #9a9ea6; --rule: #30343c; --soft: #252930;
+  --red: #ec5a5f; --blue: #6b9be0; --yellow: #f0c040; --aux: #5d626b;
+  --f-red: rgba(236, 90, 95, .25); --f-blue: rgba(107, 155, 224, .25); --f-yel: rgba(240, 192, 64, .25);
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { background: var(--paper); color: var(--ink); font-family: var(--serif); font-size: 15px; line-height: 1.75; }
+var, .lt { font-family: var(--latin); font-style: italic; font-size: 1.12em; }
+button { font: inherit; color: inherit; }
+button:focus-visible, a:focus-visible, select:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
+
+.top { border-bottom: 1px solid var(--rule); padding-block: 18px 14px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; }
+.top h1 { margin: 0; font-size: 26px; font-weight: 900; letter-spacing: .08em; }
+.top h1 span { color: var(--red); }
+.top p { margin: 0; color: var(--muted); font-size: 13px; }
+
+.app { display: grid; grid-template-columns: 232px minmax(0, 1fr); padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); gap: 28px; }
+nav { border-right: 1px solid var(--rule); padding-block: 18px 40px; padding-right: 12px; max-height: calc(100vh - 70px); overflow-y: auto; position: sticky; top: env(safe-area-inset-top, 0px); }
+nav h2 { font-size: 12px; letter-spacing: .2em; color: var(--muted); font-weight: 600; margin: 18px 0 6px; }
+nav h2:first-child { margin-top: 0; }
+nav a { display: grid; grid-template-columns: 30px 1fr; gap: 4px; color: var(--ink); text-decoration: none; padding: 3px 8px; border-radius: 4px; font-size: 13.5px; line-height: 1.5; }
+nav a:hover { background: var(--soft); }
+nav a[aria-current="page"] { background: var(--ink); color: var(--paper); }
+nav a .n { font-family: var(--latin); font-variant-numeric: tabular-nums; color: var(--muted); }
+nav a[aria-current="page"] .n { color: var(--paper); opacity: .7; }
+nav a.live .t::after { content: ""; display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--red); margin-left: 6px; vertical-align: middle; }
+nav a .t { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.navsel { display: none; }
+
+main { padding-block: 22px 60px; min-width: 0; }
+.eyebrow { font-size: 12px; letter-spacing: .2em; color: var(--muted); margin: 0 0 4px; }
+.eyebrow .kind { color: var(--red); }
+.stmt { font-size: 21px; font-weight: 600; line-height: 1.6; margin: 0 0 18px; max-width: 40em; text-wrap: balance; }
+
+.prop { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); gap: 24px; align-items: start; }
+.plate { background: var(--plate); border: 1px solid var(--rule); border-radius: 6px; padding: 8px; }
+.plate svg { width: 100%; height: auto; display: block; touch-action: none; user-select: none; -webkit-user-select: none; }
+.hint { font-size: 12.5px; color: var(--muted); padding: 6px 4px 0; }
+.controls { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
+.btn { border: 1px solid var(--rule); background: var(--plate); padding: 5px 14px; border-radius: 4px; cursor: pointer; font-size: 14px; }
+.btn:hover:not(:disabled) { border-color: var(--ink); }
+.btn:disabled { opacity: .4; cursor: default; }
+.btn.primary { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+.count { margin-left: auto; font-family: var(--latin); font-variant-numeric: tabular-nums; color: var(--muted); }
+
+ol.steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; counter-reset: s; }
+ol.steps li { counter-increment: s; display: grid; grid-template-columns: 28px 1fr; gap: 6px; padding: 8px 10px; border-radius: 5px; cursor: pointer; color: var(--muted); transition: background .2s, color .2s; }
+ol.steps li::before { content: counter(s); font-family: var(--latin); color: var(--aux); font-size: 15px; }
+ol.steps li.done { color: var(--ink); }
+ol.steps li.cur { background: var(--soft); color: var(--ink); }
+ol.steps li.cur::before { color: var(--red); font-weight: 500; }
+ol.steps li:hover:not(.cur) { background: color-mix(in srgb, var(--soft) 55%, transparent); }
+.why { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
+.chip { font-size: 12px; border: 1px solid var(--rule); border-radius: 3px; padding: 0 6px; color: var(--muted); background: var(--plate); }
+.quote { display: none; font-size: 13px; color: var(--muted); border-left: 2px solid var(--yellow); padding-left: 10px; margin-top: 6px; }
+li.cur .quote { display: block; }
+.qed { margin-top: 14px; font-size: 13px; color: var(--muted); letter-spacing: .1em; }
+
+/* figure styling */
+.fig .s { fill: none; stroke-linecap: round; stroke-linejoin: round; stroke-width: 2.2; }
+.s-ink { stroke: var(--ink); } .s-red { stroke: var(--red); } .s-blue { stroke: var(--blue); } .s-yel { stroke: var(--yellow); }
+.s-aux { stroke: var(--aux); stroke-width: 1.3 !important; }
+.fig .s.hl { stroke-width: 4.4; }
+.f-red { fill: var(--f-red); } .f-blue { fill: var(--f-blue); } .f-yel { fill: var(--f-yel); }
+.fig .ang { stroke-width: 1.6; }
+.fig .pt { fill: var(--ink); }
+.fig .pt.drag { fill: var(--plate); stroke: var(--red); stroke-width: 2.5; cursor: grab; }
+.fig .pt.hl { fill: var(--red); }
+.fig .hit { fill: transparent; cursor: grab; }
+.fig .lab { font-family: var(--latin); font-style: italic; font-size: 21px; fill: var(--ink); text-anchor: middle; dominant-baseline: central; pointer-events: none; paint-order: stroke; stroke: var(--plate); stroke-width: 4px; }
+.fig .preview { stroke: var(--red); stroke-dasharray: 5 5; stroke-width: 1.4; fill: none; pointer-events: none; }
+.fig .snap { fill: none; stroke: var(--red); stroke-width: 1.6; pointer-events: none; }
+.draw { stroke-dasharray: 1; stroke-dashoffset: 1; animation: draw 1.1s ease-in-out forwards; }
+@keyframes draw { to { stroke-dashoffset: 0; } }
+.fade { animation: fade .8s ease forwards; }
+@keyframes fade { from { opacity: 0; } to { opacity: 1; } }
+.pulse { animation: pulse 1.2s ease 1; }
+@keyframes pulse { 0%, 100% { opacity: 1; } 40% { opacity: .25; } }
+@media (prefers-reduced-motion: reduce) { .draw, .fade, .pulse { animation: none; stroke-dasharray: none; stroke-dashoffset: 0; } }
+
+/* intro + placeholders */
+.prose { max-width: 44em; }
+.prose h2 { font-size: 19px; margin: 30px 0 4px; font-weight: 900; letter-spacing: .06em; }
+.prose h2:first-of-type { margin-top: 6px; }
+.prose .sub { color: var(--muted); font-size: 13px; margin: 0 0 10px; }
+.deflist { list-style: none; padding: 0; margin: 0; display: grid; gap: 4px; }
+.deflist li { display: grid; grid-template-columns: 34px 1fr; gap: 6px; padding: 5px 0; border-bottom: 1px solid var(--soft); }
+.deflist .n { font-family: var(--latin); color: var(--red); font-variant-numeric: tabular-nums; }
+.todo { border: 1px dashed var(--rule); border-radius: 6px; padding: 22px; color: var(--muted); max-width: 44em; }
+.todo a { color: var(--blue); }
+
+/* sandbox */
+.tools { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px; }
+.tool { border: 1px solid var(--rule); background: var(--plate); padding: 5px 12px; border-radius: 4px; cursor: pointer; font-size: 14px; }
+.tool[aria-pressed="true"] { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+.side h3 { font-size: 15px; margin: 0 0 6px; }
+.side p, .side li { font-size: 14px; color: var(--muted); }
+.side ul { padding-left: 18px; margin: 0; }
+.side a { color: var(--blue); }
+
+@media (max-width: 900px) {
+  .prop { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 720px) {
+  .app { grid-template-columns: minmax(0, 1fr); gap: 0; }
+  nav { display: none; }
+  .navsel { display: block; width: 100%; margin: 14px 0 0; padding: 8px; font: inherit; border: 1px solid var(--rule); border-radius: 4px; background: var(--plate); color: var(--ink); }
+  .stmt { font-size: 18px; }
+}
+</style>
+</head>
+<body>
+<header class="top">
+  <h1>几何原本 <span>卷一</span></h1>
+  <p>欧几里得 · 23 条定义 · 5 条公设 · 5 条公理 · 48 个命题</p>
+</header>
+<div class="app">
+  <nav id="nav" aria-label="目录"></nav>
+  <main>
+    <select class="navsel" id="navsel" aria-label="目录"></select>
+    <div id="view"></div>
+  </main>
+</div>
+
+<script>
+// ---------------------------------------------------------------- text
+const DEFS = [
+  "点是没有部分的东西。",
+  "线是没有宽度的长度。",
+  "线的两端是点。",
+  "直线是与其上的点平齐放置的线。",
+  "面是只有长度和宽度的东西。",
+  "面的边缘是线。",
+  "平面是与其上的直线平齐放置的面。",
+  "平面角是在一平面内相交且不在一条直线上的两条线之间的倾斜度。",
+  "当夹角的两条线都是直线时，这个角叫做直线角。",
+  "一条直线立在另一条直线上，若所成的两个邻角彼此相等，则每一个角都叫做直角，而立着的直线叫做另一条直线的垂线。",
+  "钝角是大于直角的角。",
+  "锐角是小于直角的角。",
+  "边界是一个东西的端点。",
+  "图形是被一个或几个边界所包围的。",
+  "圆是由一条线包围的平面图形，其内有一点，由这点到这条线的所有线段都彼此相等。",
+  "这个点叫做圆心。",
+  "圆的直径是过圆心、两端在圆周上的任意线段，它把圆二等分。",
+  "半圆是由直径及被它截得的圆周所包围的图形，半圆的心与圆心相同。",
+  "直线形是由直线所包围的：三边形由三条直线围成，四边形由四条直线围成，多边形由四条以上直线围成。",
+  "三边形中，三边相等的叫等边三角形；只有两边相等的叫等腰三角形；三边都不相等的叫不等边三角形。",
+  "三边形中，有一个角是直角的叫直角三角形；有一个角是钝角的叫钝角三角形；三个角都是锐角的叫锐角三角形。",
+  "四边形中，四边相等且四角都是直角的叫正方形；角是直角而边不全相等的叫长方形；四边相等而角不是直角的叫菱形；对边、对角相等，但边不全相等、角也不是直角的叫斜方形；其余的四边形叫不规则四边形。",
+  "平行直线是在同一平面内，向两个方向无限延长，在两个方向上都不相交的直线。"
+];
+const POSTS = [
+  "由任意一点到另一任意一点可以作直线。",
+  "一条有限直线可以继续延长。",
+  "以任意点为心、任意距离为半径可以画圆。",
+  "凡直角都彼此相等。",
+  "同平面内一条直线与另外两条直线相交，若在某一侧的两个内角之和小于两直角，则这两条直线经无限延长后在这一侧相交。"
+];
+const AXIOMS = [
+  "等于同量的量彼此相等。",
+  "等量加等量，其和仍相等。",
+  "等量减等量，其差仍相等。",
+  "彼此能重合的东西是相等的。",
+  "整体大于部分。"
+];
+// [statement, short title, kind] kind: 作 = problem (Q.E.F.), 证 = theorem (Q.E.D.)
+const PROPS = [
+  ["在一条已知有限直线上作一个等边三角形。", "作等边三角形", "作"],
+  ["由一个已知点作一条线段等于已知线段。", "移置线段", "作"],
+  ["已知两条不相等的线段，从较长的线段上截取一段等于较短的线段。", "截取线段", "作"],
+  ["若两个三角形有两边分别相等，且这两边的夹角也相等，则它们的底边相等，两个三角形全等，其余的角也分别相等。", "边角边", "证"],
+  ["等腰三角形的两底角相等；若延长两腰，则底边下面的两个角也相等。", "等腰三角形底角", "证"],
+  ["若一个三角形有两角相等，则这两角所对的边也相等。", "等角对等边", "证"],
+  ["在同一线段上、同一侧，不能作出交于不同点的另外两条线段，使它们分别等于从该线段两端所作的两条线段。", "唯一性引理", "证"],
+  ["若两个三角形的三边分别相等，则夹在相等边之间的角也相等。", "边边边", "证"],
+  ["二等分一个已知直线角。", "平分角", "作"],
+  ["二等分一条已知有限直线。", "平分线段", "作"],
+  ["由已知直线上一已知点作一直线与已知直线成直角。", "作垂线（线上一点）", "作"],
+  ["由已知无限直线外一已知点作该直线的垂线。", "作垂线（线外一点）", "作"],
+  ["一条直线与另一条直线所成的角，或者是两个直角，或者等于两直角之和。", "邻补角", "证"],
+  ["若过一条直线上一点，有不在它同侧的两条直线与它所成的邻角之和等于两直角，则这两条直线在同一直线上。", "邻补角之逆", "证"],
+  ["若两直线相交，则对顶角相等。", "对顶角", "证"],
+  ["在任意三角形中，若延长一边，则所成的外角大于任何一个内对角。", "外角大于内对角", "证"],
+  ["在任意三角形中，任意两角之和小于两直角。", "两角和小于两直角", "证"],
+  ["在任意三角形中，大边对大角。", "大边对大角", "证"],
+  ["在任意三角形中，大角对大边。", "大角对大边", "证"],
+  ["在任意三角形中，任意两边之和大于第三边。", "三角不等式", "证"],
+  ["由三角形一边的两端向形内作两条相交线段，则它们的和小于三角形其余两边之和，但所夹的角较大。", "内部线段", "证"],
+  ["用分别等于已知三条线段的三条线段作一个三角形（其中任意两条之和必须大于第三条）。", "三边作三角形", "作"],
+  ["在已知直线上的已知点，作一个直线角等于已知直线角。", "移置角", "作"],
+  ["若两个三角形有两边分别相等，但一个的夹角大于另一个的夹角，则夹角大的底边也大。", "夹角大则底边大", "证"],
+  ["若两个三角形有两边分别相等，但一个的底边大于另一个的底边，则底边大的夹角也大。", "底边大则夹角大", "证"],
+  ["若两个三角形有两角分别相等，且一边相等（夹边或等角的对边），则其余的边和角也分别相等。", "角边角 · 角角边", "证"],
+  ["若一直线与两直线相交，所成的错角彼此相等，则这两直线平行。", "错角相等则平行", "证"],
+  ["若一直线与两直线相交，所成的同位角相等，或同旁内角之和等于两直角，则这两直线平行。", "同位角相等则平行", "证"],
+  ["一直线与两平行直线相交，则所成的错角相等，同位角相等，同旁内角之和等于两直角。", "平行线的性质", "证"],
+  ["平行于同一直线的直线彼此平行。", "平行的传递", "证"],
+  ["过一已知点作一直线平行于已知直线。", "作平行线", "作"],
+  ["在任意三角形中，若延长一边，则外角等于两个内对角之和，且三角形三个内角之和等于两直角。", "内角和", "证"],
+  ["在同一侧连接相等且平行的线段端点的线段，也相等且平行。", "平行四边形判定", "证"],
+  ["平行四边形的对边相等，对角相等，且对角线二等分其面积。", "平行四边形性质", "证"],
+  ["在同底上且在相同两平行线之间的平行四边形彼此相等。", "同底平行四边形", "证"],
+  ["在等底上且在相同两平行线之间的平行四边形彼此相等。", "等底平行四边形", "证"],
+  ["在同底上且在相同两平行线之间的三角形彼此相等。", "同底三角形", "证"],
+  ["在等底上且在相同两平行线之间的三角形彼此相等。", "等底三角形", "证"],
+  ["在同底上且在底同侧的相等三角形，也在相同的两平行线之间。", "同底等积之逆", "证"],
+  ["在等底上且在底同侧的相等三角形，也在相同的两平行线之间。", "等底等积之逆", "证"],
+  ["若一个平行四边形与一个三角形同底，且在相同两平行线之间，则平行四边形是三角形的二倍。", "平行四边形是三角形二倍", "证"],
+  ["用一个已知直线角作一个平行四边形，使它等于已知三角形。", "化三角形为平行四边形", "作"],
+  ["在任意平行四边形中，对角线两侧的平行四边形的补形彼此相等。", "补形相等", "证"],
+  ["在已知线段上，用已知直线角作一个平行四边形，使它等于已知三角形。", "贴合面积", "作"],
+  ["用已知直线角作一个平行四边形，使它等于已知直线形。", "化多边形为平行四边形", "作"],
+  ["在已知线段上作一个正方形。", "作正方形", "作"],
+  ["在直角三角形中，直角所对的边上的正方形等于夹直角两边上的正方形之和。", "勾股定理", "证"],
+  ["若一个三角形一边上的正方形等于另外两边上的正方形之和，则这两边所夹的角是直角。", "勾股定理之逆", "证"]
+];
+
+function refText(r) {
+  const m = r.match(/^([DPA])(\d+)$/);
+  if (m) {
+    const n = +m[2];
+    if (m[1] === "D") return ["定义 " + n, DEFS[n - 1]];
+    if (m[1] === "P") return ["公设 " + n, POSTS[n - 1]];
+    return ["公理 " + n, AXIOMS[n - 1]];
+  }
+  const n = +r.slice(2);
+  return ["命题 I." + n, PROPS[n - 1][0]];
+}
+const fmt = s => s.replace(/\b([A-Z]{1,5})\b/g, "<var>$1</var>");
+
+// ---------------------------------------------------------------- geometry
+const V = {
+  sub: (a, b) => ({ x: a.x - b.x, y: a.y - b.y }),
+  add: (a, b) => ({ x: a.x + b.x, y: a.y + b.y }),
+  mul: (a, k) => ({ x: a.x * k, y: a.y * k }),
+  dot: (a, b) => a.x * b.x + a.y * b.y,
+  len: a => Math.hypot(a.x, a.y),
+  dist: (a, b) => Math.hypot(a.x - b.x, a.y - b.y),
+  unit: a => { const l = Math.hypot(a.x, a.y) || 1; return { x: a.x / l, y: a.y / l }; },
+  perp: a => ({ x: a.y, y: -a.x }),
+  mid: (a, b) => ({ x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 }),
+  lerp: (a, b, t) => ({ x: a.x + (b.x - a.x) * t, y: a.y + (b.y - a.y) * t }),
+  proj: (p, a, b) => { const d = V.sub(b, a); return V.add(a, V.mul(d, V.dot(V.sub(p, a), d) / V.dot(d, d))); }
+};
+// Equilateral apex on segment ab, on the side away from point `away`.
+function apex(a, b, away) {
+  const m = V.mid(a, b), n = V.unit(V.perp(V.sub(b, a)));
+  const s = V.dot(n, V.sub(m, away)) >= 0 ? 1 : -1;
+  return V.add(m, V.mul(n, s * V.dist(a, b) * Math.sqrt(3) / 2));
+}
+// Outward square on pq, away from point `away`: returns [p', q'].
+function square(p, q, away) {
+  let n = V.perp(V.sub(q, p));
+  if (V.dot(n, V.sub(away, p)) > 0) n = V.mul(n, -1);
+  return [V.add(p, n), V.add(q, n)];
+}
+// Curve descriptor: {k:'L', a, b, seg} or {k:'C', c, r}
+function curveOf(o) {
+  if (!o.val) return null;
+  if (o.type === "seg" || o.type === "line") return { k: "L", a: o.val.a, b: o.val.b, seg: o.type === "seg" };
+  if (o.type === "circ") return { k: "C", c: o.val.c, r: o.val.r };
+  return null;
+}
+function intersect(c1, c2) {
+  const E = 1e-9, T = 1e-6;
+  if (!c1 || !c2) return [];
+  if (c1.k === "C" && c2.k === "L") return intersect(c2, c1);
+  if (c1.k === "L" && c2.k === "L") {
+    const d1 = V.sub(c1.b, c1.a), d2 = V.sub(c2.b, c2.a);
+    const den = d1.x * d2.y - d1.y * d2.x;
+    if (Math.abs(den) < E) return [null];
+    const w = V.sub(c2.a, c1.a);
+    const t = (w.x * d2.y - w.y * d2.x) / den, u = (w.x * d1.y - w.y * d1.x) / den;
+    if ((c1.seg && (t < -T || t > 1 + T)) || (c2.seg && (u < -T || u > 1 + T))) return [null];
+    return [V.add(c1.a, V.mul(d1, t))];
+  }
+  if (c1.k === "L" && c2.k === "C") {
+    const d = V.sub(c1.b, c1.a), f = V.sub(c1.a, c2.c);
+    const A = V.dot(d, d), B = 2 * V.dot(f, d), C = V.dot(f, f) - c2.r * c2.r;
+    const disc = B * B - 4 * A * C;
+    if (disc < 0) return [null, null];
+    const s = Math.sqrt(disc);
+    return [(-B - s) / (2 * A), (-B + s) / (2 * A)].map(t =>
+      c1.seg && (t < -T || t > 1 + T) ? null : V.add(c1.a, V.mul(d, t)));
+  }
+  const d = V.dist(c1.c, c2.c);
+  if (d < E || d > c1.r + c2.r || d < Math.abs(c1.r - c2.r)) return [null, null];
+  const a = (c1.r * c1.r - c2.r * c2.r + d * d) / (2 * d);
+  const h = Math.sqrt(Math.max(0, c1.r * c1.r - a * a));
+  const u = V.unit(V.sub(c2.c, c1.c)), n = V.perp(u);
+  const base = V.add(c1.c, V.mul(u, a));
+  return [V.add(base, V.mul(n, h)), V.sub(base, V.mul(n, h))];
+}
+
+// ---------------------------------------------------------------- scene
+class Scene {
+  constructor() { this.list = []; this.by = {}; }
+  add(o) { o.st = o.st || "ink"; this.list.push(o); this.by[o.id] = o; return o; }
+  free(id, x, y, o = {}) { return this.add({ id, type: "pt", kind: "free", x, y, ...o }); }
+  pt(id, f, o = {}) { return this.add({ id, type: "pt", kind: "fn", f, ...o }); }
+  glide(id, param, f, proj, o = {}) { return this.add({ id, type: "pt", kind: "glide", param, f, proj, ...o }); }
+  ix(id, a, b, i, o = {}) { return this.add({ id, type: "pt", kind: "ix", a, b, i, ...o }); }
+  seg(id, a, b, o = {}) { return this.add({ id, type: "seg", a, b, ...o }); }
+  line(id, a, b, o = {}) { return this.add({ id, type: "line", a, b, ...o }); }
+  circ(id, c, p, o = {}) { return this.add({ id, type: "circ", c, p, ...o }); }
+  poly(id, pts, o = {}) { return this.add({ id, type: "poly", pts, ...o }); }
+  ang(id, a, v, b, o = {}) { return this.add({ id, type: "ang", a, v, b, ...o }); }
+  rang(id, a, v, b, o = {}) { return this.add({ id, type: "rang", a, v, b, ...o }); }
+  remove(ids) { const s = new Set(ids); this.list = this.list.filter(o => !s.has(o.id)); ids.forEach(i => delete this.by[i]); }
+  eval() {
+    const g = id => (this.by[id] && this.by[id].val) || null;
+    const all = (...ids) => ids.every(i => g(i));
+    for (const o of this.list) {
+      let v = null;
+      switch (o.type) {
+        case "pt":
+          if (o.kind === "free") v = { x: o.x, y: o.y };
+          else if (o.kind === "fn") { try { v = o.f(g); } catch (e) { v = null; } }
+          else if (o.kind === "glide") { try { v = o.f(g, o.param); } catch (e) { v = null; } }
+          else v = intersect(curveOf(this.by[o.a] || {}), curveOf(this.by[o.b] || {}))[o.i] || null;
+          break;
+        case "seg": case "line":
+          if (all(o.a, o.b) && V.dist(g(o.a), g(o.b)) > 1e-6) v = { a: g(o.a), b: g(o.b) };
+          break;
+        case "circ":
+          if (all(o.c, o.p)) v = { c: g(o.c), r: V.dist(g(o.c), g(o.p)), p: g(o.p) };
+          break;
+        case "poly":
+          if (all(...o.pts)) v = o.pts.map(g);
+          break;
+        default:
+          if (all(o.a, o.v, o.b)) v = { a: g(o.a), v: g(o.v), b: g(o.b) };
+      }
+      o.val = v;
+    }
+  }
+}
+
+// ---------------------------------------------------------------- renderer
+const NS = "http://www.w3.org/2000/svg";
+function mk(tag, attrs, parent) {
+  const e = document.createElementNS(NS, tag);
+  for (const k in attrs) e.setAttribute(k, attrs[k]);
+  if (parent) parent.appendChild(e);
+  return e;
+}
+const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+function restart(el, cls) {
+  if (reduced) return;
+  el.classList.remove(cls); void el.getBoundingClientRect(); el.classList.add(cls);
+}
+
+class Renderer {
+  constructor(svg, scene, vb) {
+    this.svg = svg; this.S = scene; this.vb = vb; this.el = {};
+    svg.setAttribute("viewBox", vb.join(" "));
+    this.gFill = mk("g", {}, svg); this.gLine = mk("g", {}, svg);
+    this.gOver = mk("g", {}, svg); this.gPt = mk("g", {}, svg); this.gLab = mk("g", {}, svg);
+    this.vis = null; this.hl = new Set();
+    this.canDrag = () => true;
+    svg.addEventListener("pointerdown", e => this.down(e));
+    svg.addEventListener("pointermove", e => this.move(e));
+    svg.addEventListener("pointerup", e => this.up(e));
+    svg.addEventListener("pointercancel", e => this.up(e));
+  }
+  toSvg(e) {
+    const p = this.svg.createSVGPoint(); p.x = e.clientX; p.y = e.clientY;
+    const q = p.matrixTransform(this.svg.getScreenCTM().inverse());
+    return { x: q.x, y: q.y };
+  }
+  clamp(p) {
+    const [x0, y0, w, h] = this.vb;
+    return { x: Math.min(x0 + w - 10, Math.max(x0 + 10, p.x)), y: Math.min(y0 + h - 10, Math.max(y0 + 10, p.y)) };
+  }
+  shown(o) { return (!this.vis || this.vis.has(o.id)) && o.val; }
+  down(e) {
+    const id = e.target.dataset && e.target.dataset.id;
+    const o = id && this.S.by[id];
+    if (o && (o.kind === "free" || o.kind === "glide") && this.canDrag(o)) {
+      this.drag = o; this.svg.setPointerCapture(e.pointerId); e.preventDefault();
+      return;
+    }
+    this.onDown && this.onDown(e, this.toSvg(e));
+  }
+  move(e) {
+    const m = this.toSvg(e);
+    if (this.drag) {
+      const o = this.drag, c = this.clamp(m);
+      if (o.kind === "free") { o.x = c.x; o.y = c.y; } else o.param = o.proj(id => this.S.by[id].val, c);
+      this.render();
+      this.onDrag && this.onDrag();
+      return;
+    }
+    this.onMove && this.onMove(e, m);
+  }
+  up(e) { if (this.drag) { this.drag = null; } }
+
+  render(anim = new Set(), pulse = false) {
+    this.S.eval();
+    const pts = this.S.list.filter(o => o.type === "pt" && this.shown(o) && o.lab !== false);
+    const cx = pts.reduce((s, o) => s + o.val.x, 0) / (pts.length || 1);
+    const cy = pts.reduce((s, o) => s + o.val.y, 0) / (pts.length || 1);
+    const live = new Set();
+    for (const o of this.S.list) {
+      live.add(o.id);
+      let el = this.el[o.id];
+      if (!el) el = this.el[o.id] = this.create(o);
+      const on = this.shown(o);
+      for (const n of el.nodes) n.style.display = on ? "" : "none";
+      if (!on) continue;
+      const hl = this.hl.has(o.id);
+      this.update(o, el, hl, cx, cy);
+      if (anim.has(o.id)) {
+        if (el.path) restart(el.path, el.anim);
+        if (el.dot) restart(el.dot, "fade"), el.lab && restart(el.lab, "fade");
+      } else if (hl && pulse && el.path && o.type !== "poly") restart(el.path, "pulse");
+    }
+    for (const id in this.el) if (!live.has(id)) { this.el[id].nodes.forEach(n => n.remove()); delete this.el[id]; }
+  }
+  create(o) {
+    if (o.type === "pt") {
+      const g = mk("g", {}, this.gPt);
+      const drag = o.kind === "free" || o.kind === "glide";
+      const dot = mk("circle", { class: "pt" + (drag ? " drag" : ""), r: drag ? 6.5 : 4.2 }, g);
+      const hit = mk("circle", { class: "hit", r: 20, "data-id": o.id }, g);
+      if (!drag) hit.style.pointerEvents = "none";
+      const nodes = [g];
+      let lab = null;
+      if (o.lab !== false) { lab = mk("text", { class: "lab" }, this.gLab); lab.textContent = o.name || o.id; nodes.push(lab); }
+      return { nodes, dot, hit, lab };
+    }
+    const layer = o.type === "poly" ? this.gFill : (o.type === "ang" || o.type === "rang") ? this.gOver : this.gLine;
+    const path = mk("path", { pathLength: 1 }, layer);
+    return { nodes: [path], path, anim: o.type === "poly" ? "fade" : "draw" };
+  }
+  update(o, el, hl, cx, cy) {
+    const f = n => n.toFixed(2);
+    if (o.type === "pt") {
+      const p = o.val;
+      el.dot.setAttribute("cx", f(p.x)); el.dot.setAttribute("cy", f(p.y));
+      el.hit.setAttribute("cx", f(p.x)); el.hit.setAttribute("cy", f(p.y));
+      el.dot.classList.toggle("hl", hl);
+      if (el.lab) {
+        let d = o.ld ? V.unit(o.ld) : V.unit({ x: p.x - cx, y: p.y - cy });
+        if (!o.ld && Math.hypot(p.x - cx, p.y - cy) < 1) d = { x: -0.7, y: -0.7 };
+        el.lab.setAttribute("x", f(p.x + d.x * 19)); el.lab.setAttribute("y", f(p.y + d.y * 19));
+      }
+      return;
+    }
+    const P = el.path;
+    let d = "";
+    const v = o.val;
+    if (o.type === "seg") d = `M${f(v.a.x)} ${f(v.a.y)}L${f(v.b.x)} ${f(v.b.y)}`;
+    else if (o.type === "line") {
+      const u = V.unit(V.sub(v.b, v.a)), a = V.sub(v.a, V.mul(u, 3000)), b = V.add(v.a, V.mul(u, 3000));
+      d = `M${f(a.x)} ${f(a.y)}L${f(b.x)} ${f(b.y)}`;
+    } else if (o.type === "circ") {
+      const p = v.p, q = V.sub(V.mul(v.c, 2), p), r = f(v.r);
+      d = `M${f(p.x)} ${f(p.y)}A${r} ${r} 0 1 1 ${f(q.x)} ${f(q.y)}A${r} ${r} 0 1 1 ${f(p.x)} ${f(p.y)}`;
+    } else if (o.type === "poly") {
+      d = "M" + v.map(p => f(p.x) + " " + f(p.y)).join("L") + "Z";
+    } else if (o.type === "ang") {
+      const r = o.r || 24;
+      const a1 = Math.atan2(v.a.y - v.v.y, v.a.x - v.v.x), a2 = Math.atan2(v.b.y - v.v.y, v.b.x - v.v.x);
+      let dd = a2 - a1; while (dd > Math.PI) dd -= 2 * Math.PI; while (dd <= -Math.PI) dd += 2 * Math.PI;
+      const s = { x: v.v.x + r * Math.cos(a1), y: v.v.y + r * Math.sin(a1) };
+      const e = { x: v.v.x + r * Math.cos(a1 + dd), y: v.v.y + r * Math.sin(a1 + dd) };
+      d = `M${f(v.v.x)} ${f(v.v.y)}L${f(s.x)} ${f(s.y)}A${r} ${r} 0 0 ${dd > 0 ? 1 : 0} ${f(e.x)} ${f(e.y)}Z`;
+    } else if (o.type === "rang") {
+      const k = 13, ua = V.mul(V.unit(V.sub(v.a, v.v)), k), ub = V.mul(V.unit(V.sub(v.b, v.v)), k);
+      const p1 = V.add(v.v, ua), p2 = V.add(p1, ub), p3 = V.add(v.v, ub);
+      d = `M${f(p1.x)} ${f(p1.y)}L${f(p2.x)} ${f(p2.y)}L${f(p3.x)} ${f(p3.y)}`;
+    }
+    P.setAttribute("d", d);
+    let cls;
+    if (o.type === "poly") cls = "f-" + o.st;
+    else if (o.type === "ang") cls = `s ang s-${o.st} f-${o.st}`;
+    else cls = `s s-${o.st}` + (o.type === "rang" ? " ang" : "") + (hl ? " hl" : "");
+    // keep animation classes that are currently running
+    for (const k of ["draw", "fade", "pulse"]) if (P.classList.contains(k)) cls += " " + k;
+    P.setAttribute("class", cls);
+  }
+}
+
+// ---------------------------------------------------------------- propositions
+const LIVE = {};
+
+LIVE[1] = {
+  vb: [0, 0, 720, 580],
+  build(S) {
+    S.free("A", 270, 360); S.free("B", 450, 360);
+    S.seg("AB", "A", "B");
+    S.circ("cA", "A", "B", { st: "blue" }); S.circ("cB", "B", "A", { st: "yel" });
+    S.pt("D", g => V.sub(V.mul(g("A"), 2), g("B")));
+    S.pt("E", g => V.sub(V.mul(g("B"), 2), g("A")));
+    S.ix("C", "cA", "cB", 0);
+    S.seg("CA", "C", "A", { st: "red" }); S.seg("CB", "C", "B", { st: "red" });
+  },
+  steps: [
+    { show: ["A", "B", "AB"], text: "设 AB 是已知有限直线。要求在 AB 上作一个等边三角形。" },
+    { show: ["cA", "D"], text: "以 A 为圆心、AB 为距离作圆 BCD。", why: ["P3"] },
+    { show: ["cB", "E"], text: "再以 B 为圆心、BA 为距离作圆 ACE。", why: ["P3"] },
+    { show: ["C", "CA", "CB"], hl: ["C"], text: "从两圆的交点 C 到 A、B 分别连线段 CA、CB。", why: ["P1"] },
+    { hl: ["CA", "AB"], text: "因为点 A 是圆 CDB 的圆心，所以 AC 等于 AB。", why: ["D15"] },
+    { hl: ["CB", "AB"], text: "又因为点 B 是圆 CAE 的圆心，所以 BC 等于 BA。", why: ["D15"] },
+    { hl: ["CA", "CB", "AB"], text: "CA、CB 都等于 AB，而等于同量的量彼此相等，所以 CA 也等于 CB。三条线段 CA、AB、BC 彼此相等，三角形 ABC 是等边三角形，且作在已知有限直线 AB 上。", why: ["A1"] }
+  ]
+};
+
+LIVE[9] = {
+  vb: [0, 0, 720, 580],
+  build(S) {
+    S.free("A", 120, 450); S.free("B", 620, 450); S.free("C", 520, 120);
+    S.seg("AB", "A", "B"); S.seg("AC", "A", "C");
+    S.glide("D", 0.42, (g, t) => V.lerp(g("A"), g("B"), t),
+      (g, m) => Math.min(0.95, Math.max(0.08, V.dot(V.sub(m, g("A")), V.sub(g("B"), g("A"))) / V.dot(V.sub(g("B"), g("A")), V.sub(g("B"), g("A"))))));
+    S.pt("E", g => V.add(g("A"), V.mul(V.unit(V.sub(g("C"), g("A"))), V.dist(g("A"), g("D")))));
+    S.circ("cA", "A", "D", { st: "aux" });
+    S.seg("DE", "D", "E", { st: "yel" });
+    S.circ("cD", "D", "E", { st: "aux" }); S.circ("cE", "E", "D", { st: "aux" });
+    S.pt("F", g => apex(g("D"), g("E"), g("A")));
+    S.seg("DF", "D", "F", { st: "blue" }); S.seg("EF", "E", "F", { st: "blue" });
+    S.seg("AF", "A", "F", { st: "red" });
+    S.ang("aD", "D", "A", "F", { st: "red", r: 46 }); S.ang("aE", "F", "A", "E", { st: "yel", r: 38 });
+  },
+  steps: [
+    { show: ["A", "B", "C", "AB", "AC"], text: "设 ∠BAC 是已知直线角。要求二等分它。" },
+    { show: ["D"], hl: ["D"], text: "在 AB 上任取一点 D（可以拖动它）。" },
+    { show: ["cA", "E"], text: "在 AC 上截取 AE 等于 AD。", why: ["I.3"] },
+    { show: ["DE"], text: "连接 DE。", why: ["P1"] },
+    { show: ["cD", "cE", "F", "DF", "EF"], text: "在 DE 上作等边三角形 DEF，使 F 在与 A 相对的一侧。", why: ["I.1"] },
+    { show: ["AF"], hide: ["cA", "cD", "cE"], text: "连接 AF。断言：∠BAC 被直线 AF 二等分。", why: ["P1"] },
+    { show: ["aD", "aE"], hl: ["DF", "EF", "AF"], text: "因为 AD 等于 AE，AF 是公共边，所以两边 DA、AF 分别等于两边 EA、AF；又底 DF 等于底 EF，所以 ∠DAF 等于 ∠EAF。已知直线角 BAC 被直线 AF 二等分。", why: ["I.8"] }
+  ]
+};
+
+LIVE[10] = {
+  vb: [0, 0, 720, 600],
+  build(S) {
+    S.free("A", 250, 400); S.free("B", 470, 400);
+    S.seg("AB", "A", "B");
+    S.circ("cA", "A", "B", { st: "aux" }); S.circ("cB", "B", "A", { st: "aux" });
+    S.ix("C", "cA", "cB", 0);
+    S.seg("CA", "C", "A", { st: "blue" }); S.seg("CB", "C", "B", { st: "blue" });
+    S.pt("D", g => V.mid(g("A"), g("B")), { ld: { x: 0, y: 1 } });
+    S.seg("CD", "C", "D", { st: "ink" });
+    S.ang("a1", "A", "C", "D", { st: "yel", r: 40 }); S.ang("a2", "D", "C", "B", { st: "yel", r: 40 });
+    S.seg("AD", "A", "D", { st: "red" }); S.seg("DB", "D", "B", { st: "red" });
+  },
+  steps: [
+    { show: ["A", "B", "AB"], text: "设 AB 是已知有限直线。要求二等分 AB。" },
+    { show: ["cA", "cB", "C", "CA", "CB"], text: "在 AB 上作等边三角形 ABC。", why: ["I.1"] },
+    { show: ["D", "CD", "a1", "a2"], hide: ["cA", "cB"], text: "用直线 CD 二等分 ∠ACB，CD 与 AB 交于 D。断言：AB 在点 D 被二等分。", why: ["I.9"] },
+    { show: ["AD", "DB"], hl: ["CA", "CB", "CD", "AD", "DB"], text: "因为 AC 等于 CB，CD 是公共边，所以两边 AC、CD 分别等于两边 BC、CD；又 ∠ACD 等于 ∠BCD，所以底 AD 等于底 BD。已知有限直线 AB 在 D 点被二等分。", why: ["I.4"] }
+  ]
+};
+
+LIVE[47] = {
+  vb: [0, 0, 720, 570],
+  build(S) {
+    S.free("B", 250, 300); S.free("C", 470, 300);
+    // A slides on the semicircle over BC, so ∠BAC stays a right angle.
+    const frame = g => {
+      const B = g("B"), C = g("C"), M = V.mid(B, C), u = V.unit(V.sub(C, B));
+      return { M, u, n: { x: u.y, y: -u.x }, r: V.dist(B, C) / 2 };
+    };
+    S.glide("A", 0.95, (g, t) => { const F = frame(g); return V.add(F.M, V.mul(V.add(V.mul(F.u, Math.cos(t)), V.mul(F.n, Math.sin(t))), F.r)); },
+      (g, m) => {
+        const F = frame(g), w = V.sub(m, F.M);
+        let t = Math.atan2(V.dot(w, F.n), V.dot(w, F.u));
+        if (t < 0) t = V.dot(w, F.u) > 0 ? 0 : Math.PI;
+        return Math.min(Math.PI * 0.86, Math.max(Math.PI * 0.14, t));
+      }, { ld: { x: 0, y: -1 } });
+    const sq = (a, b, away, i) => g => square(g(a), g(b), g(away))[i];
+    S.pt("D", sq("B", "C", "A", 0)); S.pt("E", sq("B", "C", "A", 1));
+    S.pt("F", sq("B", "A", "C", 0)); S.pt("G", sq("B", "A", "C", 1));
+    S.pt("H", sq("A", "C", "B", 0)); S.pt("K", sq("A", "C", "B", 1));
+    S.pt("L", g => V.proj(g("A"), g("D"), g("E")), { ld: { x: 0, y: 1 } });
+    S.pt("X", g => V.proj(g("A"), g("B"), g("C")), { lab: false });
+
+    S.poly("tABD", ["A", "B", "D"], { st: "red" }); S.poly("tFBC", ["F", "B", "C"], { st: "red" });
+    S.poly("rBL", ["B", "X", "L", "D"], { st: "red" }); S.poly("sAB", ["A", "B", "F", "G"], { st: "red" });
+    S.poly("tACE", ["A", "C", "E"], { st: "blue" }); S.poly("tKCB", ["K", "C", "B"], { st: "blue" });
+    S.poly("rCL", ["X", "C", "E", "L"], { st: "blue" }); S.poly("sAC", ["A", "C", "K", "H"], { st: "blue" });
+
+    S.seg("AB", "A", "B"); S.seg("AC", "A", "C"); S.seg("BC", "B", "C");
+    S.seg("BD", "B", "D"); S.seg("DE", "D", "E"); S.seg("EC", "E", "C");
+    S.seg("BF", "B", "F"); S.seg("FG", "F", "G"); S.seg("GA", "G", "A");
+    S.seg("AH", "A", "H"); S.seg("HK", "H", "K"); S.seg("KC", "K", "C");
+    S.seg("AL", "A", "L", { st: "yel" });
+    S.seg("AD", "A", "D", { st: "red" }); S.seg("FC", "F", "C", { st: "red" });
+    S.seg("AE", "A", "E", { st: "blue" }); S.seg("BK", "B", "K", { st: "blue" });
+    S.rang("rA", "B", "A", "C");
+    S.ang("aDBA", "D", "B", "A", { st: "yel", r: 22 }); S.ang("aFBC", "F", "B", "C", { st: "yel", r: 34 });
+  },
+  steps: [
+    { show: ["A", "B", "C", "AB", "AC", "BC", "rA"], text: "设 ABC 是直角三角形，∠BAC 是直角。断言：BC 上的正方形等于 BA、AC 上的正方形之和。（拖动 A，它沿 BC 上的半圆移动，直角始终保持。）" },
+    { show: ["D", "E", "BD", "DE", "EC", "F", "G", "BF", "FG", "GA", "H", "K", "AH", "HK", "KC"], text: "在 BC 上作正方形 BDEC，在 BA、AC 上作正方形 GB、HC。", why: ["I.46"] },
+    { show: ["L", "AL"], text: "过 A 作 AL 平行于 BD 或 CE。", why: ["I.31"] },
+    { show: ["AD", "FC"], text: "连接 AD、FC。", why: ["P1"] },
+    { hl: ["GA", "AC", "AB", "AH"], text: "因为 ∠BAC、∠BAG 都是直角，在直线 BA 上的点 A，不在同侧的两直线 AC、AG 所成的邻角之和等于两直角，所以 CA 与 AG 在同一直线上。同理，BA 与 AH 也在同一直线上。", why: ["D22", "I.14"] },
+    { show: ["aDBA", "aFBC"], text: "因为 ∠DBC 等于 ∠FBA（都是直角），给它们各加上 ∠ABC，所以整个 ∠DBA 等于整个 ∠FBC。", why: ["P4", "A2"] },
+    { show: ["tABD", "tFBC"], hl: ["AD", "FC"], text: "又因为 DB 等于 BC，FB 等于 BA，两边 AB、BD 分别等于两边 FB、BC，且 ∠ABD 等于 ∠FBC，所以底 AD 等于底 FC，三角形 ABD 等于三角形 FBC。", why: ["I.4"] },
+    { show: ["rBL", "sAB"], hide: ["aDBA", "aFBC"], text: "平行四边形 BL 与三角形 ABD 同底 BD，且在相同两平行线 BD、AL 之间，所以 BL 是三角形 ABD 的二倍。正方形 GB 与三角形 FBC 同底 FB，且在相同两平行线 FB、GC 之间，所以正方形 GB 是三角形 FBC 的二倍。", why: ["I.41"] },
+    { hide: ["tABD", "tFBC"], text: "等量的二倍彼此相等，所以平行四边形 BL 等于正方形 GB。" },
+    { show: ["AE", "BK", "tACE", "tKCB"], text: "同理，连接 AE、BK，可以证明三角形 ACE 等于三角形 KCB，从而平行四边形 CL 是前者的二倍，正方形 HC 是后者的二倍。", why: ["I.4", "I.41"] },
+    { show: ["rCL", "sAC"], hide: ["tACE", "tKCB"], text: "所以平行四边形 CL 等于正方形 HC。" },
+    { hl: ["BD", "DE", "EC", "BC"], text: "整个正方形 BDEC 等于两个正方形 GB、HC 之和。而正方形 BDEC 作在 BC 上，正方形 GB、HC 作在 BA、AC 上，所以 BC 上的正方形等于 BA、AC 上的正方形之和。", why: ["A2"] }
+  ]
+};
+
+// ---------------------------------------------------------------- views
+const view = document.getElementById("view");
+let teardown = null;
+
+function mountProp(n) {
+  const [stmt, , kind] = PROPS[n - 1];
+  const def = LIVE[n];
+  const head = `<p class="eyebrow">命题 I.${n} · <span class="kind">${kind === "作" ? "作图题" : "定理"}</span></p><h2 class="stmt">${fmt(stmt)}</h2>`;
+  if (!def) {
+    view.innerHTML = head + `<div class="todo">这个命题的交互演示还在制作中。目前已完成：${Object.keys(LIVE).map(k => `<a href="#p${k}">I.${k}</a>`).join("、")}。也可以去 <a href="#sandbox">自由作图</a> 里用尺规自己试一试。</div>`;
+    return;
+  }
+  view.innerHTML = head + `
+    <div class="prop">
+      <div>
+        <div class="plate"><svg class="fig" role="img" aria-label="命题 I.${n} 的图形"></svg></div>
+        <div class="hint">红圈的点可以拖动，图形会随之改变，而证明的每一步仍然成立。</div>
+      </div>
+      <div>
+        <div class="controls">
+          <button class="btn" id="prev">上一步</button>
+          <button class="btn primary" id="play">播放</button>
+          <button class="btn" id="next">下一步</button>
+          <span class="count" id="count"></span>
+        </div>
+        <ol class="steps" id="steps"></ol>
+        <p class="qed" id="qed" hidden>${kind === "作" ? "这就是所要作的。" : "这就是所要证明的。"}</p>
+      </div>
+    </div>`;
+  const S = new Scene(); def.build(S);
+  const R = new Renderer(view.querySelector("svg"), S, def.vb);
+  const steps = def.steps, ol = view.querySelector("#steps");
+  ol.innerHTML = steps.map((s, i) => {
+    const why = (s.why || []).map(refText);
+    return `<li data-i="${i}"><div>${fmt(s.text)}${why.length ? `<div class="why">${why.map(w => `<span class="chip">${w[0]}</span>`).join("")}</div>` + why.map(w => `<div class="quote">${w[0]}：${w[1]}</div>`).join("") : ""}</div></li>`;
+  }).join("");
+  const visAt = k => { const v = new Set(); for (let i = 0; i <= k; i++) { (steps[i].show || []).forEach(x => v.add(x)); (steps[i].hide || []).forEach(x => v.delete(x)); } return v; };
+  let cur = -1, timer = null;
+  function go(k) {
+    k = Math.max(0, Math.min(steps.length - 1, k));
+    const before = cur >= 0 ? visAt(cur) : new Set();
+    const now = visAt(k);
+    const anim = new Set([...now].filter(x => !before.has(x)));
+    cur = k;
+    R.vis = now; R.hl = new Set(steps[k].hl || []);
+    R.render(anim, true);
+    ol.querySelectorAll("li").forEach((li, i) => { li.classList.toggle("cur", i === k); li.classList.toggle("done", i < k); });
+    view.querySelector("#count").textContent = `${k + 1} / ${steps.length}`;
+    view.querySelector("#prev").disabled = k === 0;
+    view.querySelector("#next").disabled = k === steps.length - 1;
+    view.querySelector("#qed").hidden = k !== steps.length - 1;
+  }
+  function stop() { clearInterval(timer); timer = null; view.querySelector("#play").textContent = "播放"; }
+  view.querySelector("#prev").onclick = () => { stop(); go(cur - 1); };
+  view.querySelector("#next").onclick = () => { stop(); go(cur + 1); };
+  view.querySelector("#play").onclick = () => {
+    if (timer) return stop();
+    if (cur === steps.length - 1) go(0);
+    view.querySelector("#play").textContent = "暂停";
+    timer = setInterval(() => { if (cur >= steps.length - 1) return stop(); go(cur + 1); }, 3200);
+  };
+  ol.onclick = e => { const li = e.target.closest("li"); if (li) { stop(); go(+li.dataset.i); } };
+  R.onDrag = () => {};
+  go(0);
+  teardown = stop;
+}
+
+function mountIntro() {
+  const list = (arr, cls) => `<ol class="deflist">${arr.map((t, i) => `<li><span class="n">${i + 1}</span><span>${t}</span></li>`).join("")}</ol>`;
+  view.innerHTML = `<div class="prose">
+    <p class="eyebrow">卷一 · 开篇</p>
+    <h2>定义</h2><p class="sub">ὅροι · 共 23 条，说明后面要用到的名词</p>${list(DEFS)}
+    <h2>公设</h2><p class="sub">αἰτήματα · 共 5 条，规定尺规可以做的事；第 1–3 条就是直尺与圆规</p>${list(POSTS)}
+    <h2>公理</h2><p class="sub">κοιναὶ ἔννοιαι · 共 5 条，又称"一般概念"</p>${list(AXIOMS)}
+  </div>`;
+}
+
+function mountSandbox() {
+  view.innerHTML = `
+    <p class="eyebrow">尺规作图</p>
+    <h2 class="stmt">只用直尺和圆规，看看能作出什么。</h2>
+    <div class="prop">
+      <div>
+        <div class="tools" role="toolbar" aria-label="作图工具">
+          <button class="tool" data-t="move">移动</button>
+          <button class="tool" data-t="point">点</button>
+          <button class="tool" data-t="seg">线段</button>
+          <button class="tool" data-t="line">直线</button>
+          <button class="tool" data-t="circ">圆</button>
+          <button class="btn" id="undo">撤销</button>
+          <button class="btn" id="clear">清空</button>
+        </div>
+        <div class="plate"><svg class="fig" role="img" aria-label="自由作图画板"></svg></div>
+        <div class="hint" id="shint"></div>
+      </div>
+      <div class="side">
+        <h3>怎么用</h3>
+        <ul>
+          <li>线段、直线：依次点两个点（公设 1、2）。</li>
+          <li>圆：先点圆心，再点圆上一点（公设 3）。</li>
+          <li>靠近两条线的交点时会出现红圈，点下去就得到交点；拖动原来的点，交点会跟着动。</li>
+          <li>选"移动"工具后可以拖动自由点。</li>
+        </ul>
+        <h3 style="margin-top:18px">试试看</h3>
+        <ul>
+          <li>在 <var>AB</var> 上作等边三角形（<a href="#p1">I.1</a>）。</li>
+          <li>二等分线段 <var>AB</var>（<a href="#p10">I.10</a>）。</li>
+          <li>过 <var>AB</var> 上一点作垂线（I.11）。</li>
+        </ul>
+      </div>
+    </div>`;
+  const svg = view.querySelector("svg");
+  const S = new Scene();
+  const R = new Renderer(svg, S, [0, 0, 720, 560]);
+  const hintEl = view.querySelector("#shint");
+  const HINTS = { move: "拖动红圈的自由点。", point: "点击放置一个点。", seg: "依次点击两个点连成线段。", line: "依次点击两个点作一条可以无限延长的直线。", circ: "先点圆心，再点圆上一点。" };
+  let tool = "circ", first = null, hist = [], nextName = 0;
+  const preview = mk("path", { class: "preview" }, R.gOver);
+  const snap = mk("circle", { class: "snap", r: 10 }, R.gOver);
+  const label = () => {
+    const used = new Set(S.list.map(o => o.id));
+    for (;;) {
+      const i = nextName++, ch = String.fromCharCode(65 + (i % 26)) + (i >= 26 ? Math.floor(i / 26) : "");
+      if (!used.has(ch)) return ch;
+    }
+  };
+  let uid = 0;
+  const pts = () => S.list.filter(o => o.type === "pt" && o.val);
+  function candidates() {
+    const curves = S.list.filter(o => curveOf(o));
+    const out = [], P = pts();
+    for (let i = 0; i < curves.length; i++) for (let j = i + 1; j < curves.length; j++) {
+      intersect(curveOf(curves[i]), curveOf(curves[j])).forEach((p, k) => {
+        if (p && !P.some(q => V.dist(q.val, p) < 3)) out.push({ a: curves[i].id, b: curves[j].id, k, p });
+      });
+    }
+    return out;
+  }
+  function find(m) {
+    let best = null, bd = 16;
+    for (const o of pts()) { const d = V.dist(o.val, m); if (d < bd) { bd = d; best = { id: o.id, p: o.val }; } }
+    if (best) return best;
+    for (const c of candidates()) { const d = V.dist(c.p, m); if (d < bd) { bd = d; best = { ix: c, p: c.p }; } }
+    return best;
+  }
+  function resolve(m, added) {
+    const f = find(m);
+    if (f && f.id) return f.id;
+    const id = label();
+    if (f && f.ix) S.ix(id, f.ix.a, f.ix.b, f.ix.k);
+    else S.free(id, m.x, m.y);
+    added.push(id);
+    return id;
+  }
+  function setTool(t) {
+    tool = t; first = null; preview.setAttribute("d", "");
+    view.querySelectorAll(".tool").forEach(b => b.setAttribute("aria-pressed", b.dataset.t === t));
+    hintEl.textContent = HINTS[t];
+  }
+  R.canDrag = () => tool === "move";
+  R.onDown = (e, m) => {
+    if (tool === "move") return;
+    m = R.clamp(m);
+    const added = [];
+    const id = resolve(m, added);
+    if (tool === "point") { if (added.length) hist.push(added); R.render(new Set(added)); return; }
+    if (!first) { first = { id, added }; R.render(new Set(added)); return; }
+    if (id === first.id) return;
+    const all = first.added.concat(added), k = "o" + uid++;
+    if (tool === "seg") S.seg(k, first.id, id);
+    else if (tool === "line") S.line(k, first.id, id);
+    else S.circ(k, first.id, id, { st: "blue" });
+    all.push(k); hist.push(all); first = null; preview.setAttribute("d", "");
+    R.render(new Set(all));
+  };
+  R.onMove = (e, m) => {
+    const f = tool !== "move" && find(m);
+    snap.style.display = f ? "" : "none";
+    if (f) { snap.setAttribute("cx", f.p.x); snap.setAttribute("cy", f.p.y); }
+    if (first && S.by[first.id] && S.by[first.id].val) {
+      const a = S.by[first.id].val, b = f ? f.p : m;
+      if (tool === "circ") { const r = V.dist(a, b); preview.setAttribute("d", `M${a.x - r} ${a.y}a${r} ${r} 0 1 0 ${2 * r} 0a${r} ${r} 0 1 0 ${-2 * r} 0`); }
+      else preview.setAttribute("d", `M${a.x} ${a.y}L${b.x} ${b.y}`);
+    }
+  };
+  svg.addEventListener("pointerleave", () => { snap.style.display = "none"; });
+  view.querySelectorAll(".tool").forEach(b => b.onclick = () => setTool(b.dataset.t));
+  view.querySelector("#undo").onclick = () => {
+    if (first) { S.remove(first.added); first = null; preview.setAttribute("d", ""); }
+    else if (hist.length) S.remove(hist.pop());
+    R.render();
+  };
+  view.querySelector("#clear").onclick = () => { S.remove(S.list.map(o => o.id)); hist = []; first = null; nextName = 0; seed(); };
+  function seed() {
+    S.free(label(), 270, 330); S.free(label(), 450, 330); S.seg("o" + uid++, "A", "B");
+    R.render();
+  }
+  seed();
+  setTool("circ");
+}
+
+// ---------------------------------------------------------------- routing
+const nav = document.getElementById("nav"), sel = document.getElementById("navsel");
+nav.innerHTML =
+  `<h2>开篇</h2><a href="#intro" data-r="intro"><span class="n">·</span><span class="t">定义、公设、公理</span></a>` +
+  `<h2>动手</h2><a href="#sandbox" data-r="sandbox"><span class="n">·</span><span class="t">自由作图</span></a>` +
+  `<h2>命题</h2>` + PROPS.map((p, i) => `<a href="#p${i + 1}" data-r="p${i + 1}" class="${LIVE[i + 1] ? "live" : ""}" title="${p[0]}"><span class="n">${i + 1}</span><span class="t">${p[1]}</span></a>`).join("");
+sel.innerHTML = `<option value="intro">开篇：定义、公设、公理</option><option value="sandbox">自由作图</option>` +
+  PROPS.map((p, i) => `<option value="p${i + 1}">命题 I.${i + 1} ${p[1]}${LIVE[i + 1] ? " ●" : ""}</option>`).join("");
+sel.onchange = () => { location.hash = sel.value; };
+
+function route() {
+  if (teardown) { teardown(); teardown = null; }
+  let r = location.hash.slice(1) || "p1";
+  const m = r.match(/^p(\d+)$/);
+  if (m && (+m[1] < 1 || +m[1] > 48)) r = "p1";
+  if (r === "intro") mountIntro();
+  else if (r === "sandbox") mountSandbox();
+  else if (m) mountProp(+m[1]);
+  else { r = "p1"; mountProp(1); }
+  nav.querySelectorAll("a").forEach(a => { if (a.dataset.r === r) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current"); });
+  sel.value = r;
+  window.scrollTo(0, 0);
+}
+addEventListener("hashchange", route);
+route();
+</script>
+
+</body>
+</html>
