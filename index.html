@@ -230,6 +230,14 @@ function apex(a, b, away) {
   const s = V.dot(n, V.sub(m, away)) >= 0 ? 1 : -1;
   return V.add(m, V.mul(n, s * V.dist(a, b) * Math.sqrt(3) / 2));
 }
+const rot = (v, a) => ({ x: v.x * Math.cos(a) - v.y * Math.sin(a), y: v.x * Math.sin(a) + v.y * Math.cos(a) });
+const angOf = v => Math.atan2(v.y, v.x);
+// Rigid motion carrying a→c with direction ab onto cd, applied to p at fraction t (0 = p, 1 = image).
+function carry(p, a, b, c, d, t) {
+  const phi = angOf(V.sub(d, c)) - angOf(V.sub(b, a));
+  let dphi = phi; while (dphi > Math.PI) dphi -= 2 * Math.PI; while (dphi < -Math.PI) dphi += 2 * Math.PI;
+  return V.add(V.add(a, rot(V.sub(p, a), dphi * t)), V.mul(V.sub(c, a), t));
+}
 // Outward square on pq, away from point `away`: returns [p', q'].
 function square(p, q, away) {
   let n = V.perp(V.sub(q, p));
@@ -281,6 +289,8 @@ class Scene {
   free(id, x, y, o = {}) { return this.add({ id, type: "pt", kind: "free", x, y, ...o }); }
   pt(id, f, o = {}) { return this.add({ id, type: "pt", kind: "fn", f, ...o }); }
   glide(id, param, f, proj, o = {}) { return this.add({ id, type: "pt", kind: "glide", param, f, proj, ...o }); }
+  // a hidden number (read as g(id).x) that a step can animate with tween: [id, from, to]
+  param(id, v) { return this.add({ id, type: "pt", kind: "glide", param: v, f: (g, p) => ({ x: p, y: 0 }), proj: (g, m) => 0, lab: false }); }
   ix(id, a, b, i, o = {}) { return this.add({ id, type: "pt", kind: "ix", a, b, i, ...o }); }
   seg(id, a, b, o = {}) { return this.add({ id, type: "seg", a, b, ...o }); }
   line(id, a, b, o = {}) { return this.add({ id, type: "line", a, b, ...o }); }
@@ -467,193 +477,10 @@ class Renderer {
 }
 
 // ---------------------------------------------------------------- propositions
+// Each ready proposition lives in props/pNN.js and calls PROP(n, {vb, build, steps, text}).
 const LIVE = {};
-
-LIVE[1] = {
-  vb: [0, 0, 720, 580],
-  build(S) {
-    S.free("A", 270, 360); S.free("B", 450, 360);
-    S.seg("AB", "A", "B");
-    S.circ("cA", "A", "B", { st: "blue" }); S.circ("cB", "B", "A", { st: "yel" });
-    S.pt("D", g => V.sub(V.mul(g("A"), 2), g("B")));
-    S.pt("E", g => V.sub(V.mul(g("B"), 2), g("A")));
-    S.ix("C", "cA", "cB", 0);
-    S.seg("CA", "C", "A", { st: "red" }); S.seg("CB", "C", "B", { st: "red" });
-  },
-  steps: [
-    { show: ["A", "B", "AB"] },
-    { show: ["cA", "D"], why: ["P3"] },
-    { show: ["cB", "E"], why: ["P3"] },
-    { show: ["C", "CA", "CB"], hl: ["C"], why: ["P1"] },
-    { hl: ["CA", "AB"], why: ["D15"] },
-    { hl: ["CB", "AB"], why: ["D15"] },
-    { hl: ["CA", "CB", "AB"], why: ["A1"] }
-  ]
-};
-
-LIVE[2] = {
-  vb: [0, 0, 720, 560],
-  build(S) {
-    S.free("A", 300, 330); S.free("B", 400, 330); S.free("C", 470, 410);
-    S.seg("BC", "B", "C", { st: "red" });
-    S.seg("AB", "A", "B");
-    S.pt("D", g => apex(g("A"), g("B"), g("C")));
-    S.seg("DA", "D", "A"); S.seg("DB", "D", "B");
-    // G on DB produced with BG = BC; L on DA produced with DL = DG.
-    S.pt("G", g => V.add(g("B"), V.mul(V.unit(V.sub(g("B"), g("D"))), V.dist(g("B"), g("C")))));
-    S.pt("L", g => V.add(g("D"), V.mul(V.unit(V.sub(g("A"), g("D"))), V.dist(g("D"), g("G")))));
-    const beyond = (from, to) => g => V.add(g(from), V.mul(V.unit(V.sub(g(to), g(from))), V.dist(g("D"), g("G")) + 50));
-    S.pt("E", beyond("D", "A")); S.pt("F", beyond("D", "B"));
-    S.seg("AE", "A", "E"); S.seg("BF", "B", "F");
-    S.circ("cB", "B", "C", { st: "blue" });
-    S.pt("H", g => V.sub(V.mul(g("B"), 2), g("C")));
-    S.circ("cD", "D", "G", { st: "yel" });
-    S.pt("K", g => V.sub(V.mul(g("D"), 2), g("G")));
-    S.seg("DG", "D", "G", { st: "yel" }); S.seg("DL", "D", "L", { st: "yel" });
-    S.seg("BG", "B", "G", { st: "red" }); S.seg("AL", "A", "L", { st: "red" });
-  },
-  steps: [
-    { show: ["A", "B", "C", "BC"] },
-    { show: ["AB"], why: ["P1"] },
-    { show: ["D", "DA", "DB"], why: ["I.1"] },
-    { show: ["E", "F", "AE", "BF"], why: ["P2"] },
-    { show: ["cB", "G", "H"], why: ["P3"] },
-    { show: ["cD", "K", "L"], why: ["P3"] },
-    { show: ["BG"], hl: ["BC", "BG"], why: ["D15"] },
-    { show: ["DG", "DL"], hl: ["DG", "DL"], why: ["D15"] },
-    { show: ["AL"], hide: ["DG", "DL"], hl: ["AL", "BG"], why: ["A3"] },
-    { hl: ["AL", "BC"], why: ["A1"] }
-  ]
-};
-
-LIVE[3] = {
-  vb: [0, 0, 720, 560],
-  build(S) {
-    S.free("A", 240, 330); S.free("B", 640, 330);
-    S.free("C", 380, 70); S.free("C2", 580, 70, { lab: false });
-    S.seg("AB", "A", "B"); S.seg("sC", "C", "C2", { st: "red" });
-    const r = g => V.dist(g("C"), g("C2"));
-    const u = g => V.unit(V.sub(g("B"), g("A")));
-    // AD = C, placed at A by I.2 (direction chosen to keep the figure clear of AB).
-    S.pt("D", g => { const d = u(g), c = Math.cos(-0.96), s = Math.sin(-0.96);
-      return V.add(g("A"), V.mul({ x: d.x * c - d.y * s, y: d.x * s + d.y * c }, r(g))); });
-    S.seg("AD", "A", "D", { st: "red" });
-    S.circ("cA", "A", "D", { st: "blue" });
-    // E exists only while C is shorter than AB.
-    S.pt("E", g => r(g) < V.dist(g("A"), g("B")) ? V.add(g("A"), V.mul(u(g), r(g))) : null, { ld: { x: 0.4, y: 1 } });
-    S.pt("F", g => V.sub(g("A"), V.mul(u(g), r(g))));
-    S.seg("AE", "A", "E", { st: "red" });
-  },
-  steps: [
-    { show: ["A", "B", "AB", "C", "C2", "sC"] },
-    { show: ["D", "AD"], why: ["I.2"] },
-    { show: ["cA", "E", "F"], why: ["P3"] },
-    { show: ["AE"], hl: ["AD", "AE"], why: ["D15"] },
-    { hl: ["AE", "sC"], why: ["A1"] }
-  ]
-};
-
-LIVE[9] = {
-  vb: [0, 0, 720, 580],
-  build(S) {
-    S.free("A", 120, 450); S.free("B", 620, 450); S.free("C", 520, 120);
-    S.seg("AB", "A", "B"); S.seg("AC", "A", "C");
-    S.glide("D", 0.42, (g, t) => V.lerp(g("A"), g("B"), t),
-      (g, m) => Math.min(0.95, Math.max(0.08, V.dot(V.sub(m, g("A")), V.sub(g("B"), g("A"))) / V.dot(V.sub(g("B"), g("A")), V.sub(g("B"), g("A"))))));
-    S.pt("E", g => V.add(g("A"), V.mul(V.unit(V.sub(g("C"), g("A"))), V.dist(g("A"), g("D")))));
-    S.circ("cA", "A", "D", { st: "aux" });
-    S.seg("DE", "D", "E", { st: "yel" });
-    S.circ("cD", "D", "E", { st: "aux" }); S.circ("cE", "E", "D", { st: "aux" });
-    S.pt("F", g => apex(g("D"), g("E"), g("A")));
-    S.seg("DF", "D", "F", { st: "blue" }); S.seg("EF", "E", "F", { st: "blue" });
-    S.seg("AF", "A", "F", { st: "red" });
-    S.ang("aD", "D", "A", "F", { st: "red", r: 46 }); S.ang("aE", "F", "A", "E", { st: "yel", r: 38 });
-  },
-  steps: [
-    { show: ["A", "B", "C", "AB", "AC"] },
-    { show: ["D"], hl: ["D"] },
-    { show: ["cA", "E"], why: ["I.3"] },
-    { show: ["DE"], why: ["P1"] },
-    { show: ["cD", "cE", "F", "DF", "EF"], why: ["I.1"] },
-    { show: ["AF"], hide: ["cA", "cD", "cE"], why: ["P1"] },
-    { show: ["aD", "aE"], hl: ["DF", "EF", "AF"], why: ["I.8"] }
-  ]
-};
-
-LIVE[10] = {
-  vb: [0, 0, 720, 600],
-  build(S) {
-    S.free("A", 250, 400); S.free("B", 470, 400);
-    S.seg("AB", "A", "B");
-    S.circ("cA", "A", "B", { st: "aux" }); S.circ("cB", "B", "A", { st: "aux" });
-    S.ix("C", "cA", "cB", 0);
-    S.seg("CA", "C", "A", { st: "blue" }); S.seg("CB", "C", "B", { st: "blue" });
-    S.pt("D", g => V.mid(g("A"), g("B")), { ld: { x: 0, y: 1 } });
-    S.seg("CD", "C", "D", { st: "ink" });
-    S.ang("a1", "A", "C", "D", { st: "yel", r: 40 }); S.ang("a2", "D", "C", "B", { st: "yel", r: 40 });
-    S.seg("AD", "A", "D", { st: "red" }); S.seg("DB", "D", "B", { st: "red" });
-  },
-  steps: [
-    { show: ["A", "B", "AB"] },
-    { show: ["cA", "cB", "C", "CA", "CB"], why: ["I.1"] },
-    { show: ["D", "CD", "a1", "a2"], hide: ["cA", "cB"], why: ["I.9"] },
-    { show: ["AD", "DB"], hl: ["CA", "CB", "CD", "AD", "DB"], why: ["I.4"] }
-  ]
-};
-
-LIVE[47] = {
-  vb: [0, 0, 720, 570],
-  build(S) {
-    S.free("B", 250, 300); S.free("C", 470, 300);
-    // A slides on the semicircle over BC, so ∠BAC stays a right angle.
-    const frame = g => {
-      const B = g("B"), C = g("C"), M = V.mid(B, C), u = V.unit(V.sub(C, B));
-      return { M, u, n: { x: u.y, y: -u.x }, r: V.dist(B, C) / 2 };
-    };
-    S.glide("A", 0.95, (g, t) => { const F = frame(g); return V.add(F.M, V.mul(V.add(V.mul(F.u, Math.cos(t)), V.mul(F.n, Math.sin(t))), F.r)); },
-      (g, m) => {
-        const F = frame(g), w = V.sub(m, F.M);
-        let t = Math.atan2(V.dot(w, F.n), V.dot(w, F.u));
-        if (t < 0) t = V.dot(w, F.u) > 0 ? 0 : Math.PI;
-        return Math.min(Math.PI * 0.86, Math.max(Math.PI * 0.14, t));
-      }, { ld: { x: 0, y: -1 } });
-    const sq = (a, b, away, i) => g => square(g(a), g(b), g(away))[i];
-    S.pt("D", sq("B", "C", "A", 0)); S.pt("E", sq("B", "C", "A", 1));
-    S.pt("F", sq("B", "A", "C", 0)); S.pt("G", sq("B", "A", "C", 1));
-    S.pt("H", sq("A", "C", "B", 0)); S.pt("K", sq("A", "C", "B", 1));
-    S.pt("L", g => V.proj(g("A"), g("D"), g("E")), { ld: { x: 0, y: 1 } });
-    S.pt("X", g => V.proj(g("A"), g("B"), g("C")), { lab: false });
-
-    S.poly("tABD", ["A", "B", "D"], { st: "red" }); S.poly("tFBC", ["F", "B", "C"], { st: "red" });
-    S.poly("rBL", ["B", "X", "L", "D"], { st: "red" }); S.poly("sAB", ["A", "B", "F", "G"], { st: "red" });
-    S.poly("tACE", ["A", "C", "E"], { st: "blue" }); S.poly("tKCB", ["K", "C", "B"], { st: "blue" });
-    S.poly("rCL", ["X", "C", "E", "L"], { st: "blue" }); S.poly("sAC", ["A", "C", "K", "H"], { st: "blue" });
-
-    S.seg("AB", "A", "B"); S.seg("AC", "A", "C"); S.seg("BC", "B", "C");
-    S.seg("BD", "B", "D"); S.seg("DE", "D", "E"); S.seg("EC", "E", "C");
-    S.seg("BF", "B", "F"); S.seg("FG", "F", "G"); S.seg("GA", "G", "A");
-    S.seg("AH", "A", "H"); S.seg("HK", "H", "K"); S.seg("KC", "K", "C");
-    S.seg("AL", "A", "L", { st: "yel" });
-    S.seg("AD", "A", "D", { st: "red" }); S.seg("FC", "F", "C", { st: "red" });
-    S.seg("AE", "A", "E", { st: "blue" }); S.seg("BK", "B", "K", { st: "blue" });
-    S.rang("rA", "B", "A", "C");
-    S.ang("aDBA", "D", "B", "A", { st: "yel", r: 22 }); S.ang("aFBC", "F", "B", "C", { st: "yel", r: 34 });
-  },
-  steps: [
-    { show: ["A", "B", "C", "AB", "AC", "BC", "rA"] },
-    { show: ["D", "E", "BD", "DE", "EC", "F", "G", "BF", "FG", "GA", "H", "K", "AH", "HK", "KC"], why: ["I.46"] },
-    { show: ["L", "AL"], why: ["I.31"] },
-    { show: ["AD", "FC"], why: ["P1"] },
-    { hl: ["GA", "AC", "AB", "AH"], why: ["D22", "I.14"] },
-    { show: ["aDBA", "aFBC"], why: ["P4", "A2"] },
-    { show: ["tABD", "tFBC"], hl: ["AD", "FC"], why: ["I.4"] },
-    { show: ["rBL", "sAB"], hide: ["aDBA", "aFBC"], why: ["I.41"] },
-    { hide: ["tABD", "tFBC"] },
-    { show: ["AE", "BK", "tACE", "tKCB"], why: ["I.4", "I.41"] },
-    { show: ["rCL", "sAC"], hide: ["tACE", "tKCB"] },
-    { hl: ["BD", "DE", "EC", "BC"], why: ["A2"] }
-  ]
-};
+const READY = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 47];
+function PROP(n, def) { LIVE[n] = def; }
 
 // ---------------------------------------------------------------- views
 const view = document.getElementById("view");
@@ -663,9 +490,16 @@ function mountProp(n) {
   const [stmt] = T.props[n - 1];
   const kind = KINDS[n - 1];
   const def = LIVE[n];
+  if (!def && READY.includes(n)) {
+    // load props/pNN.js once, then draw it if the reader is still on this page
+    view.innerHTML = "";
+    const want = location.hash;
+    loadScript(`props/p${String(n).padStart(2, "0")}.js`).then(() => { if (location.hash === want || (!location.hash && n === 1)) route(); }, () => {});
+    return;
+  }
   const head = `<p class="eyebrow">${T.ui.prop} I.${n} · <span class="kind">${kind === "作" ? T.ui.problem : T.ui.theorem}</span></p><h2 class="stmt">${fmt(stmt)}</h2>`;
   if (!def) {
-    const done = Object.keys(LIVE).map(k => `<a href="#p${k}">I.${k}</a>`).join(T.ui.sep);
+    const done = READY.map(k => `<a href="#p${k}">I.${k}</a>`).join(T.ui.sep);
     view.innerHTML = head + `<div class="todo">${tr(T.ui.todo, { done, sandbox: `<a href="#sandbox">${T.ui.navSandbox}</a>` })}</div>`;
     return;
   }
@@ -688,15 +522,20 @@ function mountProp(n) {
     </div>`;
   const S = new Scene(); def.build(S);
   const R = new Renderer(view.querySelector("svg"), S, def.vb);
-  const steps = def.steps, texts = T.steps[n], ol = view.querySelector("#steps");
+  const steps = def.steps, texts = def.text[LANG] || def.text.en, ol = view.querySelector("#steps");
   ol.innerHTML = steps.map((s, i) => {
     const why = (s.why || []).map(refText);
     return `<li data-i="${i}"><div>${fmt(texts[i])}${why.length ? `<div class="why">${why.map(w => `<span class="chip">${w[0]}</span>`).join("")}</div>` + why.map(w => `<div class="quote">${w[0]}${T.ui.colon}${w[1]}</div>`).join("") : ""}</div></li>`;
   }).join("");
   const visAt = k => { const v = new Set(); for (let i = 0; i <= k; i++) { (steps[i].show || []).forEach(x => v.add(x)); (steps[i].hide || []).forEach(x => v.delete(x)); } return v; };
-  let cur = -1, timer = null;
+  let cur = -1, timer = null, raf = 0;
+  // params animated by earlier steps sit at their end value, later ones at their start value
+  const setParams = k => steps.forEach((s, i) => { if (s.tween) S.by[s.tween[0]].param = i <= k ? s.tween[2] : s.tween[1]; });
   function go(k) {
     k = Math.max(0, Math.min(steps.length - 1, k));
+    const fwd = k === cur + 1;
+    cancelAnimationFrame(raf);
+    setParams(k);
     const before = cur >= 0 ? visAt(cur) : new Set();
     const now = visAt(k);
     const anim = new Set([...now].filter(x => !before.has(x)));
@@ -708,8 +547,19 @@ function mountProp(n) {
     view.querySelector("#prev").disabled = k === 0;
     view.querySelector("#next").disabled = k === steps.length - 1;
     view.querySelector("#qed").hidden = k !== steps.length - 1;
+    const tw = steps[k].tween;
+    if (tw && fwd && !reduced) {
+      const o = S.by[tw[0]], t0 = performance.now();
+      const tick = now => {
+        const u = Math.min(1, (now - t0) / 1600), e = u < 0.5 ? 2 * u * u : 1 - 2 * (1 - u) * (1 - u);
+        o.param = tw[1] + (tw[2] - tw[1]) * e;
+        R.render();
+        if (u < 1) raf = requestAnimationFrame(tick);
+      };
+      raf = requestAnimationFrame(tick);
+    }
   }
-  function stop() { clearInterval(timer); timer = null; view.querySelector("#play").textContent = T.ui.play; }
+  function stop() { clearInterval(timer); timer = null; cancelAnimationFrame(raf); view.querySelector("#play").textContent = T.ui.play; }
   view.querySelector("#prev").onclick = () => { stop(); go(cur - 1); };
   view.querySelector("#next").onclick = () => { stop(); go(cur + 1); };
   view.querySelector("#play").onclick = () => {
@@ -870,9 +720,9 @@ function buildChrome() {
   nav.innerHTML =
     `<h2>${U.navOpen}</h2><a href="#intro" data-r="intro"><span class="n">·</span><span class="t">${U.navIntro}</span></a>` +
     `<h2>${U.navHands}</h2><a href="#sandbox" data-r="sandbox"><span class="n">·</span><span class="t">${U.navSandbox}</span></a>` +
-    `<h2>${U.navProps}</h2>` + T.props.map((p, i) => `<a href="#p${i + 1}" data-r="p${i + 1}" class="${LIVE[i + 1] ? "live" : ""}" title="${p[0]}"><span class="n">${i + 1}</span><span class="t">${p[1]}</span></a>`).join("");
+    `<h2>${U.navProps}</h2>` + T.props.map((p, i) => `<a href="#p${i + 1}" data-r="p${i + 1}" class="${READY.includes(i + 1) ? "live" : ""}" title="${p[0]}"><span class="n">${i + 1}</span><span class="t">${p[1]}</span></a>`).join("");
   sel.innerHTML = `<option value="intro">${U.navOpen}${U.colon}${U.navIntro}</option><option value="sandbox">${U.navSandbox}</option>` +
-    T.props.map((p, i) => `<option value="p${i + 1}">${U.prop} I.${i + 1} · ${p[1]}${LIVE[i + 1] ? " ●" : ""}</option>`).join("");
+    T.props.map((p, i) => `<option value="p${i + 1}">${U.prop} I.${i + 1} · ${p[1]}${READY.includes(i + 1) ? " ●" : ""}</option>`).join("");
 }
 
 function route() {
@@ -888,15 +738,17 @@ function route() {
   sel.value = r;
 }
 
-function loadLang(code) {
-  if (I18N[code]) return Promise.resolve(I18N[code]);
-  return new Promise((res, rej) => {
+const scripts = {};
+function loadScript(src) {
+  return scripts[src] || (scripts[src] = new Promise((res, rej) => {
     const s = document.createElement("script");
-    s.src = `i18n/${code}.js`;
-    s.onload = () => (I18N[code] ? res(I18N[code]) : rej(new Error(code)));
-    s.onerror = () => rej(new Error(code));
+    s.src = src; s.onload = res;
+    s.onerror = () => { delete scripts[src]; rej(new Error(src)); };
     document.head.appendChild(s);
-  });
+  }));
+}
+function loadLang(code) {
+  return loadScript(`i18n/${code}.js`).then(() => I18N[code] || Promise.reject(new Error(code)));
 }
 // ?lang= first (shareable links), then the viewer's last choice, then the browser's languages.
 function pickLang() {
