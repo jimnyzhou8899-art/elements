@@ -20,7 +20,7 @@
           "value": "(?<lang>zh|en|es|fr|de|ru|ar|hi|ja)"
         }
       ],
-      "destination": "/_l/:lang/index.html"
+      "destination": "/_l/:lang/home"
     },
     {
       "source": "/p/:n(\\d{1,2})",
@@ -31,7 +31,7 @@
           "value": "(?<lang>zh|en|es|fr|de|ru|ar|hi|ja)"
         }
       ],
-      "destination": "/_l/:lang/p/:n.html"
+      "destination": "/_l/:lang/p/:n"
     },
     {
       "source": "/:page(intro|sandbox|about|privacy|contact)",
@@ -42,19 +42,19 @@
           "value": "(?<lang>zh|en|es|fr|de|ru|ar|hi|ja)"
         }
       ],
-      "destination": "/_l/:lang/:page.html"
+      "destination": "/_l/:lang/:page"
     },
     {
       "source": "/",
-      "destination": "/_l/x/index.html"
+      "destination": "/_l/x/home"
     },
     {
       "source": "/p/:n(\\d{1,2})",
-      "destination": "/_l/x/p/:n.html"
+      "destination": "/_l/x/p/:n"
     },
     {
       "source": "/:page(intro|sandbox|about|privacy|contact)",
-      "destination": "/_l/x/:page.html"
+      "destination": "/_l/x/:page"
     }
   ],
   "headers": [

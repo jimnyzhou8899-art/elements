@@ -4,7 +4,7 @@
 // so a visitor (or a crawler) gets the right title, text and links before any script has loaded.
 // dist/_l/x/p/12.html is I.12 with no language chosen yet (the page then picks one, as before); dist/_l/fr/p/12.html is
 // the French copy. vercel.json rewrites /p/12 and /p/12?lang=fr to them. (Vercel serves an existing file before any
-// rewrite, so no page may sit at its own path in dist/.)
+// rewrite, so no page may sit at its own path in dist/; and with cleanUrls the rewrite targets have no .html.)
 import fs from "node:fs";
 import path from "node:path";
 import vm from "node:vm";
@@ -103,7 +103,7 @@ function page(r, lang, inUrl, extraHead = "") {
 // ---------------------------------------------------------------- write
 fs.rmSync(OUT, { recursive: true, force: true });
 const write = (f, s) => { const p = path.join(OUT, f); fs.mkdirSync(path.dirname(p), { recursive: true }); fs.writeFileSync(p, s); };
-const fileFor = r => r === "p1" ? "index.html" : R.pathFor(r).slice(1) + ".html";
+const fileFor = r => r === "p1" ? "home.html" : R.pathFor(r).slice(1) + ".html";
 // The x-default copy is pre-rendered in English: crawlers without a language preference get English from the page too.
 const DEFAULT = "en";
 let pages = 0;
