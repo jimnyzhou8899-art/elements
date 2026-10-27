@@ -1,4 +1,4 @@
-// Local preview of dist/ that answers like Vercel does with vercel.json: clean URLs, ?lang= copies, /p/1 → /, 404 page.
+// Local preview of dist/ that answers like Vercel does with vercel.json: clean URLs, the _l/ copies, /p/1 → /, 404 page.
 //   node build.mjs && node serve.mjs   →   http://localhost:8000
 // /api/visits is not served here, so the visit counter stays hidden.
 import http from "node:http";
@@ -19,7 +19,9 @@ http.createServer((req, res) => {
     const m = p.match(compile(r.source));
     if (m) { res.writeHead(r.permanent ? 308 : 307, { Location: subst(r.destination, m.groups || {}) + u.search }); return res.end(); }
   }
-  for (const r of vercel.rewrites || []) {
+  // like Vercel: an existing file wins over the rewrites
+  const exists = x => { const f = path.join(DIST, x); return f.startsWith(DIST) && fs.existsSync(f) && fs.statSync(f).isFile(); };
+  if (!exists(p) && !exists(p + ".html")) for (const r of vercel.rewrites || []) {
     const m = p.match(compile(r.source));
     if (!m) continue;
     const groups = { ...m.groups };

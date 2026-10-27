@@ -2,8 +2,9 @@
 //   node build.mjs
 // index.html is the template. Its <!-- build:x --> blocks are filled in here using render.js, the same code the page runs,
 // so a visitor (or a crawler) gets the right title, text and links before any script has loaded.
-// dist/p/12.html is I.12 with no language chosen yet (the page then picks one, as before); dist/_l/fr/p/12.html is the
-// French copy, which vercel.json serves for /p/12?lang=fr.
+// dist/_l/x/p/12.html is I.12 with no language chosen yet (the page then picks one, as before); dist/_l/fr/p/12.html is
+// the French copy. vercel.json rewrites /p/12 and /p/12?lang=fr to them. (Vercel serves an existing file before any
+// rewrite, so no page may sit at its own path in dist/.)
 import fs from "node:fs";
 import path from "node:path";
 import vm from "node:vm";
@@ -107,7 +108,7 @@ const fileFor = r => r === "p1" ? "index.html" : R.pathFor(r).slice(1) + ".html"
 const DEFAULT = "en";
 let pages = 0;
 for (const r of ROUTES) {
-  write(fileFor(r), page(r, DEFAULT, false)); pages++;
+  write(`_l/x/${fileFor(r)}`, page(r, DEFAULT, false)); pages++;
   for (const l of CODES) { write(`_l/${l}/${fileFor(r)}`, page(r, l, true)); pages++; }
 }
 write("404.html", page("p1", DEFAULT, false, '<meta name="robots" content="noindex">'));

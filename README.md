@@ -37,8 +37,8 @@ node build.mjs && node serve.mjs
 
 - 每个视图有自己的地址：`/` 是 I.1，`/p/2` … `/p/48`，`/intro`（定义、公设、公理），`/sandbox`（作图板），
   `/about`、`/privacy`、`/contact`。站内链接不刷新页面；旧的 `#p12` 链接会自动换成 `/p/12`。
-- 不带 `?lang=` 的地址预先生成的是英文（`dist/p/12.html`），打开后页面照旧按浏览器语言或上次的选择切换；
-  `/p/12?lang=fr` 由 `vercel.json` 改写到 `dist/_l/fr/p/12.html`，直接就是法文。
+- 不带 `?lang=` 的地址预先生成的是英文（`dist/_l/x/p/12.html`），打开后页面照旧按浏览器语言或上次的选择切换；
+  `/p/12?lang=fr` 改写到 `dist/_l/fr/p/12.html`，直接就是法文（都由 `vercel.json` 的 rewrites 完成；Vercel 会先找同名文件，所以 `dist/` 根目录下不放页面）。
 - 视图的共用标记（目录、命题页、关于/隐私/联系页、地址规则）在 `render.js`，页面和 `build.mjs` 都用它，所以预先生成的内容和页面自己画的一致。
 - 关于、隐私政策、联系页面的 9 种语言文字在 `pages/<语言代码>.js`。
 
