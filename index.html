@@ -59,7 +59,9 @@ button:focus-visible, a:focus-visible, select:focus-visible { outline: 2px solid
 .top { border-bottom: 1px solid var(--rule); padding-block: 18px 14px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; }
 .top h1 { margin: 0; font-size: 26px; font-weight: 900; letter-spacing: .08em; }
 .top h1 .accent { color: var(--red); }
-.langsel { margin-inline-start: auto; align-self: center; font: inherit; font-size: 14px; padding: 4px 8px; border: 1px solid var(--rule); border-radius: 4px; background: var(--plate); color: var(--ink); }
+.tools { margin-inline-start: auto; align-self: center; display: flex; align-items: center; gap: 12px; }
+.visits { font-size: 13px; color: var(--muted); white-space: nowrap; font-variant-numeric: tabular-nums; }
+.langsel { font: inherit; font-size: 14px; padding: 4px 8px; border: 1px solid var(--rule); border-radius: 4px; background: var(--plate); color: var(--ink); }
 .top p { margin: 0; color: var(--muted); font-size: 13px; }
 
 .app { display: grid; grid-template-columns: 232px minmax(0, 1fr); padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); gap: 28px; }
@@ -170,7 +172,10 @@ li.cur .quote { display: block; }
 <header class="top">
   <h1><span id="h1a">几何原本</span> <span id="h1b" class="accent">卷一</span></h1>
   <p id="tagline"></p>
-  <select id="lang" class="langsel"></select>
+  <div class="tools">
+    <span id="visits" class="visits" hidden></span>
+    <select id="lang" class="langsel"></select>
+  </div>
 </header>
 <div class="app">
   <nav id="nav"></nav>
@@ -479,7 +484,7 @@ class Renderer {
 // ---------------------------------------------------------------- propositions
 // Each ready proposition lives in props/pNN.js and calls PROP(n, {vb, build, steps, text}).
 const LIVE = {};
-const READY = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 47];
+const READY = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 47];
 function PROP(n, def) { LIVE[n] = def; }
 
 // ---------------------------------------------------------------- views
@@ -716,6 +721,7 @@ function buildChrome() {
   document.getElementById("h1b").textContent = U.h1b;
   document.getElementById("tagline").textContent = U.tagline;
   langSel.setAttribute("aria-label", U.language);
+  showVisits();
   nav.setAttribute("aria-label", U.contents); sel.setAttribute("aria-label", U.contents);
   nav.innerHTML =
     `<h2>${U.navOpen}</h2><a href="#intro" data-r="intro"><span class="n">·</span><span class="t">${U.navIntro}</span></a>` +
@@ -723,6 +729,23 @@ function buildChrome() {
     `<h2>${U.navProps}</h2>` + T.props.map((p, i) => `<a href="#p${i + 1}" data-r="p${i + 1}" class="${READY.includes(i + 1) ? "live" : ""}" title="${p[0]}"><span class="n">${i + 1}</span><span class="t">${p[1]}</span></a>`).join("");
   sel.innerHTML = `<option value="intro">${U.navOpen}${U.colon}${U.navIntro}</option><option value="sandbox">${U.navSandbox}</option>` +
     T.props.map((p, i) => `<option value="p${i + 1}">${U.prop} I.${i + 1} · ${p[1]}${READY.includes(i + 1) ? " ●" : ""}</option>`).join("");
+}
+
+// Visit counter (api/visits.js). A visit counts once per browser session; the label hides if the API is unreachable.
+let VISITS = null;
+function showVisits() {
+  const el = document.getElementById("visits");
+  if (VISITS == null || !T) { el.hidden = true; return; }
+  el.textContent = tr(T.ui.visits, { n: new Intl.NumberFormat(T.htmlLang).format(VISITS) });
+  el.hidden = false;
+}
+function loadVisits() {
+  if (location.protocol === "file:") return;
+  let hit = "1";
+  try { if (sessionStorage.getItem("visited")) hit = "0"; sessionStorage.setItem("visited", "1"); } catch (e) {}
+  fetch("/api/visits?hit=" + hit).then(r => r.ok ? r.json() : null).then(d => {
+    if (d && typeof d.count === "number") { VISITS = d.count; showVisits(); }
+  }).catch(() => {});
 }
 
 function route() {
@@ -776,6 +799,7 @@ langSel.onchange = () => setLang(langSel.value, true);
 sel.onchange = () => { location.hash = sel.value; };
 addEventListener("hashchange", () => { route(); window.scrollTo(0, 0); });
 setLang(pickLang(), false);
+loadVisits();
 </script>
 
 </body>

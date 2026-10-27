@@ -9,6 +9,7 @@ I18N.en = {
     tagline: "23 definitions · 5 postulates · 5 common notions · 48 propositions",
     metaDesc: "Book I of Euclid's Elements: definitions, postulates, common notions and all 48 propositions, with draggable compass-and-straightedge constructions and step-by-step proofs.",
     language: "Language",
+    visits: "{n} visits",
     contents: "Contents",
     navOpen: "Foundations",
     navIntro: "Definitions, postulates, notions",

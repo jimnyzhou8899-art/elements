@@ -9,6 +9,7 @@ I18N.de = {
     tagline: "23 Definitionen · 5 Postulate · 5 Axiome · 48 Propositionen",
     metaDesc: "Buch I von Euklids Elementen: Definitionen, Postulate, Axiome und alle 48 Propositionen, mit verschiebbaren Konstruktionen mit Zirkel und Lineal und schrittweisen Beweisen.",
     language: "Sprache",
+    visits: "{n} Besuche",
     contents: "Inhalt",
     navOpen: "Grundlagen",
     navIntro: "Definitionen, Postulate, Axiome",

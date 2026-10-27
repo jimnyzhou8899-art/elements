@@ -9,6 +9,7 @@ I18N.fr = {
     tagline: "23 définitions · 5 demandes · 5 notions communes · 48 propositions",
     metaDesc: "Livre I des Éléments d'Euclide : définitions, demandes, notions communes et les 48 propositions, avec des constructions à la règle et au compas que l'on peut déplacer et des démonstrations pas à pas.",
     language: "Langue",
+    visits: "{n} visites",
     contents: "Sommaire",
     navOpen: "Fondements",
     navIntro: "Définitions, demandes, notions",

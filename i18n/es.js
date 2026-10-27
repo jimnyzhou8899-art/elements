@@ -9,6 +9,7 @@ I18N.es = {
     tagline: "23 definiciones · 5 postulados · 5 nociones comunes · 48 proposiciones",
     metaDesc: "Libro I de los Elementos de Euclides: definiciones, postulados, nociones comunes y las 48 proposiciones, con construcciones con regla y compás que se pueden arrastrar y demostraciones paso a paso.",
     language: "Idioma",
+    visits: "{n} visitas",
     contents: "Índice",
     navOpen: "Fundamentos",
     navIntro: "Definiciones, postulados, nociones",
