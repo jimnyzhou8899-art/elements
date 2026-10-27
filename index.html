@@ -14,7 +14,7 @@
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,500;1,400;1,500&family=Noto+Serif+SC:wght@400;600;900&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,800;1,400;1,500&family=Noto+Serif+SC:wght@400;600;900&display=swap">
 <style>
 /* Layout: book index on the left, a figure "plate" beside its proof, colored after Byrne's 1847 Euclid (red, yellow, blue on paper). */
 :root {
@@ -51,16 +51,19 @@
 * { box-sizing: border-box; }
 body { background: var(--paper); color: var(--ink); font-family: var(--serif); font-size: 15px; line-height: 1.75; }
 var, .lt { font-family: var(--latin); font-style: italic; font-size: 1.12em; }
+/* each figure name is its own bidi run, so "CA، CB" reads in order inside Arabic text */
+var { unicode-bidi: isolate; }
 button { font: inherit; color: inherit; }
 button:focus-visible, a:focus-visible, select:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
 
 .top { border-bottom: 1px solid var(--rule); padding-block: 18px 14px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; }
 .top h1 { margin: 0; font-size: 26px; font-weight: 900; letter-spacing: .08em; }
-.top h1 span { color: var(--red); }
+.top h1 .accent { color: var(--red); }
+.langsel { margin-inline-start: auto; align-self: center; font: inherit; font-size: 14px; padding: 4px 8px; border: 1px solid var(--rule); border-radius: 4px; background: var(--plate); color: var(--ink); }
 .top p { margin: 0; color: var(--muted); font-size: 13px; }
 
 .app { display: grid; grid-template-columns: 232px minmax(0, 1fr); padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); gap: 28px; }
-nav { border-right: 1px solid var(--rule); padding-block: 18px 40px; padding-right: 12px; max-height: calc(100vh - 70px); overflow-y: auto; position: sticky; top: env(safe-area-inset-top, 0px); }
+nav { border-inline-end: 1px solid var(--rule); padding-block: 18px 40px; padding-inline-end: 12px; max-height: calc(100vh - 70px); overflow-y: auto; position: sticky; top: env(safe-area-inset-top, 0px); }
 nav h2 { font-size: 12px; letter-spacing: .2em; color: var(--muted); font-weight: 600; margin: 18px 0 6px; }
 nav h2:first-child { margin-top: 0; }
 nav a { display: grid; grid-template-columns: 30px 1fr; gap: 4px; color: var(--ink); text-decoration: none; padding: 3px 8px; border-radius: 4px; font-size: 13.5px; line-height: 1.5; }
@@ -68,7 +71,7 @@ nav a:hover { background: var(--soft); }
 nav a[aria-current="page"] { background: var(--ink); color: var(--paper); }
 nav a .n { font-family: var(--latin); font-variant-numeric: tabular-nums; color: var(--muted); }
 nav a[aria-current="page"] .n { color: var(--paper); opacity: .7; }
-nav a.live .t::after { content: ""; display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--red); margin-left: 6px; vertical-align: middle; }
+nav a.live .t::after { content: ""; display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--red); margin-inline-start: 6px; vertical-align: middle; }
 nav a .t { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .navsel { display: none; }
 
@@ -86,7 +89,7 @@ main { padding-block: 22px 60px; min-width: 0; }
 .btn:hover:not(:disabled) { border-color: var(--ink); }
 .btn:disabled { opacity: .4; cursor: default; }
 .btn.primary { background: var(--ink); color: var(--paper); border-color: var(--ink); }
-.count { margin-left: auto; font-family: var(--latin); font-variant-numeric: tabular-nums; color: var(--muted); }
+.count { margin-inline-start: auto; font-family: var(--latin); font-variant-numeric: tabular-nums; color: var(--muted); }
 
 ol.steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; counter-reset: s; }
 ol.steps li { counter-increment: s; display: grid; grid-template-columns: 28px 1fr; gap: 6px; padding: 8px 10px; border-radius: 5px; cursor: pointer; color: var(--muted); transition: background .2s, color .2s; }
@@ -97,7 +100,7 @@ ol.steps li.cur::before { color: var(--red); font-weight: 500; }
 ol.steps li:hover:not(.cur) { background: color-mix(in srgb, var(--soft) 55%, transparent); }
 .why { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
 .chip { font-size: 12px; border: 1px solid var(--rule); border-radius: 3px; padding: 0 6px; color: var(--muted); background: var(--plate); }
-.quote { display: none; font-size: 13px; color: var(--muted); border-left: 2px solid var(--yellow); padding-left: 10px; margin-top: 6px; }
+.quote { display: none; font-size: 13px; color: var(--muted); border-inline-start: 2px solid var(--yellow); padding-inline-start: 10px; margin-top: 6px; }
 li.cur .quote { display: block; }
 .qed { margin-top: 14px; font-size: 13px; color: var(--muted); letter-spacing: .1em; }
 
@@ -140,8 +143,17 @@ li.cur .quote { display: block; }
 .tool[aria-pressed="true"] { background: var(--ink); color: var(--paper); border-color: var(--ink); }
 .side h3 { font-size: 15px; margin: 0 0 6px; }
 .side p, .side li { font-size: 14px; color: var(--muted); }
-.side ul { padding-left: 18px; margin: 0; }
+.side ul { padding-inline-start: 18px; margin: 0; }
 .side a { color: var(--blue); }
+
+/* Latin-script locales use EB Garamond, which sets smaller than CJK at the same size */
+:root.latin body { font-size: 17px; }
+:root.latin .stmt { font-size: 23px; }
+:root.latin var { font-size: 1.04em; }
+/* Arabic letters join, so no tracking; Devanagari and Arabic need taller lines */
+:root[lang="ar"] *, :root[lang="hi"] .eyebrow, :root[lang="hi"] nav h2 { letter-spacing: 0 !important; }
+:root[lang="ar"] body, :root[lang="hi"] body { line-height: 1.95; }
+:root[lang="ar"] body { font-size: 16px; }
 
 @media (max-width: 900px) {
   .prop { grid-template-columns: minmax(0, 1fr); }
@@ -149,129 +161,54 @@ li.cur .quote { display: block; }
 @media (max-width: 720px) {
   .app { grid-template-columns: minmax(0, 1fr); gap: 0; }
   nav { display: none; }
-  .navsel { display: block; width: 100%; margin: 14px 0 0; padding: 8px; font: inherit; border: 1px solid var(--rule); border-radius: 4px; background: var(--plate); color: var(--ink); }
+  .navsel { display: block; width: 100%; margin: 14px 0 12px; padding: 8px; font: inherit; border: 1px solid var(--rule); border-radius: 4px; background: var(--plate); color: var(--ink); }
   .stmt { font-size: 18px; }
 }
 </style>
 </head>
 <body>
 <header class="top">
-  <h1>几何原本 <span>卷一</span></h1>
-  <p>欧几里得 · 23 条定义 · 5 条公设 · 5 条公理 · 48 个命题</p>
+  <h1><span id="h1a">几何原本</span> <span id="h1b" class="accent">卷一</span></h1>
+  <p id="tagline"></p>
+  <select id="lang" class="langsel"></select>
 </header>
 <div class="app">
-  <nav id="nav" aria-label="目录"></nav>
+  <nav id="nav"></nav>
   <main>
-    <select class="navsel" id="navsel" aria-label="目录"></select>
+    <select class="navsel" id="navsel"></select>
     <div id="view"></div>
   </main>
 </div>
 
 <script>
 // ---------------------------------------------------------------- text
-const DEFS = [
-  "点是没有部分的东西。",
-  "线是没有宽度的长度。",
-  "线的两端是点。",
-  "直线是与其上的点平齐放置的线。",
-  "面是只有长度和宽度的东西。",
-  "面的边缘是线。",
-  "平面是与其上的直线平齐放置的面。",
-  "平面角是在一平面内相交且不在一条直线上的两条线之间的倾斜度。",
-  "当夹角的两条线都是直线时，这个角叫做直线角。",
-  "一条直线立在另一条直线上，若所成的两个邻角彼此相等，则每一个角都叫做直角，而立着的直线叫做另一条直线的垂线。",
-  "钝角是大于直角的角。",
-  "锐角是小于直角的角。",
-  "边界是一个东西的端点。",
-  "图形是被一个或几个边界所包围的。",
-  "圆是由一条线包围的平面图形，其内有一点，由这点到这条线的所有线段都彼此相等。",
-  "这个点叫做圆心。",
-  "圆的直径是过圆心、两端在圆周上的任意线段，它把圆二等分。",
-  "半圆是由直径及被它截得的圆周所包围的图形，半圆的心与圆心相同。",
-  "直线形是由直线所包围的：三边形由三条直线围成，四边形由四条直线围成，多边形由四条以上直线围成。",
-  "三边形中，三边相等的叫等边三角形；只有两边相等的叫等腰三角形；三边都不相等的叫不等边三角形。",
-  "三边形中，有一个角是直角的叫直角三角形；有一个角是钝角的叫钝角三角形；三个角都是锐角的叫锐角三角形。",
-  "四边形中，四边相等且四角都是直角的叫正方形；角是直角而边不全相等的叫长方形；四边相等而角不是直角的叫菱形；对边、对角相等，但边不全相等、角也不是直角的叫斜方形；其余的四边形叫不规则四边形。",
-  "平行直线是在同一平面内，向两个方向无限延长，在两个方向上都不相交的直线。"
-];
-const POSTS = [
-  "由任意一点到另一任意一点可以作直线。",
-  "一条有限直线可以继续延长。",
-  "以任意点为心、任意距离为半径可以画圆。",
-  "凡直角都彼此相等。",
-  "同平面内一条直线与另外两条直线相交，若在某一侧的两个内角之和小于两直角，则这两条直线经无限延长后在这一侧相交。"
-];
-const AXIOMS = [
-  "等于同量的量彼此相等。",
-  "等量加等量，其和仍相等。",
-  "等量减等量，其差仍相等。",
-  "彼此能重合的东西是相等的。",
-  "整体大于部分。"
-];
-// [statement, short title, kind] kind: 作 = problem (Q.E.F.), 证 = theorem (Q.E.D.)
-const PROPS = [
-  ["在一条已知有限直线上作一个等边三角形。", "作等边三角形", "作"],
-  ["由一个已知点作一条线段等于已知线段。", "移置线段", "作"],
-  ["已知两条不相等的线段，从较长的线段上截取一段等于较短的线段。", "截取线段", "作"],
-  ["若两个三角形有两边分别相等，且这两边的夹角也相等，则它们的底边相等，两个三角形全等，其余的角也分别相等。", "边角边", "证"],
-  ["等腰三角形的两底角相等；若延长两腰，则底边下面的两个角也相等。", "等腰三角形底角", "证"],
-  ["若一个三角形有两角相等，则这两角所对的边也相等。", "等角对等边", "证"],
-  ["在同一线段上、同一侧，不能作出交于不同点的另外两条线段，使它们分别等于从该线段两端所作的两条线段。", "唯一性引理", "证"],
-  ["若两个三角形的三边分别相等，则夹在相等边之间的角也相等。", "边边边", "证"],
-  ["二等分一个已知直线角。", "平分角", "作"],
-  ["二等分一条已知有限直线。", "平分线段", "作"],
-  ["由已知直线上一已知点作一直线与已知直线成直角。", "作垂线（线上一点）", "作"],
-  ["由已知无限直线外一已知点作该直线的垂线。", "作垂线（线外一点）", "作"],
-  ["一条直线与另一条直线所成的角，或者是两个直角，或者等于两直角之和。", "邻补角", "证"],
-  ["若过一条直线上一点，有不在它同侧的两条直线与它所成的邻角之和等于两直角，则这两条直线在同一直线上。", "邻补角之逆", "证"],
-  ["若两直线相交，则对顶角相等。", "对顶角", "证"],
-  ["在任意三角形中，若延长一边，则所成的外角大于任何一个内对角。", "外角大于内对角", "证"],
-  ["在任意三角形中，任意两角之和小于两直角。", "两角和小于两直角", "证"],
-  ["在任意三角形中，大边对大角。", "大边对大角", "证"],
-  ["在任意三角形中，大角对大边。", "大角对大边", "证"],
-  ["在任意三角形中，任意两边之和大于第三边。", "三角不等式", "证"],
-  ["由三角形一边的两端向形内作两条相交线段，则它们的和小于三角形其余两边之和，但所夹的角较大。", "内部线段", "证"],
-  ["用分别等于已知三条线段的三条线段作一个三角形（其中任意两条之和必须大于第三条）。", "三边作三角形", "作"],
-  ["在已知直线上的已知点，作一个直线角等于已知直线角。", "移置角", "作"],
-  ["若两个三角形有两边分别相等，但一个的夹角大于另一个的夹角，则夹角大的底边也大。", "夹角大则底边大", "证"],
-  ["若两个三角形有两边分别相等，但一个的底边大于另一个的底边，则底边大的夹角也大。", "底边大则夹角大", "证"],
-  ["若两个三角形有两角分别相等，且一边相等（夹边或等角的对边），则其余的边和角也分别相等。", "角边角 · 角角边", "证"],
-  ["若一直线与两直线相交，所成的错角彼此相等，则这两直线平行。", "错角相等则平行", "证"],
-  ["若一直线与两直线相交，所成的同位角相等，或同旁内角之和等于两直角，则这两直线平行。", "同位角相等则平行", "证"],
-  ["一直线与两平行直线相交，则所成的错角相等，同位角相等，同旁内角之和等于两直角。", "平行线的性质", "证"],
-  ["平行于同一直线的直线彼此平行。", "平行的传递", "证"],
-  ["过一已知点作一直线平行于已知直线。", "作平行线", "作"],
-  ["在任意三角形中，若延长一边，则外角等于两个内对角之和，且三角形三个内角之和等于两直角。", "内角和", "证"],
-  ["在同一侧连接相等且平行的线段端点的线段，也相等且平行。", "平行四边形判定", "证"],
-  ["平行四边形的对边相等，对角相等，且对角线二等分其面积。", "平行四边形性质", "证"],
-  ["在同底上且在相同两平行线之间的平行四边形彼此相等。", "同底平行四边形", "证"],
-  ["在等底上且在相同两平行线之间的平行四边形彼此相等。", "等底平行四边形", "证"],
-  ["在同底上且在相同两平行线之间的三角形彼此相等。", "同底三角形", "证"],
-  ["在等底上且在相同两平行线之间的三角形彼此相等。", "等底三角形", "证"],
-  ["在同底上且在底同侧的相等三角形，也在相同的两平行线之间。", "同底等积之逆", "证"],
-  ["在等底上且在底同侧的相等三角形，也在相同的两平行线之间。", "等底等积之逆", "证"],
-  ["若一个平行四边形与一个三角形同底，且在相同两平行线之间，则平行四边形是三角形的二倍。", "平行四边形是三角形二倍", "证"],
-  ["用一个已知直线角作一个平行四边形，使它等于已知三角形。", "化三角形为平行四边形", "作"],
-  ["在任意平行四边形中，对角线两侧的平行四边形的补形彼此相等。", "补形相等", "证"],
-  ["在已知线段上，用已知直线角作一个平行四边形，使它等于已知三角形。", "贴合面积", "作"],
-  ["用已知直线角作一个平行四边形，使它等于已知直线形。", "化多边形为平行四边形", "作"],
-  ["在已知线段上作一个正方形。", "作正方形", "作"],
-  ["在直角三角形中，直角所对的边上的正方形等于夹直角两边上的正方形之和。", "勾股定理", "证"],
-  ["若一个三角形一边上的正方形等于另外两边上的正方形之和，则这两边所夹的角是直角。", "勾股定理之逆", "证"]
-];
+// All visible text lives in i18n/<code>.js, which sets I18N[code]; T is the active locale.
+const LANGS = { zh: "中文", en: "English", es: "Español", fr: "Français", de: "Deutsch", ru: "Русский", ar: "العربية", hi: "हिन्दी", ja: "日本語" };
+const FONTS = {
+  zh: ["\"Noto Serif SC\", \"Songti SC\", serif", "Noto+Serif+SC:wght@400;600;900"],
+  ja: ["\"Noto Serif JP\", \"Hiragino Mincho ProN\", serif", "Noto+Serif+JP:wght@400;600;900"],
+  hi: ["\"Noto Serif Devanagari\", \"Kohinoor Devanagari\", serif", "Noto+Serif+Devanagari:wght@400;600;800"],
+  ar: ["\"Noto Naskh Arabic\", \"Geeza Pro\", serif", "Noto+Naskh+Arabic:wght@400;600;700"]
+};
+const LATIN_FONT = "\"EB Garamond\", Georgia, \"Times New Roman\", serif";
+// 作 = problem (ends Q.E.F.), 证 = theorem (ends Q.E.D.), for I.1 … I.48
+const KINDS = "作作作证证证证证作作作作证证证证证证证证证作作证证证证证证证作证证证证证证证证证证作证作作作证证";
+window.I18N = window.I18N || {};
+let T = null, LANG = "zh";
 
+function tr(s, vars) { return s.replace(/\{(\w+)\}/g, (m, k) => (k in vars ? vars[k] : m)); }
 function refText(r) {
   const m = r.match(/^([DPA])(\d+)$/);
   if (m) {
     const n = +m[2];
-    if (m[1] === "D") return ["定义 " + n, DEFS[n - 1]];
-    if (m[1] === "P") return ["公设 " + n, POSTS[n - 1]];
-    return ["公理 " + n, AXIOMS[n - 1]];
+    const [lab, arr] = m[1] === "D" ? [T.ui.def, T.defs] : m[1] === "P" ? [T.ui.post, T.posts] : [T.ui.ax, T.axioms];
+    return [lab + " " + n, arr[n - 1]];
   }
   const n = +r.slice(2);
-  return ["命题 I." + n, PROPS[n - 1][0]];
+  return [T.ui.prop + " I." + n, T.props[n - 1][0]];
 }
-const fmt = s => s.replace(/\b([A-Z]{1,5})\b/g, "<var>$1</var>");
+// Figure letters: runs of 1–5 capitals not touching other Latin letters (so "Tómese" or "Über" stay plain).
+const fmt = s => s.replace(/(?<![\p{Script=Latin}\d])([A-Z]{1,5})(?![\p{Script=Latin}\d'’])/gu, "<var>$1</var>");
 
 // ---------------------------------------------------------------- geometry
 const V = {
@@ -544,13 +481,13 @@ LIVE[1] = {
     S.seg("CA", "C", "A", { st: "red" }); S.seg("CB", "C", "B", { st: "red" });
   },
   steps: [
-    { show: ["A", "B", "AB"], text: "设 AB 是已知有限直线。要求在 AB 上作一个等边三角形。" },
-    { show: ["cA", "D"], text: "以 A 为圆心、AB 为距离作圆 BCD。", why: ["P3"] },
-    { show: ["cB", "E"], text: "再以 B 为圆心、BA 为距离作圆 ACE。", why: ["P3"] },
-    { show: ["C", "CA", "CB"], hl: ["C"], text: "从两圆的交点 C 到 A、B 分别连线段 CA、CB。", why: ["P1"] },
-    { hl: ["CA", "AB"], text: "因为点 A 是圆 CDB 的圆心，所以 AC 等于 AB。", why: ["D15"] },
-    { hl: ["CB", "AB"], text: "又因为点 B 是圆 CAE 的圆心，所以 BC 等于 BA。", why: ["D15"] },
-    { hl: ["CA", "CB", "AB"], text: "CA、CB 都等于 AB，而等于同量的量彼此相等，所以 CA 也等于 CB。三条线段 CA、AB、BC 彼此相等，三角形 ABC 是等边三角形，且作在已知有限直线 AB 上。", why: ["A1"] }
+    { show: ["A", "B", "AB"] },
+    { show: ["cA", "D"], why: ["P3"] },
+    { show: ["cB", "E"], why: ["P3"] },
+    { show: ["C", "CA", "CB"], hl: ["C"], why: ["P1"] },
+    { hl: ["CA", "AB"], why: ["D15"] },
+    { hl: ["CB", "AB"], why: ["D15"] },
+    { hl: ["CA", "CB", "AB"], why: ["A1"] }
   ]
 };
 
@@ -576,16 +513,16 @@ LIVE[2] = {
     S.seg("BG", "B", "G", { st: "red" }); S.seg("AL", "A", "L", { st: "red" });
   },
   steps: [
-    { show: ["A", "B", "C", "BC"], text: "设 A 是已知点，BC 是已知线段。要求以 A 为端点作一条线段等于 BC。" },
-    { show: ["AB"], text: "从点 A 到点 B 连接线段 AB。", why: ["P1"] },
-    { show: ["D", "DA", "DB"], text: "在 AB 上作等边三角形 DAB。", why: ["I.1"] },
-    { show: ["E", "F", "AE", "BF"], text: "延长 DA、DB 成直线 AE、BF。", why: ["P2"] },
-    { show: ["cB", "G", "H"], text: "以 B 为圆心、BC 为距离作圆 CGH，它与 BF 交于 G。", why: ["P3"] },
-    { show: ["cD", "K", "L"], text: "再以 D 为圆心、DG 为距离作圆 GKL，它与 AE 交于 L。", why: ["P3"] },
-    { show: ["BG"], hl: ["BC", "BG"], text: "因为点 B 是圆 CGH 的圆心，所以 BC 等于 BG。", why: ["D15"] },
-    { show: ["DG", "DL"], hl: ["DG", "DL"], text: "又因为点 D 是圆 GKL 的圆心，所以 DL 等于 DG。", why: ["D15"] },
-    { show: ["AL"], hide: ["DG", "DL"], hl: ["AL", "BG"], text: "其中 DA 等于 DB，从等量 DL、DG 中分别减去 DA、DB，所以余量 AL 等于余量 BG。", why: ["A3"] },
-    { hl: ["AL", "BC"], text: "已证 BC 也等于 BG，所以 AL、BC 都等于 BG。等于同量的量彼此相等，所以 AL 也等于 BC。于是在已知点 A 作出了线段 AL 等于已知线段 BC。", why: ["A1"] }
+    { show: ["A", "B", "C", "BC"] },
+    { show: ["AB"], why: ["P1"] },
+    { show: ["D", "DA", "DB"], why: ["I.1"] },
+    { show: ["E", "F", "AE", "BF"], why: ["P2"] },
+    { show: ["cB", "G", "H"], why: ["P3"] },
+    { show: ["cD", "K", "L"], why: ["P3"] },
+    { show: ["BG"], hl: ["BC", "BG"], why: ["D15"] },
+    { show: ["DG", "DL"], hl: ["DG", "DL"], why: ["D15"] },
+    { show: ["AL"], hide: ["DG", "DL"], hl: ["AL", "BG"], why: ["A3"] },
+    { hl: ["AL", "BC"], why: ["A1"] }
   ]
 };
 
@@ -608,11 +545,11 @@ LIVE[3] = {
     S.seg("AE", "A", "E", { st: "red" });
   },
   steps: [
-    { show: ["A", "B", "AB", "C", "C2", "sC"], text: "设 AB 和 C 是两条不相等的线段，AB 较长。要求从较长的 AB 上截取一段等于较短的 C。（拖动 C 的端点可以改变它的长度。）" },
-    { show: ["D", "AD"], text: "在点 A 作线段 AD 等于 C。", why: ["I.2"] },
-    { show: ["cA", "E", "F"], text: "以 A 为圆心、AD 为距离作圆 DEF，它与 AB 交于 E。", why: ["P3"] },
-    { show: ["AE"], hl: ["AD", "AE"], text: "因为点 A 是圆 DEF 的圆心，所以 AE 等于 AD。", why: ["D15"] },
-    { hl: ["AE", "sC"], text: "而 C 也等于 AD，所以 AE、C 都等于 AD。等于同量的量彼此相等，所以 AE 也等于 C。于是从较长的 AB 上截取了 AE，等于较短的 C。", why: ["A1"] }
+    { show: ["A", "B", "AB", "C", "C2", "sC"] },
+    { show: ["D", "AD"], why: ["I.2"] },
+    { show: ["cA", "E", "F"], why: ["P3"] },
+    { show: ["AE"], hl: ["AD", "AE"], why: ["D15"] },
+    { hl: ["AE", "sC"], why: ["A1"] }
   ]
 };
 
@@ -633,13 +570,13 @@ LIVE[9] = {
     S.ang("aD", "D", "A", "F", { st: "red", r: 46 }); S.ang("aE", "F", "A", "E", { st: "yel", r: 38 });
   },
   steps: [
-    { show: ["A", "B", "C", "AB", "AC"], text: "设 ∠BAC 是已知直线角。要求二等分它。" },
-    { show: ["D"], hl: ["D"], text: "在 AB 上任取一点 D（可以拖动它）。" },
-    { show: ["cA", "E"], text: "在 AC 上截取 AE 等于 AD。", why: ["I.3"] },
-    { show: ["DE"], text: "连接 DE。", why: ["P1"] },
-    { show: ["cD", "cE", "F", "DF", "EF"], text: "在 DE 上作等边三角形 DEF，使 F 在与 A 相对的一侧。", why: ["I.1"] },
-    { show: ["AF"], hide: ["cA", "cD", "cE"], text: "连接 AF。断言：∠BAC 被直线 AF 二等分。", why: ["P1"] },
-    { show: ["aD", "aE"], hl: ["DF", "EF", "AF"], text: "因为 AD 等于 AE，AF 是公共边，所以两边 DA、AF 分别等于两边 EA、AF；又底 DF 等于底 EF，所以 ∠DAF 等于 ∠EAF。已知直线角 BAC 被直线 AF 二等分。", why: ["I.8"] }
+    { show: ["A", "B", "C", "AB", "AC"] },
+    { show: ["D"], hl: ["D"] },
+    { show: ["cA", "E"], why: ["I.3"] },
+    { show: ["DE"], why: ["P1"] },
+    { show: ["cD", "cE", "F", "DF", "EF"], why: ["I.1"] },
+    { show: ["AF"], hide: ["cA", "cD", "cE"], why: ["P1"] },
+    { show: ["aD", "aE"], hl: ["DF", "EF", "AF"], why: ["I.8"] }
   ]
 };
 
@@ -657,10 +594,10 @@ LIVE[10] = {
     S.seg("AD", "A", "D", { st: "red" }); S.seg("DB", "D", "B", { st: "red" });
   },
   steps: [
-    { show: ["A", "B", "AB"], text: "设 AB 是已知有限直线。要求二等分 AB。" },
-    { show: ["cA", "cB", "C", "CA", "CB"], text: "在 AB 上作等边三角形 ABC。", why: ["I.1"] },
-    { show: ["D", "CD", "a1", "a2"], hide: ["cA", "cB"], text: "用直线 CD 二等分 ∠ACB，CD 与 AB 交于 D。断言：AB 在点 D 被二等分。", why: ["I.9"] },
-    { show: ["AD", "DB"], hl: ["CA", "CB", "CD", "AD", "DB"], text: "因为 AC 等于 CB，CD 是公共边，所以两边 AC、CD 分别等于两边 BC、CD；又 ∠ACD 等于 ∠BCD，所以底 AD 等于底 BD。已知有限直线 AB 在 D 点被二等分。", why: ["I.4"] }
+    { show: ["A", "B", "AB"] },
+    { show: ["cA", "cB", "C", "CA", "CB"], why: ["I.1"] },
+    { show: ["D", "CD", "a1", "a2"], hide: ["cA", "cB"], why: ["I.9"] },
+    { show: ["AD", "DB"], hl: ["CA", "CB", "CD", "AD", "DB"], why: ["I.4"] }
   ]
 };
 
@@ -703,18 +640,18 @@ LIVE[47] = {
     S.ang("aDBA", "D", "B", "A", { st: "yel", r: 22 }); S.ang("aFBC", "F", "B", "C", { st: "yel", r: 34 });
   },
   steps: [
-    { show: ["A", "B", "C", "AB", "AC", "BC", "rA"], text: "设 ABC 是直角三角形，∠BAC 是直角。断言：BC 上的正方形等于 BA、AC 上的正方形之和。（拖动 A，它沿 BC 上的半圆移动，直角始终保持。）" },
-    { show: ["D", "E", "BD", "DE", "EC", "F", "G", "BF", "FG", "GA", "H", "K", "AH", "HK", "KC"], text: "在 BC 上作正方形 BDEC，在 BA、AC 上作正方形 GB、HC。", why: ["I.46"] },
-    { show: ["L", "AL"], text: "过 A 作 AL 平行于 BD 或 CE。", why: ["I.31"] },
-    { show: ["AD", "FC"], text: "连接 AD、FC。", why: ["P1"] },
-    { hl: ["GA", "AC", "AB", "AH"], text: "因为 ∠BAC、∠BAG 都是直角，在直线 BA 上的点 A，不在同侧的两直线 AC、AG 所成的邻角之和等于两直角，所以 CA 与 AG 在同一直线上。同理，BA 与 AH 也在同一直线上。", why: ["D22", "I.14"] },
-    { show: ["aDBA", "aFBC"], text: "因为 ∠DBC 等于 ∠FBA（都是直角），给它们各加上 ∠ABC，所以整个 ∠DBA 等于整个 ∠FBC。", why: ["P4", "A2"] },
-    { show: ["tABD", "tFBC"], hl: ["AD", "FC"], text: "又因为 DB 等于 BC，FB 等于 BA，两边 AB、BD 分别等于两边 FB、BC，且 ∠ABD 等于 ∠FBC，所以底 AD 等于底 FC，三角形 ABD 等于三角形 FBC。", why: ["I.4"] },
-    { show: ["rBL", "sAB"], hide: ["aDBA", "aFBC"], text: "平行四边形 BL 与三角形 ABD 同底 BD，且在相同两平行线 BD、AL 之间，所以 BL 是三角形 ABD 的二倍。正方形 GB 与三角形 FBC 同底 FB，且在相同两平行线 FB、GC 之间，所以正方形 GB 是三角形 FBC 的二倍。", why: ["I.41"] },
-    { hide: ["tABD", "tFBC"], text: "等量的二倍彼此相等，所以平行四边形 BL 等于正方形 GB。" },
-    { show: ["AE", "BK", "tACE", "tKCB"], text: "同理，连接 AE、BK，可以证明三角形 ACE 等于三角形 KCB，从而平行四边形 CL 是前者的二倍，正方形 HC 是后者的二倍。", why: ["I.4", "I.41"] },
-    { show: ["rCL", "sAC"], hide: ["tACE", "tKCB"], text: "所以平行四边形 CL 等于正方形 HC。" },
-    { hl: ["BD", "DE", "EC", "BC"], text: "整个正方形 BDEC 等于两个正方形 GB、HC 之和。而正方形 BDEC 作在 BC 上，正方形 GB、HC 作在 BA、AC 上，所以 BC 上的正方形等于 BA、AC 上的正方形之和。", why: ["A2"] }
+    { show: ["A", "B", "C", "AB", "AC", "BC", "rA"] },
+    { show: ["D", "E", "BD", "DE", "EC", "F", "G", "BF", "FG", "GA", "H", "K", "AH", "HK", "KC"], why: ["I.46"] },
+    { show: ["L", "AL"], why: ["I.31"] },
+    { show: ["AD", "FC"], why: ["P1"] },
+    { hl: ["GA", "AC", "AB", "AH"], why: ["D22", "I.14"] },
+    { show: ["aDBA", "aFBC"], why: ["P4", "A2"] },
+    { show: ["tABD", "tFBC"], hl: ["AD", "FC"], why: ["I.4"] },
+    { show: ["rBL", "sAB"], hide: ["aDBA", "aFBC"], why: ["I.41"] },
+    { hide: ["tABD", "tFBC"] },
+    { show: ["AE", "BK", "tACE", "tKCB"], why: ["I.4", "I.41"] },
+    { show: ["rCL", "sAC"], hide: ["tACE", "tKCB"] },
+    { hl: ["BD", "DE", "EC", "BC"], why: ["A2"] }
   ]
 };
 
@@ -723,36 +660,38 @@ const view = document.getElementById("view");
 let teardown = null;
 
 function mountProp(n) {
-  const [stmt, , kind] = PROPS[n - 1];
+  const [stmt] = T.props[n - 1];
+  const kind = KINDS[n - 1];
   const def = LIVE[n];
-  const head = `<p class="eyebrow">命题 I.${n} · <span class="kind">${kind === "作" ? "作图题" : "定理"}</span></p><h2 class="stmt">${fmt(stmt)}</h2>`;
+  const head = `<p class="eyebrow">${T.ui.prop} I.${n} · <span class="kind">${kind === "作" ? T.ui.problem : T.ui.theorem}</span></p><h2 class="stmt">${fmt(stmt)}</h2>`;
   if (!def) {
-    view.innerHTML = head + `<div class="todo">这个命题的交互演示还在制作中。目前已完成：${Object.keys(LIVE).map(k => `<a href="#p${k}">I.${k}</a>`).join("、")}。也可以去 <a href="#sandbox">自由作图</a> 里用尺规自己试一试。</div>`;
+    const done = Object.keys(LIVE).map(k => `<a href="#p${k}">I.${k}</a>`).join(T.ui.sep);
+    view.innerHTML = head + `<div class="todo">${tr(T.ui.todo, { done, sandbox: `<a href="#sandbox">${T.ui.navSandbox}</a>` })}</div>`;
     return;
   }
   view.innerHTML = head + `
     <div class="prop">
       <div>
-        <div class="plate"><svg class="fig" role="img" aria-label="命题 I.${n} 的图形"></svg></div>
-        <div class="hint">红圈的点可以拖动，图形会随之改变，而证明的每一步仍然成立。</div>
+        <div class="plate" dir="ltr"><svg class="fig" role="img" aria-label="${tr(T.ui.figLabel, { n: "I." + n })}"></svg></div>
+        <div class="hint">${T.ui.hint}</div>
       </div>
       <div>
         <div class="controls">
-          <button class="btn" id="prev">上一步</button>
-          <button class="btn primary" id="play">播放</button>
-          <button class="btn" id="next">下一步</button>
-          <span class="count" id="count"></span>
+          <button class="btn" id="prev">${T.ui.prev}</button>
+          <button class="btn primary" id="play">${T.ui.play}</button>
+          <button class="btn" id="next">${T.ui.next}</button>
+          <span class="count" id="count" dir="ltr"></span>
         </div>
         <ol class="steps" id="steps"></ol>
-        <p class="qed" id="qed" hidden>${kind === "作" ? "这就是所要作的。" : "这就是所要证明的。"}</p>
+        <p class="qed" id="qed" hidden>${kind === "作" ? T.ui.qef : T.ui.qed}</p>
       </div>
     </div>`;
   const S = new Scene(); def.build(S);
   const R = new Renderer(view.querySelector("svg"), S, def.vb);
-  const steps = def.steps, ol = view.querySelector("#steps");
+  const steps = def.steps, texts = T.steps[n], ol = view.querySelector("#steps");
   ol.innerHTML = steps.map((s, i) => {
     const why = (s.why || []).map(refText);
-    return `<li data-i="${i}"><div>${fmt(s.text)}${why.length ? `<div class="why">${why.map(w => `<span class="chip">${w[0]}</span>`).join("")}</div>` + why.map(w => `<div class="quote">${w[0]}：${w[1]}</div>`).join("") : ""}</div></li>`;
+    return `<li data-i="${i}"><div>${fmt(texts[i])}${why.length ? `<div class="why">${why.map(w => `<span class="chip">${w[0]}</span>`).join("")}</div>` + why.map(w => `<div class="quote">${w[0]}${T.ui.colon}${w[1]}</div>`).join("") : ""}</div></li>`;
   }).join("");
   const visAt = k => { const v = new Set(); for (let i = 0; i <= k; i++) { (steps[i].show || []).forEach(x => v.add(x)); (steps[i].hide || []).forEach(x => v.delete(x)); } return v; };
   let cur = -1, timer = null;
@@ -770,13 +709,13 @@ function mountProp(n) {
     view.querySelector("#next").disabled = k === steps.length - 1;
     view.querySelector("#qed").hidden = k !== steps.length - 1;
   }
-  function stop() { clearInterval(timer); timer = null; view.querySelector("#play").textContent = "播放"; }
+  function stop() { clearInterval(timer); timer = null; view.querySelector("#play").textContent = T.ui.play; }
   view.querySelector("#prev").onclick = () => { stop(); go(cur - 1); };
   view.querySelector("#next").onclick = () => { stop(); go(cur + 1); };
   view.querySelector("#play").onclick = () => {
     if (timer) return stop();
     if (cur === steps.length - 1) go(0);
-    view.querySelector("#play").textContent = "暂停";
+    view.querySelector("#play").textContent = T.ui.pause;
     timer = setInterval(() => { if (cur >= steps.length - 1) return stop(); go(cur + 1); }, 3200);
   };
   ol.onclick = e => { const li = e.target.closest("li"); if (li) { stop(); go(+li.dataset.i); } };
@@ -786,54 +725,42 @@ function mountProp(n) {
 }
 
 function mountIntro() {
-  const list = (arr, cls) => `<ol class="deflist">${arr.map((t, i) => `<li><span class="n">${i + 1}</span><span>${t}</span></li>`).join("")}</ol>`;
+  const list = arr => `<ol class="deflist">${arr.map((t, i) => `<li><span class="n">${i + 1}</span><span>${t}</span></li>`).join("")}</ol>`;
   view.innerHTML = `<div class="prose">
-    <p class="eyebrow">卷一 · 开篇</p>
-    <h2>定义</h2><p class="sub">ὅροι · 共 23 条，说明后面要用到的名词</p>${list(DEFS)}
-    <h2>公设</h2><p class="sub">αἰτήματα · 共 5 条，规定尺规可以做的事；第 1–3 条就是直尺与圆规</p>${list(POSTS)}
-    <h2>公理</h2><p class="sub">κοιναὶ ἔννοιαι · 共 5 条，又称"一般概念"</p>${list(AXIOMS)}
+    <p class="eyebrow">${T.ui.introEyebrow}</p>
+    <h2>${T.ui.defsTitle}</h2><p class="sub"><span lang="grc">ὅροι</span> · ${T.ui.defsSub}</p>${list(T.defs)}
+    <h2>${T.ui.postsTitle}</h2><p class="sub"><span lang="grc">αἰτήματα</span> · ${T.ui.postsSub}</p>${list(T.posts)}
+    <h2>${T.ui.axiomsTitle}</h2><p class="sub"><span lang="grc">κοιναὶ ἔννοιαι</span> · ${T.ui.axiomsSub}</p>${list(T.axioms)}
   </div>`;
 }
 
 function mountSandbox() {
+  const U = T.ui;
   view.innerHTML = `
-    <p class="eyebrow">尺规作图</p>
-    <h2 class="stmt">只用直尺和圆规，看看能作出什么。</h2>
+    <p class="eyebrow">${U.sbEyebrow}</p>
+    <h2 class="stmt">${U.sbTitle}</h2>
     <div class="prop">
       <div>
-        <div class="tools" role="toolbar" aria-label="作图工具">
-          <button class="tool" data-t="move">移动</button>
-          <button class="tool" data-t="point">点</button>
-          <button class="tool" data-t="seg">线段</button>
-          <button class="tool" data-t="line">直线</button>
-          <button class="tool" data-t="circ">圆</button>
-          <button class="btn" id="undo">撤销</button>
-          <button class="btn" id="clear">清空</button>
+        <div class="tools" role="toolbar" aria-label="${U.toolbar}">
+          ${["move", "point", "seg", "line", "circ"].map(t => `<button class="tool" data-t="${t}">${U.tools[t]}</button>`).join("")}
+          <button class="btn" id="undo">${U.undo}</button>
+          <button class="btn" id="clear">${U.clear}</button>
         </div>
-        <div class="plate"><svg class="fig" role="img" aria-label="自由作图画板"></svg></div>
+        <div class="plate" dir="ltr"><svg class="fig" role="img" aria-label="${U.board}"></svg></div>
         <div class="hint" id="shint"></div>
       </div>
       <div class="side">
-        <h3>怎么用</h3>
-        <ul>
-          <li>线段、直线：依次点两个点（公设 1、2）。</li>
-          <li>圆：先点圆心，再点圆上一点（公设 3）。</li>
-          <li>靠近两条线的交点时会出现红圈，点下去就得到交点；拖动原来的点，交点会跟着动。</li>
-          <li>选"移动"工具后可以拖动自由点。</li>
-        </ul>
-        <h3 style="margin-top:18px">试试看</h3>
-        <ul>
-          <li>在 <var>AB</var> 上作等边三角形（<a href="#p1">I.1</a>）。</li>
-          <li>二等分线段 <var>AB</var>（<a href="#p10">I.10</a>）。</li>
-          <li>过 <var>AB</var> 上一点作垂线（I.11）。</li>
-        </ul>
+        <h3>${U.howTo}</h3>
+        <ul>${U.howItems.map(x => `<li>${x}</li>`).join("")}</ul>
+        <h3 style="margin-top:18px">${U.tryIt}</h3>
+        <ul>${U.tryItems.map(x => `<li>${fmt(x)}</li>`).join("")}</ul>
       </div>
     </div>`;
   const svg = view.querySelector("svg");
   const S = new Scene();
   const R = new Renderer(svg, S, [0, 0, 720, 560]);
   const hintEl = view.querySelector("#shint");
-  const HINTS = { move: "拖动红圈的自由点。", point: "点击放置一个点。", seg: "依次点击两个点连成线段。", line: "依次点击两个点作一条可以无限延长的直线。", circ: "先点圆心，再点圆上一点。" };
+  const HINTS = U.hints;
   let tool = "circ", first = null, hist = [], nextName = 0;
   const preview = mk("path", { class: "preview" }, R.gOver);
   const snap = mk("circle", { class: "snap", r: 10 }, R.gOver);
@@ -920,14 +847,33 @@ function mountSandbox() {
 }
 
 // ---------------------------------------------------------------- routing
-const nav = document.getElementById("nav"), sel = document.getElementById("navsel");
-nav.innerHTML =
-  `<h2>开篇</h2><a href="#intro" data-r="intro"><span class="n">·</span><span class="t">定义、公设、公理</span></a>` +
-  `<h2>动手</h2><a href="#sandbox" data-r="sandbox"><span class="n">·</span><span class="t">自由作图</span></a>` +
-  `<h2>命题</h2>` + PROPS.map((p, i) => `<a href="#p${i + 1}" data-r="p${i + 1}" class="${LIVE[i + 1] ? "live" : ""}" title="${p[0]}"><span class="n">${i + 1}</span><span class="t">${p[1]}</span></a>`).join("");
-sel.innerHTML = `<option value="intro">开篇：定义、公设、公理</option><option value="sandbox">自由作图</option>` +
-  PROPS.map((p, i) => `<option value="p${i + 1}">命题 I.${i + 1} ${p[1]}${LIVE[i + 1] ? " ●" : ""}</option>`).join("");
-sel.onchange = () => { location.hash = sel.value; };
+const nav = document.getElementById("nav"), sel = document.getElementById("navsel"), langSel = document.getElementById("lang");
+
+function buildChrome() {
+  const U = T.ui, root = document.documentElement;
+  root.lang = T.htmlLang; root.dir = T.dir || "ltr";
+  root.style.setProperty("--serif", (FONTS[LANG] || [LATIN_FONT])[0]);
+  root.classList.toggle("latin", !FONTS[LANG]);
+  if (FONTS[LANG] && !document.getElementById("font-" + LANG)) {
+    const l = document.createElement("link");
+    l.id = "font-" + LANG; l.rel = "stylesheet";
+    l.href = `https://fonts.googleapis.com/css2?family=${FONTS[LANG][1]}&display=swap`;
+    document.head.appendChild(l);
+  }
+  document.title = U.title;
+  document.querySelector('meta[name="description"]').content = U.metaDesc;
+  document.getElementById("h1a").textContent = U.h1;
+  document.getElementById("h1b").textContent = U.h1b;
+  document.getElementById("tagline").textContent = U.tagline;
+  langSel.setAttribute("aria-label", U.language);
+  nav.setAttribute("aria-label", U.contents); sel.setAttribute("aria-label", U.contents);
+  nav.innerHTML =
+    `<h2>${U.navOpen}</h2><a href="#intro" data-r="intro"><span class="n">·</span><span class="t">${U.navIntro}</span></a>` +
+    `<h2>${U.navHands}</h2><a href="#sandbox" data-r="sandbox"><span class="n">·</span><span class="t">${U.navSandbox}</span></a>` +
+    `<h2>${U.navProps}</h2>` + T.props.map((p, i) => `<a href="#p${i + 1}" data-r="p${i + 1}" class="${LIVE[i + 1] ? "live" : ""}" title="${p[0]}"><span class="n">${i + 1}</span><span class="t">${p[1]}</span></a>`).join("");
+  sel.innerHTML = `<option value="intro">${U.navOpen}${U.colon}${U.navIntro}</option><option value="sandbox">${U.navSandbox}</option>` +
+    T.props.map((p, i) => `<option value="p${i + 1}">${U.prop} I.${i + 1} · ${p[1]}${LIVE[i + 1] ? " ●" : ""}</option>`).join("");
+}
 
 function route() {
   if (teardown) { teardown(); teardown = null; }
@@ -940,10 +886,44 @@ function route() {
   else { r = "p1"; mountProp(1); }
   nav.querySelectorAll("a").forEach(a => { if (a.dataset.r === r) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current"); });
   sel.value = r;
-  window.scrollTo(0, 0);
 }
-addEventListener("hashchange", route);
-route();
+
+function loadLang(code) {
+  if (I18N[code]) return Promise.resolve(I18N[code]);
+  return new Promise((res, rej) => {
+    const s = document.createElement("script");
+    s.src = `i18n/${code}.js`;
+    s.onload = () => (I18N[code] ? res(I18N[code]) : rej(new Error(code)));
+    s.onerror = () => rej(new Error(code));
+    document.head.appendChild(s);
+  });
+}
+// ?lang= first (shareable links), then the viewer's last choice, then the browser's languages.
+function pickLang() {
+  let q = null;
+  try { q = new URLSearchParams(location.search).get("lang"); } catch (e) {}
+  if (q && LANGS[q]) return q;
+  try { const s = localStorage.getItem("lang"); if (s && LANGS[s]) return s; } catch (e) {}
+  for (const l of navigator.languages || [navigator.language || ""]) { const c = l.slice(0, 2).toLowerCase(); if (LANGS[c]) return c; }
+  return "en";
+}
+async function setLang(code, remember) {
+  try { T = await loadLang(code); LANG = code; }
+  catch (e) { if (code !== "zh") return setLang("zh", false); throw e; }
+  langSel.value = LANG;
+  if (remember) {
+    try { localStorage.setItem("lang", LANG); } catch (e) {}
+    try { const u = new URL(location.href); u.searchParams.set("lang", LANG); history.replaceState(null, "", u); } catch (e) {}
+  }
+  buildChrome();
+  route();
+}
+
+langSel.innerHTML = Object.entries(LANGS).map(([k, v]) => `<option value="${k}" lang="${k}">${v}</option>`).join("");
+langSel.onchange = () => setLang(langSel.value, true);
+sel.onchange = () => { location.hash = sel.value; };
+addEventListener("hashchange", () => { route(); window.scrollTo(0, 0); });
+setLang(pickLang(), false);
 </script>
 
 </body>
