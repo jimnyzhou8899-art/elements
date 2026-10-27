@@ -10,6 +10,10 @@ I18N.en = {
     metaDesc: "Book I of Euclid's Elements: definitions, postulates, common notions and all 48 propositions, with draggable compass-and-straightedge constructions and step-by-step proofs.",
     language: "Language",
     visits: "{n} visits",
+    about: "About",
+    privacy: "Privacy policy",
+    contact: "Contact",
+    ad: "Advertisement",
     contents: "Contents",
     navOpen: "Foundations",
     navIntro: "Definitions, postulates, notions",
@@ -63,8 +67,8 @@ I18N.en = {
     ],
     tryIt: "Try this",
     tryItems: [
-      "Construct an equilateral triangle on AB (<a href=\"#p1\">I.1</a>).",
-      "Bisect the segment AB (<a href=\"#p10\">I.10</a>).",
+      "Construct an equilateral triangle on AB (<a href=\"/\">I.1</a>).",
+      "Bisect the segment AB (<a href=\"/p/10\">I.10</a>).",
       "Draw a perpendicular from a point on AB (I.11)."
     ]
   },

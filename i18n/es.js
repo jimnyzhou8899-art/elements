@@ -10,6 +10,10 @@ I18N.es = {
     metaDesc: "Libro I de los Elementos de Euclides: definiciones, postulados, nociones comunes y las 48 proposiciones, con construcciones con regla y compás que se pueden arrastrar y demostraciones paso a paso.",
     language: "Idioma",
     visits: "{n} visitas",
+    about: "Acerca de",
+    privacy: "Política de privacidad",
+    contact: "Contacto",
+    ad: "Publicidad",
     contents: "Índice",
     navOpen: "Fundamentos",
     navIntro: "Definiciones, postulados, nociones",
@@ -63,8 +67,8 @@ I18N.es = {
     ],
     tryIt: "Prueba esto",
     tryItems: [
-      "Construye un triángulo equilátero sobre AB (<a href=\"#p1\">I.1</a>).",
-      "Divide en dos partes iguales el segmento AB (<a href=\"#p10\">I.10</a>).",
+      "Construye un triángulo equilátero sobre AB (<a href=\"/\">I.1</a>).",
+      "Divide en dos partes iguales el segmento AB (<a href=\"/p/10\">I.10</a>).",
       "Traza una perpendicular desde un punto de AB (I.11)."
     ]
   },

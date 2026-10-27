@@ -10,6 +10,10 @@ I18N.de = {
     metaDesc: "Buch I von Euklids Elementen: Definitionen, Postulate, Axiome und alle 48 Propositionen, mit verschiebbaren Konstruktionen mit Zirkel und Lineal und schrittweisen Beweisen.",
     language: "Sprache",
     visits: "{n} Besuche",
+    about: "Über diese Seite",
+    privacy: "Datenschutz",
+    contact: "Kontakt",
+    ad: "Anzeige",
     contents: "Inhalt",
     navOpen: "Grundlagen",
     navIntro: "Definitionen, Postulate, Axiome",
@@ -63,8 +67,8 @@ I18N.de = {
     ],
     tryIt: "Versuchen Sie",
     tryItems: [
-      "Über AB ein gleichseitiges Dreieck errichten (<a href=\"#p1\">I.1</a>).",
-      "Die Strecke AB halbieren (<a href=\"#p10\">I.10</a>).",
+      "Über AB ein gleichseitiges Dreieck errichten (<a href=\"/\">I.1</a>).",
+      "Die Strecke AB halbieren (<a href=\"/p/10\">I.10</a>).",
       "In einem Punkt von AB das Lot errichten (I.11)."
     ]
   },

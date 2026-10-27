@@ -10,6 +10,10 @@ I18N.fr = {
     metaDesc: "Livre I des Éléments d'Euclide : définitions, demandes, notions communes et les 48 propositions, avec des constructions à la règle et au compas que l'on peut déplacer et des démonstrations pas à pas.",
     language: "Langue",
     visits: "{n} visites",
+    about: "À propos",
+    privacy: "Politique de confidentialité",
+    contact: "Contact",
+    ad: "Publicité",
     contents: "Sommaire",
     navOpen: "Fondements",
     navIntro: "Définitions, demandes, notions",
@@ -63,8 +67,8 @@ I18N.fr = {
     ],
     tryIt: "Essayez",
     tryItems: [
-      "Construire un triangle équilatéral sur AB (<a href=\"#p1\">I.1</a>).",
-      "Couper le segment AB en deux parties égales (<a href=\"#p10\">I.10</a>).",
+      "Construire un triangle équilatéral sur AB (<a href=\"/\">I.1</a>).",
+      "Couper le segment AB en deux parties égales (<a href=\"/p/10\">I.10</a>).",
       "Élever une perpendiculaire en un point de AB (I.11)."
     ]
   },
