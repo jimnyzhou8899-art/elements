@@ -11,11 +11,12 @@
   公设、公理、定义或前面的命题。反证法的命题（如 I.6、I.7、I.14、I.19、I.27、I.39）里，按假设画出的点会在文字里注明。
 - **自由作图**：点、线段、直线、圆四个工具，交点自动吸附，并随原来的点一起移动。
 - **访客数**：页头语言切换旁显示累计访问次数（阿拉伯语下在右侧），同一浏览器会话只计一次。
+- **关于、隐私政策、联系**：页脚链接，9 种语言；隐私政策写明了 Google 广告 Cookie。
 
 ## 多语言
 
 支持 9 种语言：中文、English、Español、Français、Deutsch、Русский、العربية（从右到左排版）、हिन्दी、日本語。
-右上角可以切换，选择会记在浏览器里，网址也会带上 `?lang=xx`，可以直接分享某个语言的链接。
+右上角可以切换，选择会记在浏览器里，网址也会带上 `?lang=xx`，可以直接分享某个语言的链接（例如 `/p/47?lang=ja`）。
 第一次打开时按浏览器语言自动选择。
 
 界面文字、定义、公设、公理和 48 个命题的陈述在 `i18n/<语言代码>.js` 里；每个交互命题的图形、步骤和 9 种语言的
@@ -24,31 +25,50 @@
 
 ## 运行
 
-纯静态页面，没有构建步骤，没有依赖：
+没有依赖。`index.html` 是模板，`build.mjs` 用它为每个页面、每种语言生成一份已经写好标题和正文的 HTML，放进 `dist/`：
 
 ```sh
-python3 -m http.server 8000
+node build.mjs && node serve.mjs
 ```
 
-然后打开 http://localhost:8000 。
+然后打开 http://localhost:8000 。`serve.mjs` 按 `vercel.json` 的规则提供 `dist/`（干净 URL、`?lang=`、404），只用于本地预览。
+
+## 网址
+
+- 每个视图有自己的地址：`/` 是 I.1，`/p/2` … `/p/48`，`/intro`（定义、公设、公理），`/sandbox`（作图板），
+  `/about`、`/privacy`、`/contact`。站内链接不刷新页面；旧的 `#p12` 链接会自动换成 `/p/12`。
+- 不带 `?lang=` 的地址预先生成的是英文（`dist/p/12.html`），打开后页面照旧按浏览器语言或上次的选择切换；
+  `/p/12?lang=fr` 由 `vercel.json` 改写到 `dist/_l/fr/p/12.html`，直接就是法文。
+- 视图的共用标记（目录、命题页、关于/隐私/联系页、地址规则）在 `render.js`，页面和 `build.mjs` 都用它，所以预先生成的内容和页面自己画的一致。
+- 关于、隐私政策、联系页面的 9 种语言文字在 `pages/<语言代码>.js`。
 
 ## 部署
 
-Vercel 上作为静态站点部署即可（Framework Preset 选 Other，不需要 build 命令，
-Output Directory 留空）。`vercel.json` 只设置了干净 URL 和缓存头。
+Vercel 上 `vercel.json` 已经写好 `buildCommand: node build.mjs` 和 `outputDirectory: dist`，不需要别的设置。
 
 - **访客计数**：`api/visits.js` 是一个 Vercel Function，计数存在 Upstash Redis（在 Vercel 的 Storage 里连接到项目，
   会自动注入 `KV_REST_API_URL`/`KV_REST_API_TOKEN` 或 `UPSTASH_REDIS_REST_URL`/`UPSTASH_REDIS_REST_TOKEN`）。
   没有配置时接口返回 503，页面上就不显示计数。
 - **Web Analytics**：页面里引用了 `/_vercel/insights/script.js`，需要在 Vercel 项目的 Analytics 页面点 Enable。
 
+## 站点设置（`site.config.json`）
+
+- `site`：正式域名，例如 `https://example.com`。换域名只改这里，canonical、hreflang、sitemap、robots、分享图地址都跟着变。
+- `contactEmail`：联系页面上显示的邮箱，留空就只显示 GitHub issues。
+- `policyDate`：隐私政策顶部的“最后更新”日期。
+- `adsense.client` / `adsense.slot`：AdSense 发布商 ID（`ca-pub-…`）和广告单元 ID。也可以在 Vercel 的环境变量里设
+  `ADSENSE_CLIENT` / `ADSENSE_SLOT`，会覆盖这里的值。
+  - 只填 `client`：每页 `<head>` 里加上 AdSense 代码和 `google-adsense-account` 标记（申请审核用），`ads.txt` 写上发布商 ID。
+  - 再填 `slot`：在证明下方显示一个自适应广告位（不压在作图区上，也不影响拖动），关于/隐私/联系页面不放。
+  - 都不填：没有任何广告代码，`ads.txt` 只有一行说明。
+
 ## SEO
 
-- 每种语言一个地址（`/?lang=xx`），`<head>` 里有 hreflang 互指和 `x-default`，切换语言时同步更新
-  `<title>`、description、canonical 和 Open Graph 标签；打开某个命题时标题会带上命题名。
-- `sitemap.xml`、`robots.txt`、`favicon.svg`、分享图 `og.png`（1200×630），以及 schema.org 的 `LearningResource` 结构化数据。
-- 不运行 JavaScript 的爬虫会看到 `<noscript>` 里的中英文简介和 48 个命题列表。
-- 正式域名变了的话，要改 `index.html` 里的 `SITE` 和 `<head>` 中的地址，以及 `sitemap.xml`、`robots.txt`。
+- 每个页面、每种语言都有自己的 `<title>`、description、canonical、Open Graph，以及 hreflang 互指和 `x-default`；
+  在页面里切换时同步更新。
+- `sitemap.xml`、`robots.txt`、`ads.txt` 由 `build.mjs` 生成；`favicon.svg`、分享图 `og.png`（1200×630），
+  以及 schema.org 的 `LearningResource` 结构化数据。
+- 不运行 JavaScript 的爬虫也能看到完整的目录、命题陈述和证明步骤文字。
 
 ## 图形是怎么画的
 

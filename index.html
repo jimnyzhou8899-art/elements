@@ -3,32 +3,52 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="description" content="欧几里得《几何原本》第一卷：定义、公设、公理与 48 个命题，可拖动的尺规作图和逐步证明动画。">
 <style>
   :root { color-scheme: light; padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
   body { margin: 0; font: 14px system-ui, -apple-system, "Segoe UI", sans-serif; }
   img { max-width: 100%; }
   [hidden] { display: none !important; }
+  :root.swap body { visibility: hidden; }
 </style>
+<script>
+// Pick the language before first paint: ?lang= first (shareable links), then the viewer's last choice, then the browser's languages.
+// Each page is pre-rendered in one language (data-baked); when another is picked, the page stays hidden until it is redrawn.
+(function () {
+  const codes = ["zh", "en", "es", "fr", "de", "ru", "ar", "hi", "ja"], root = document.documentElement;
+  let q = null, l = null;
+  try { q = new URLSearchParams(location.search).get("lang"); } catch (e) {}
+  if (codes.includes(q)) l = q;
+  if (!l) try { const s = localStorage.getItem("lang"); if (codes.includes(s)) l = s; } catch (e) {}
+  if (!l) for (const x of navigator.languages || [navigator.language || ""]) { const c = x.slice(0, 2).toLowerCase(); if (codes.includes(c)) { l = c; break; } }
+  window.FIRST_LANG = l || "en";
+  if (root.dataset.baked && root.dataset.baked !== window.FIRST_LANG) {
+    root.classList.add("swap");
+    setTimeout(() => root.classList.remove("swap"), 3000);
+  }
+})();
+</script>
+<!-- build:head: build.mjs rewrites this block for every page and language -->
 <title>几何原本 · 卷一</title>
+<meta name="description" content="欧几里得《几何原本》第一卷：定义、公设、公理与 48 个命题，可拖动的尺规作图和逐步证明动画。">
 <link rel="canonical" href="https://elements-pink.vercel.app/">
-<link rel="alternate" hreflang="zh-Hans" href="https://elements-pink.vercel.app/?lang=zh">
-<link rel="alternate" hreflang="en" href="https://elements-pink.vercel.app/?lang=en">
-<link rel="alternate" hreflang="es" href="https://elements-pink.vercel.app/?lang=es">
-<link rel="alternate" hreflang="fr" href="https://elements-pink.vercel.app/?lang=fr">
-<link rel="alternate" hreflang="de" href="https://elements-pink.vercel.app/?lang=de">
-<link rel="alternate" hreflang="ru" href="https://elements-pink.vercel.app/?lang=ru">
-<link rel="alternate" hreflang="ar" href="https://elements-pink.vercel.app/?lang=ar">
-<link rel="alternate" hreflang="hi" href="https://elements-pink.vercel.app/?lang=hi">
-<link rel="alternate" hreflang="ja" href="https://elements-pink.vercel.app/?lang=ja">
-<link rel="alternate" hreflang="x-default" href="https://elements-pink.vercel.app/">
+<link rel="alternate" hreflang="zh-Hans" data-l="zh" href="https://elements-pink.vercel.app/?lang=zh">
+<link rel="alternate" hreflang="en" data-l="en" href="https://elements-pink.vercel.app/?lang=en">
+<link rel="alternate" hreflang="es" data-l="es" href="https://elements-pink.vercel.app/?lang=es">
+<link rel="alternate" hreflang="fr" data-l="fr" href="https://elements-pink.vercel.app/?lang=fr">
+<link rel="alternate" hreflang="de" data-l="de" href="https://elements-pink.vercel.app/?lang=de">
+<link rel="alternate" hreflang="ru" data-l="ru" href="https://elements-pink.vercel.app/?lang=ru">
+<link rel="alternate" hreflang="ar" data-l="ar" href="https://elements-pink.vercel.app/?lang=ar">
+<link rel="alternate" hreflang="hi" data-l="hi" href="https://elements-pink.vercel.app/?lang=hi">
+<link rel="alternate" hreflang="ja" data-l="ja" href="https://elements-pink.vercel.app/?lang=ja">
+<link rel="alternate" hreflang="x-default" data-l="" href="https://elements-pink.vercel.app/">
+<meta property="og:title" content="Euclid's Elements, Book I · 几何原本 卷一">
+<meta property="og:description" content="All 48 propositions with draggable compass-and-straightedge figures and step-by-step proofs. 48 个命题，可拖动的尺规作图与逐步证明动画。">
+<meta property="og:url" content="https://elements-pink.vercel.app/">
+<!-- /build:head -->
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <meta name="theme-color" content="#f7f7f3">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Euclid's Elements · 几何原本">
-<meta property="og:title" content="Euclid's Elements, Book I · 几何原本 卷一">
-<meta property="og:description" content="All 48 propositions with draggable compass-and-straightedge figures and step-by-step proofs. 48 个命题，可拖动的尺规作图与逐步证明动画。">
-<meta property="og:url" content="https://elements-pink.vercel.app/">
 <meta property="og:image" content="https://elements-pink.vercel.app/og.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
@@ -179,6 +199,26 @@ li.cur .quote { display: block; }
 .todo { border: 1px dashed var(--rule); border-radius: 6px; padding: 22px; color: var(--muted); max-width: 44em; }
 .todo a { color: var(--blue); }
 
+/* about, privacy, contact */
+.legal { max-width: 42em; }
+.legal h3 { font-size: 16px; margin: 26px 0 6px; font-weight: 900; }
+.legal ul { padding-inline-start: 20px; }
+.legal li { margin-bottom: 6px; }
+.legal a { color: var(--blue); }
+.legal .updated { color: var(--muted); font-size: 13px; margin-top: -10px; }
+
+/* ad slot: below the proof, never over the figure */
+.ad { margin-top: 36px; padding-top: 8px; border-top: 1px solid var(--rule); min-height: 120px; }
+.ad .label { font-size: 11px; letter-spacing: .15em; color: var(--muted); margin: 0 0 6px; }
+.ad ins { display: block; }
+
+/* footer */
+.foot { border-top: 1px solid var(--rule); padding-block: 14px 28px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); display: flex; flex-wrap: wrap; gap: 8px 28px; font-size: 13px; }
+.foot p { margin: 0; display: flex; flex-wrap: wrap; gap: 4px 16px; }
+.foot .langs { margin-inline-start: auto; }
+.foot a { color: var(--muted); text-decoration: none; }
+.foot a:hover { color: var(--ink); text-decoration: underline; }
+
 /* sandbox */
 .tools { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px; }
 .tool { border: 1px solid var(--rule); background: var(--plate); padding: 5px 12px; border-radius: 4px; cursor: pointer; font-size: 14px; }
@@ -210,6 +250,7 @@ li.cur .quote { display: block; }
 <!-- Vercel Web Analytics -->
 <script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };</script>
 <script defer src="/_vercel/insights/script.js"></script>
+<!-- build:ads-head --><!-- /build:ads-head -->
 </head>
 <body>
 <header class="top">
@@ -220,103 +261,27 @@ li.cur .quote { display: block; }
     <select id="lang" class="langsel"></select>
   </div>
 </header>
-<noscript>
-<section class="noscript">
-<h2>Euclid's Elements, Book I · 几何原本 卷一</h2>
-<p>Book I of Euclid's Elements: definitions, postulates, common notions and all 48 propositions, with draggable compass-and-straightedge constructions and step-by-step proofs.</p>
-<p>欧几里得《几何原本》第一卷：定义、公设、公理与 48 个命题，可拖动的尺规作图和逐步证明动画。</p>
-<p><a href="https://elements-pink.vercel.app/?lang=zh" hreflang="zh">中文</a> · <a href="https://elements-pink.vercel.app/?lang=en" hreflang="en">English</a> · <a href="https://elements-pink.vercel.app/?lang=es" hreflang="es">Español</a> · <a href="https://elements-pink.vercel.app/?lang=fr" hreflang="fr">Français</a> · <a href="https://elements-pink.vercel.app/?lang=de" hreflang="de">Deutsch</a> · <a href="https://elements-pink.vercel.app/?lang=ru" hreflang="ru">Русский</a> · <a href="https://elements-pink.vercel.app/?lang=ar" hreflang="ar">العربية</a> · <a href="https://elements-pink.vercel.app/?lang=hi" hreflang="hi">हिन्दी</a> · <a href="https://elements-pink.vercel.app/?lang=ja" hreflang="ja">日本語</a></p>
-<ol>
-<li><strong>Equilateral triangle</strong> / 作等边三角形 — On a given finite straight line to construct an equilateral triangle.</li>
-<li><strong>Copying a segment</strong> / 移置线段 — To place at a given point a straight line equal to a given straight line.</li>
-<li><strong>Cutting off a segment</strong> / 截取线段 — Given two unequal straight lines, to cut off from the greater a straight line equal to the less.</li>
-<li><strong>Side-angle-side</strong> / 边角边 — If two triangles have two sides equal to two sides respectively, and have the angles contained by the equal straight lines equal, they will also have the base equal to the base, the triangle will be equal to the triangle, and the remaining angles will be equal to the remaining angles respectively.</li>
-<li><strong>Isosceles base angles</strong> / 等腰三角形底角 — In isosceles triangles the angles at the base are equal to one another, and, if the equal straight lines be produced further, the angles under the base will be equal to one another.</li>
-<li><strong>Equal angles, equal sides</strong> / 等角对等边 — If in a triangle two angles be equal to one another, the sides which subtend the equal angles will also be equal to one another.</li>
-<li><strong>Uniqueness lemma</strong> / 唯一性引理 — Given two straight lines constructed on a straight line from its extremities and meeting in a point, there cannot be constructed on the same straight line from its extremities, and on the same side of it, two other straight lines meeting in another point and equal to the former two respectively.</li>
-<li><strong>Side-side-side</strong> / 边边边 — If two triangles have the two sides equal to two sides respectively, and have also the base equal to the base, they will also have the angles equal which are contained by the equal straight lines.</li>
-<li><strong>Bisecting an angle</strong> / 平分角 — To bisect a given rectilineal angle.</li>
-<li><strong>Bisecting a segment</strong> / 平分线段 — To bisect a given finite straight line.</li>
-<li><strong>Perpendicular from a point on a line</strong> / 作垂线（线上一点） — To draw a straight line at right angles to a given straight line from a given point on it.</li>
-<li><strong>Perpendicular from a point off a line</strong> / 作垂线（线外一点） — To a given infinite straight line, from a given point which is not on it, to draw a perpendicular straight line.</li>
-<li><strong>Supplementary angles</strong> / 邻补角 — If a straight line set up on a straight line makes angles, it will make either two right angles or angles equal to two right angles.</li>
-<li><strong>Converse of I.13</strong> / 邻补角之逆 — If with any straight line, and at a point on it, two straight lines not lying on the same side make the adjacent angles equal to two right angles, the two straight lines will be in a straight line with one another.</li>
-<li><strong>Vertical angles</strong> / 对顶角 — If two straight lines cut one another, they make the vertical angles equal to one another.</li>
-<li><strong>Exterior angle inequality</strong> / 外角大于内对角 — In any triangle, if one of the sides be produced, the exterior angle is greater than either of the interior and opposite angles.</li>
-<li><strong>Two angles less than two right</strong> / 两角和小于两直角 — In any triangle two angles taken together in any manner are less than two right angles.</li>
-<li><strong>Greater side, greater angle</strong> / 大边对大角 — In any triangle the greater side subtends the greater angle.</li>
-<li><strong>Greater angle, greater side</strong> / 大角对大边 — In any triangle the greater angle is subtended by the greater side.</li>
-<li><strong>Triangle inequality</strong> / 三角不等式 — In any triangle two sides taken together in any manner are greater than the remaining one.</li>
-<li><strong>Lines inside a triangle</strong> / 内部线段 — If on one of the sides of a triangle, from its extremities, there be constructed two straight lines meeting within the triangle, the straight lines so constructed will be less than the remaining two sides of the triangle, but will contain a greater angle.</li>
-<li><strong>Triangle from three segments</strong> / 三边作三角形 — Out of three straight lines, which are equal to three given straight lines, to construct a triangle: thus it is necessary that two of the straight lines taken together in any manner should be greater than the remaining one.</li>
-<li><strong>Copying an angle</strong> / 移置角 — On a given straight line and at a point on it to construct a rectilineal angle equal to a given rectilineal angle.</li>
-<li><strong>Hinge theorem</strong> / 夹角大则底边大 — If two triangles have the two sides equal to two sides respectively, but have the one of the angles contained by the equal straight lines greater than the other, they will also have the base greater than the base.</li>
-<li><strong>Converse of the hinge theorem</strong> / 底边大则夹角大 — If two triangles have the two sides equal to two sides respectively, but have the base greater than the base, they will also have the one of the angles contained by the equal straight lines greater than the other.</li>
-<li><strong>Angle-side-angle</strong> / 角边角 · 角角边 — If two triangles have the two angles equal to two angles respectively, and one side equal to one side, namely, either the side adjoining the equal angles, or that subtending one of the equal angles, they will also have the remaining sides equal to the remaining sides and the remaining angle to the remaining angle.</li>
-<li><strong>Alternate angles make parallels</strong> / 错角相等则平行 — If a straight line falling on two straight lines make the alternate angles equal to one another, the straight lines will be parallel to one another.</li>
-<li><strong>Corresponding angles make parallels</strong> / 同位角相等则平行 — If a straight line falling on two straight lines make the exterior angle equal to the interior and opposite angle on the same side, or the interior angles on the same side equal to two right angles, the straight lines will be parallel to one another.</li>
-<li><strong>Angles at parallel lines</strong> / 平行线的性质 — A straight line falling on parallel straight lines makes the alternate angles equal to one another, the exterior angle equal to the interior and opposite angle, and the interior angles on the same side equal to two right angles.</li>
-<li><strong>Parallels to the same line</strong> / 平行的传递 — Straight lines parallel to the same straight line are also parallel to one another.</li>
-<li><strong>Drawing a parallel</strong> / 作平行线 — Through a given point to draw a straight line parallel to a given straight line.</li>
-<li><strong>Angle sum of a triangle</strong> / 内角和 — In any triangle, if one of the sides be produced, the exterior angle is equal to the two interior and opposite angles, and the three interior angles of the triangle are equal to two right angles.</li>
-<li><strong>Joining equal parallels</strong> / 平行四边形判定 — The straight lines joining equal and parallel straight lines at the extremities which are in the same directions respectively are themselves also equal and parallel.</li>
-<li><strong>Parallelogram properties</strong> / 平行四边形性质 — In parallelogrammic areas the opposite sides and angles are equal to one another, and the diameter bisects the areas.</li>
-<li><strong>Parallelograms on the same base</strong> / 同底平行四边形 — Parallelograms which are on the same base and in the same parallels are equal to one another.</li>
-<li><strong>Parallelograms on equal bases</strong> / 等底平行四边形 — Parallelograms which are on equal bases and in the same parallels are equal to one another.</li>
-<li><strong>Triangles on the same base</strong> / 同底三角形 — Triangles which are on the same base and in the same parallels are equal to one another.</li>
-<li><strong>Triangles on equal bases</strong> / 等底三角形 — Triangles which are on equal bases and in the same parallels are equal to one another.</li>
-<li><strong>Converse of I.37</strong> / 同底等积之逆 — Equal triangles which are on the same base and on the same side are also in the same parallels.</li>
-<li><strong>Converse of I.38</strong> / 等底等积之逆 — Equal triangles which are on equal bases and on the same side are also in the same parallels.</li>
-<li><strong>Parallelogram is double the triangle</strong> / 平行四边形是三角形二倍 — If a parallelogram have the same base with a triangle and be in the same parallels, the parallelogram is double of the triangle.</li>
-<li><strong>Parallelogram equal to a triangle</strong> / 化三角形为平行四边形 — To construct, in a given rectilineal angle, a parallelogram equal to a given triangle.</li>
-<li><strong>Complements</strong> / 补形相等 — In any parallelogram the complements of the parallelograms about the diameter are equal to one another.</li>
-<li><strong>Application of areas</strong> / 贴合面积 — To a given straight line to apply, in a given rectilineal angle, a parallelogram equal to a given triangle.</li>
-<li><strong>Parallelogram equal to a polygon</strong> / 化多边形为平行四边形 — To construct, in a given rectilineal angle, a parallelogram equal to a given rectilineal figure.</li>
-<li><strong>Constructing a square</strong> / 作正方形 — On a given straight line to describe a square.</li>
-<li><strong>Pythagorean theorem</strong> / 勾股定理 — In right-angled triangles the square on the side subtending the right angle is equal to the squares on the sides containing the right angle.</li>
-<li><strong>Converse of Pythagoras</strong> / 勾股定理之逆 — If in a triangle the square on one of the sides be equal to the squares on the remaining two sides of the triangle, the angle contained by the remaining two sides of the triangle is right.</li>
-</ol>
-<p>JavaScript is needed for the interactive figures. 交互图形需要启用 JavaScript。</p>
-</section>
-</noscript>
+<noscript><p class="noscript">JavaScript is needed for the interactive figures. 交互图形需要启用 JavaScript。</p></noscript>
 <div class="app">
-  <nav id="nav"></nav>
+  <nav id="nav"><!-- build:nav --><!-- /build:nav --></nav>
   <main>
     <select class="navsel" id="navsel"></select>
-    <div id="view"></div>
+    <div id="view"><!-- build:view --><!-- /build:view --></div>
+    <aside class="ad" id="ad" hidden><!-- build:ad --><!-- /build:ad --></aside>
   </main>
 </div>
+<footer class="foot" id="foot"><!-- build:foot --><!-- /build:foot --></footer>
 
+<script src="/render.js"></script>
 <script>
 // ---------------------------------------------------------------- text
 // All visible text lives in i18n/<code>.js, which sets I18N[code]; T is the active locale.
-const SITE = "https://elements-pink.vercel.app/";
-const LANGS = { zh: "中文", en: "English", es: "Español", fr: "Français", de: "Deutsch", ru: "Русский", ar: "العربية", hi: "हिन्दी", ja: "日本語" };
-const FONTS = {
-  zh: ["\"Noto Serif SC\", \"Songti SC\", serif", "Noto+Serif+SC:wght@400;600;900"],
-  ja: ["\"Noto Serif JP\", \"Hiragino Mincho ProN\", serif", "Noto+Serif+JP:wght@400;600;900"],
-  hi: ["\"Noto Serif Devanagari\", \"Kohinoor Devanagari\", serif", "Noto+Serif+Devanagari:wght@400;600;800"],
-  ar: ["\"Noto Naskh Arabic\", \"Geeza Pro\", serif", "Noto+Naskh+Arabic:wght@400;600;700"]
-};
-const LATIN_FONT = "\"EB Garamond\", Georgia, \"Times New Roman\", serif";
-// 作 = problem (ends Q.E.F.), 证 = theorem (ends Q.E.D.), for I.1 … I.48
-const KINDS = "作作作证证证证证作作作作证证证证证证证证证作作证证证证证证证作证证证证证证证证证证作证作作作证证";
+// The about, privacy and contact pages are in pages/<code>.js (PAGES[code]), loaded when opened.
+// Shared markup (navigation, proposition and page views, addresses) is in render.js.
+/* build:config */const SITE = "https://elements-pink.vercel.app", ADS = { client: "", slot: "" }, CFG = { repo: "https://github.com/jimnyzhou8899-art/elements", email: "", policyDate: "2026-10-27" };/* /build:config */
 window.I18N = window.I18N || {};
+window.PAGES = window.PAGES || {};
 let T = null, LANG = "zh";
-
-function tr(s, vars) { return s.replace(/\{(\w+)\}/g, (m, k) => (k in vars ? vars[k] : m)); }
-function refText(r) {
-  const m = r.match(/^([DPA])(\d+)$/);
-  if (m) {
-    const n = +m[2];
-    const [lab, arr] = m[1] === "D" ? [T.ui.def, T.defs] : m[1] === "P" ? [T.ui.post, T.posts] : [T.ui.ax, T.axioms];
-    return [lab + " " + n, arr[n - 1]];
-  }
-  const n = +r.slice(2);
-  return [T.ui.prop + " I." + n, T.props[n - 1][0]];
-}
-// Figure letters: runs of 1–5 capitals not touching other Latin letters (so "Tómese" or "Über" stay plain).
-const fmt = s => s.replace(/(?<![\p{Script=Latin}\d])([A-Z]{1,5})(?![\p{Script=Latin}\d'’])/gu, "<var>$1</var>");
 
 // ---------------------------------------------------------------- geometry
 const V = {
@@ -587,54 +552,28 @@ class Renderer {
 // ---------------------------------------------------------------- propositions
 // Each ready proposition lives in props/pNN.js and calls PROP(n, {vb, build, steps, text}).
 const LIVE = {};
-const READY = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48];
 function PROP(n, def) { LIVE[n] = def; }
 
 // ---------------------------------------------------------------- views
 const view = document.getElementById("view");
 let teardown = null;
 
-function mountProp(n) {
-  const [stmt] = T.props[n - 1];
-  const kind = KINDS[n - 1];
+// keep: the page was pre-rendered for this proposition, so leave it in place while props/pNN.js loads
+function mountProp(n, keep) {
   const def = LIVE[n];
   if (!def && READY.includes(n)) {
     // load props/pNN.js once, then draw it if the reader is still on this page
-    view.innerHTML = "";
-    const want = location.hash;
-    loadScript(`props/p${String(n).padStart(2, "0")}.js`).then(() => { if (location.hash === want || (!location.hash && n === 1)) route(); }, () => {});
+    if (!keep) view.innerHTML = "";
+    const want = location.pathname;
+    loadScript(`/props/p${String(n).padStart(2, "0")}.js`).then(() => { if (location.pathname === want) route(); }, () => {});
     return;
   }
-  const head = `<p class="eyebrow">${T.ui.prop} I.${n} · <span class="kind">${kind === "作" ? T.ui.problem : T.ui.theorem}</span></p><h2 class="stmt">${fmt(stmt)}</h2>`;
-  if (!def) {
-    const done = READY.map(k => `<a href="#p${k}">I.${k}</a>`).join(T.ui.sep);
-    view.innerHTML = head + `<div class="todo">${tr(T.ui.todo, { done, sandbox: `<a href="#sandbox">${T.ui.navSandbox}</a>` })}</div>`;
-    return;
-  }
-  view.innerHTML = head + `
-    <div class="prop">
-      <div>
-        <div class="plate" dir="ltr"><svg class="fig" role="img" aria-label="${tr(T.ui.figLabel, { n: "I." + n })}"></svg></div>
-        <div class="hint">${T.ui.hint}</div>
-      </div>
-      <div>
-        <div class="controls">
-          <button class="btn" id="prev">${T.ui.prev}</button>
-          <button class="btn primary" id="play">${T.ui.play}</button>
-          <button class="btn" id="next">${T.ui.next}</button>
-          <span class="count" id="count" dir="ltr"></span>
-        </div>
-        <ol class="steps" id="steps"></ol>
-        <p class="qed" id="qed" hidden>${kind === "作" ? T.ui.qef : T.ui.qed}</p>
-      </div>
-    </div>`;
+  const texts = def ? def.text[LANG] || def.text.en : null;
+  view.innerHTML = propHTML(T, n, def, texts);
+  if (!def) return;
   const S = new Scene(); def.build(S);
   const R = new Renderer(view.querySelector("svg"), S, def.vb);
-  const steps = def.steps, texts = def.text[LANG] || def.text.en, ol = view.querySelector("#steps");
-  ol.innerHTML = steps.map((s, i) => {
-    const why = (s.why || []).map(refText);
-    return `<li data-i="${i}"><div>${fmt(texts[i])}${why.length ? `<div class="why">${why.map(w => `<span class="chip">${w[0]}</span>`).join("")}</div>` + why.map(w => `<div class="quote">${w[0]}${T.ui.colon}${w[1]}</div>`).join("") : ""}</div></li>`;
-  }).join("");
+  const steps = def.steps, ol = view.querySelector("#steps");
   const visAt = k => { const v = new Set(); for (let i = 0; i <= k; i++) { (steps[i].show || []).forEach(x => v.add(x)); (steps[i].hide || []).forEach(x => v.delete(x)); } return v; };
   let cur = -1, timer = null, raf = 0;
   // params animated by earlier steps sit at their end value, later ones at their start value
@@ -683,37 +622,12 @@ function mountProp(n) {
 }
 
 function mountIntro() {
-  const list = arr => `<ol class="deflist">${arr.map((t, i) => `<li><span class="n">${i + 1}</span><span>${t}</span></li>`).join("")}</ol>`;
-  view.innerHTML = `<div class="prose">
-    <p class="eyebrow">${T.ui.introEyebrow}</p>
-    <h2>${T.ui.defsTitle}</h2><p class="sub"><span lang="grc">ὅροι</span> · ${T.ui.defsSub}</p>${list(T.defs)}
-    <h2>${T.ui.postsTitle}</h2><p class="sub"><span lang="grc">αἰτήματα</span> · ${T.ui.postsSub}</p>${list(T.posts)}
-    <h2>${T.ui.axiomsTitle}</h2><p class="sub"><span lang="grc">κοιναὶ ἔννοιαι</span> · ${T.ui.axiomsSub}</p>${list(T.axioms)}
-  </div>`;
+  view.innerHTML = introHTML(T);
 }
 
 function mountSandbox() {
   const U = T.ui;
-  view.innerHTML = `
-    <p class="eyebrow">${U.sbEyebrow}</p>
-    <h2 class="stmt">${U.sbTitle}</h2>
-    <div class="prop">
-      <div>
-        <div class="tools" role="toolbar" aria-label="${U.toolbar}">
-          ${["move", "point", "seg", "line", "circ"].map(t => `<button class="tool" data-t="${t}">${U.tools[t]}</button>`).join("")}
-          <button class="btn" id="undo">${U.undo}</button>
-          <button class="btn" id="clear">${U.clear}</button>
-        </div>
-        <div class="plate" dir="ltr"><svg class="fig" role="img" aria-label="${U.board}"></svg></div>
-        <div class="hint" id="shint"></div>
-      </div>
-      <div class="side">
-        <h3>${U.howTo}</h3>
-        <ul>${U.howItems.map(x => `<li>${x}</li>`).join("")}</ul>
-        <h3 style="margin-top:18px">${U.tryIt}</h3>
-        <ul>${U.tryItems.map(x => `<li>${fmt(x)}</li>`).join("")}</ul>
-      </div>
-    </div>`;
+  view.innerHTML = sandboxHTML(T);
   const svg = view.querySelector("svg");
   const S = new Scene();
   const R = new Renderer(svg, S, [0, 0, 720, 560]);
@@ -805,6 +719,8 @@ function mountSandbox() {
 }
 
 // ---------------------------------------------------------------- routing
+// Each view has its own address (/, /p/12, /intro, /about …), served pre-rendered by build.mjs;
+// links between them are followed here without reloading. Old #p12 links are moved to /p/12.
 const nav = document.getElementById("nav"), sel = document.getElementById("navsel"), langSel = document.getElementById("lang");
 
 function buildChrome() {
@@ -818,24 +734,29 @@ function buildChrome() {
     l.href = `https://fonts.googleapis.com/css2?family=${FONTS[LANG][1]}&display=swap`;
     document.head.appendChild(l);
   }
-  document.title = U.title;
-  document.querySelector('meta[name="description"]').content = U.metaDesc;
-  document.querySelector('link[rel="canonical"]').href = SITE + "?lang=" + LANG;
-  document.querySelector('meta[property="og:url"]').content = SITE + "?lang=" + LANG;
-  document.querySelector('meta[property="og:title"]').content = U.title;
-  document.querySelector('meta[property="og:description"]').content = U.metaDesc;
   document.getElementById("h1a").textContent = U.h1;
   document.getElementById("h1b").textContent = U.h1b;
   document.getElementById("tagline").textContent = U.tagline;
   langSel.setAttribute("aria-label", U.language);
   showVisits();
   nav.setAttribute("aria-label", U.contents); sel.setAttribute("aria-label", U.contents);
-  nav.innerHTML =
-    `<h2>${U.navOpen}</h2><a href="#intro" data-r="intro"><span class="n">·</span><span class="t">${U.navIntro}</span></a>` +
-    `<h2>${U.navHands}</h2><a href="#sandbox" data-r="sandbox"><span class="n">·</span><span class="t">${U.navSandbox}</span></a>` +
-    `<h2>${U.navProps}</h2>` + T.props.map((p, i) => `<a href="#p${i + 1}" data-r="p${i + 1}" class="${READY.includes(i + 1) ? "live" : ""}" title="${p[0]}"><span class="n">${i + 1}</span><span class="t">${p[1]}</span></a>`).join("");
-  sel.innerHTML = `<option value="intro">${U.navOpen}${U.colon}${U.navIntro}</option><option value="sandbox">${U.navSandbox}</option>` +
-    T.props.map((p, i) => `<option value="p${i + 1}">${U.prop} I.${i + 1} · ${p[1]}${READY.includes(i + 1) ? " ●" : ""}</option>`).join("");
+  nav.innerHTML = navHTML(T);
+  sel.innerHTML = selHTML(T);
+  const ad = document.querySelector("#ad .label");
+  if (ad) ad.textContent = U.ad;
+}
+
+// Title, description, canonical and hreflang for the current view. The canonical keeps ?lang= only if the address has it.
+function setHead(r) {
+  const { title, desc } = headTexts(T, PAGES[LANG], r), path = pathFor(r);
+  const url = SITE + path + (new URLSearchParams(location.search).has("lang") ? "?lang=" + LANG : "");
+  document.title = title;
+  document.querySelector('meta[name="description"]').content = desc;
+  document.querySelector('meta[property="og:title"]').content = title;
+  document.querySelector('meta[property="og:description"]').content = desc;
+  document.querySelector('meta[property="og:url"]').content = url;
+  document.querySelector('link[rel="canonical"]').href = url;
+  document.querySelectorAll('link[rel="alternate"][data-l]').forEach(l => { l.href = SITE + path + (l.dataset.l ? "?lang=" + l.dataset.l : ""); });
 }
 
 // Visit counter (api/visits.js). A visit counts once per browser session; the label hides if the API is unreachable.
@@ -855,19 +776,54 @@ function loadVisits() {
   }).catch(() => {});
 }
 
+// Ad slot under the proof (never over the figure). build.mjs puts the AdSense unit in only once
+// site.config.json has a publisher ID and a slot ID; it is filled once per page load and not on the policy pages.
+function showAd(r) {
+  const el = document.getElementById("ad"), ins = el.querySelector("ins");
+  el.hidden = !ins || LEGAL.includes(r);
+  if (el.hidden || ins.dataset.pushed) return;
+  ins.dataset.pushed = "1";
+  try { (window.adsbygoogle = window.adsbygoogle || []).push({}); } catch (e) {}
+}
+
+function mountPage(name) {
+  if (!PAGES[LANG]) {
+    const want = LANG;
+    loadScript(`/pages/${LANG}.js`).then(() => { if (LANG === want && routeOf(location.pathname) === name) route(); }, () => {});
+    return;
+  }
+  view.innerHTML = pageHTML(T, PAGES[LANG], name, CFG);
+}
+
 function route() {
   if (teardown) { teardown(); teardown = null; }
-  let r = location.hash.slice(1) || "p1";
-  const m = r.match(/^p(\d+)$/);
-  if (m && (+m[1] < 1 || +m[1] > 48)) r = "p1";
+  const r = routeOf(location.pathname) || "p1";
+  // on the first draw, the pre-rendered view is still right if it is for this route and language
+  const keep = view.dataset.r === r && document.documentElement.dataset.baked === LANG;
+  delete view.dataset.r;
   if (r === "intro") mountIntro();
   else if (r === "sandbox") mountSandbox();
-  else if (m) mountProp(+m[1]);
-  else { r = "p1"; mountProp(1); }
-  const pn = r.match(/^p(\d+)$/);
-  document.title = pn ? `${T.ui.prop} I.${pn[1]} · ${T.props[pn[1] - 1][1]} — ${T.ui.title}` : T.ui.title;
+  else if (LEGAL.includes(r)) mountPage(r);
+  else mountProp(+r.slice(1), keep);
+  setHead(r);
+  document.getElementById("foot").innerHTML = footHTML(T, r);
   nav.querySelectorAll("a").forEach(a => { if (a.dataset.r === r) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current"); });
   sel.value = r;
+  showAd(r);
+}
+function navigate(r) {
+  const url = pathFor(r) + location.search;
+  if (url !== location.pathname + location.search) history.pushState(null, "", url);
+  route();
+  window.scrollTo(0, 0);
+}
+// #p12, #intro, #sandbox from before the move to real addresses
+function fromHash() {
+  const h = location.hash.slice(1);
+  const r = /^p\d+$/.test(h) ? routeOf("/p/" + h.slice(1)) : routeOf("/" + h);
+  if (!h || !r) return false;
+  history.replaceState(null, "", pathFor(r) + location.search);
+  return true;
 }
 
 const scripts = {};
@@ -880,16 +836,7 @@ function loadScript(src) {
   }));
 }
 function loadLang(code) {
-  return loadScript(`i18n/${code}.js`).then(() => I18N[code] || Promise.reject(new Error(code)));
-}
-// ?lang= first (shareable links), then the viewer's last choice, then the browser's languages.
-function pickLang() {
-  let q = null;
-  try { q = new URLSearchParams(location.search).get("lang"); } catch (e) {}
-  if (q && LANGS[q]) return q;
-  try { const s = localStorage.getItem("lang"); if (s && LANGS[s]) return s; } catch (e) {}
-  for (const l of navigator.languages || [navigator.language || ""]) { const c = l.slice(0, 2).toLowerCase(); if (LANGS[c]) return c; }
-  return "en";
+  return loadScript(`/i18n/${code}.js`).then(() => I18N[code] || Promise.reject(new Error(code)));
 }
 async function setLang(code, remember) {
   try { T = await loadLang(code); LANG = code; }
@@ -901,13 +848,25 @@ async function setLang(code, remember) {
   }
   buildChrome();
   route();
+  document.documentElement.classList.remove("swap");
 }
 
 langSel.innerHTML = Object.entries(LANGS).map(([k, v]) => `<option value="${k}" lang="${k}">${v}</option>`).join("");
 langSel.onchange = () => setLang(langSel.value, true);
-sel.onchange = () => { location.hash = sel.value; };
-addEventListener("hashchange", () => { route(); window.scrollTo(0, 0); });
-setLang(pickLang(), false);
+sel.onchange = () => navigate(sel.value);
+document.addEventListener("click", e => {
+  const a = e.target.closest("a[href]");
+  if (!a || e.defaultPrevented || e.button || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || a.target || a.hasAttribute("download")) return;
+  const u = new URL(a.href, location.href), r = routeOf(u.pathname);
+  // other languages (?lang=xx) and outside links load normally
+  if (u.origin !== location.origin || !r || (u.search && u.search !== location.search)) return;
+  e.preventDefault();
+  navigate(r);
+});
+addEventListener("popstate", route);
+addEventListener("hashchange", () => { if (fromHash()) { route(); window.scrollTo(0, 0); } });
+fromHash();
+setLang(window.FIRST_LANG || "en", false);
 loadVisits();
 </script>
 

@@ -1,6 +1,16 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
+  "buildCommand": "node build.mjs",
+  "outputDirectory": "dist",
   "cleanUrls": true,
+  "redirects": [
+    { "source": "/p/1", "destination": "/", "permanent": true }
+  ],
+  "rewrites": [
+    { "source": "/", "has": [{ "type": "query", "key": "lang", "value": "(?<lang>zh|en|es|fr|de|ru|ar|hi|ja)" }], "destination": "/_l/:lang/index.html" },
+    { "source": "/p/:n(\\d{1,2})", "has": [{ "type": "query", "key": "lang", "value": "(?<lang>zh|en|es|fr|de|ru|ar|hi|ja)" }], "destination": "/_l/:lang/p/:n.html" },
+    { "source": "/:page(intro|sandbox|about|privacy|contact)", "has": [{ "type": "query", "key": "lang", "value": "(?<lang>zh|en|es|fr|de|ru|ar|hi|ja)" }], "destination": "/_l/:lang/:page.html" }
+  ],
   "headers": [
     {
       "source": "/(.*)",
