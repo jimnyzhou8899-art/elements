@@ -61,6 +61,7 @@ Vercel 上 `vercel.json` 已经写好 `buildCommand: node build.mjs` 和 `output
   - 只填 `client`：每页 `<head>` 里加上 AdSense 代码和 `google-adsense-account` 标记（申请审核用），`ads.txt` 写上发布商 ID。
   - 再填 `slot`：在证明下方显示一个自适应广告位（不压在作图区上，也不影响拖动），关于/隐私/联系页面不放。
   - 都不填：没有任何广告代码，`ads.txt` 只有一行说明。
+  - 现在填的是 `ca-pub-5376276546587640`，还没有 `slot`（审核通过后在 AdSense 里建一个“展示广告”单元，把它的编号填进来）。
 
 ## SEO
 
