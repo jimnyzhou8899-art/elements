@@ -11,6 +11,45 @@
   [hidden] { display: none !important; }
 </style>
 <title>几何原本 · 卷一</title>
+<link rel="canonical" href="https://elements-pink.vercel.app/">
+<link rel="alternate" hreflang="zh-Hans" href="https://elements-pink.vercel.app/?lang=zh">
+<link rel="alternate" hreflang="en" href="https://elements-pink.vercel.app/?lang=en">
+<link rel="alternate" hreflang="es" href="https://elements-pink.vercel.app/?lang=es">
+<link rel="alternate" hreflang="fr" href="https://elements-pink.vercel.app/?lang=fr">
+<link rel="alternate" hreflang="de" href="https://elements-pink.vercel.app/?lang=de">
+<link rel="alternate" hreflang="ru" href="https://elements-pink.vercel.app/?lang=ru">
+<link rel="alternate" hreflang="ar" href="https://elements-pink.vercel.app/?lang=ar">
+<link rel="alternate" hreflang="hi" href="https://elements-pink.vercel.app/?lang=hi">
+<link rel="alternate" hreflang="ja" href="https://elements-pink.vercel.app/?lang=ja">
+<link rel="alternate" hreflang="x-default" href="https://elements-pink.vercel.app/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta name="theme-color" content="#f7f7f3">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Euclid's Elements · 几何原本">
+<meta property="og:title" content="Euclid's Elements, Book I · 几何原本 卷一">
+<meta property="og:description" content="All 48 propositions with draggable compass-and-straightedge figures and step-by-step proofs. 48 个命题，可拖动的尺规作图与逐步证明动画。">
+<meta property="og:url" content="https://elements-pink.vercel.app/">
+<meta property="og:image" content="https://elements-pink.vercel.app/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "LearningResource",
+  "name": "Euclid's Elements, Book I — interactive",
+  "alternateName": "几何原本 卷一",
+  "url": "https://elements-pink.vercel.app/",
+  "description": "All 48 propositions of Book I of Euclid's Elements with draggable compass-and-straightedge figures and step-by-step proof animations, in nine languages.",
+  "learningResourceType": ["interactive resource", "proof"],
+  "educationalLevel": "secondary school",
+  "teaches": "Euclidean plane geometry",
+  "inLanguage": ["zh-Hans", "en", "es", "fr", "de", "ru", "ar", "hi", "ja"],
+  "isAccessibleForFree": true,
+  "image": "https://elements-pink.vercel.app/og.png",
+  "about": { "@type": "Book", "name": "Elements", "author": { "@type": "Person", "name": "Euclid" } }
+}
+</script>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -136,6 +175,7 @@ li.cur .quote { display: block; }
 .deflist { list-style: none; padding: 0; margin: 0; display: grid; gap: 4px; }
 .deflist li { display: grid; grid-template-columns: 34px 1fr; gap: 6px; padding: 5px 0; border-bottom: 1px solid var(--soft); }
 .deflist .n { font-family: var(--latin); color: var(--red); font-variant-numeric: tabular-nums; }
+.noscript { padding: 16px; max-width: 52em; line-height: 1.6; }
 .todo { border: 1px dashed var(--rule); border-radius: 6px; padding: 22px; color: var(--muted); max-width: 44em; }
 .todo a { color: var(--blue); }
 
@@ -180,6 +220,65 @@ li.cur .quote { display: block; }
     <select id="lang" class="langsel"></select>
   </div>
 </header>
+<noscript>
+<section class="noscript">
+<h2>Euclid's Elements, Book I · 几何原本 卷一</h2>
+<p>Book I of Euclid's Elements: definitions, postulates, common notions and all 48 propositions, with draggable compass-and-straightedge constructions and step-by-step proofs.</p>
+<p>欧几里得《几何原本》第一卷：定义、公设、公理与 48 个命题，可拖动的尺规作图和逐步证明动画。</p>
+<p><a href="https://elements-pink.vercel.app/?lang=zh" hreflang="zh">中文</a> · <a href="https://elements-pink.vercel.app/?lang=en" hreflang="en">English</a> · <a href="https://elements-pink.vercel.app/?lang=es" hreflang="es">Español</a> · <a href="https://elements-pink.vercel.app/?lang=fr" hreflang="fr">Français</a> · <a href="https://elements-pink.vercel.app/?lang=de" hreflang="de">Deutsch</a> · <a href="https://elements-pink.vercel.app/?lang=ru" hreflang="ru">Русский</a> · <a href="https://elements-pink.vercel.app/?lang=ar" hreflang="ar">العربية</a> · <a href="https://elements-pink.vercel.app/?lang=hi" hreflang="hi">हिन्दी</a> · <a href="https://elements-pink.vercel.app/?lang=ja" hreflang="ja">日本語</a></p>
+<ol>
+<li><strong>Equilateral triangle</strong> / 作等边三角形 — On a given finite straight line to construct an equilateral triangle.</li>
+<li><strong>Copying a segment</strong> / 移置线段 — To place at a given point a straight line equal to a given straight line.</li>
+<li><strong>Cutting off a segment</strong> / 截取线段 — Given two unequal straight lines, to cut off from the greater a straight line equal to the less.</li>
+<li><strong>Side-angle-side</strong> / 边角边 — If two triangles have two sides equal to two sides respectively, and have the angles contained by the equal straight lines equal, they will also have the base equal to the base, the triangle will be equal to the triangle, and the remaining angles will be equal to the remaining angles respectively.</li>
+<li><strong>Isosceles base angles</strong> / 等腰三角形底角 — In isosceles triangles the angles at the base are equal to one another, and, if the equal straight lines be produced further, the angles under the base will be equal to one another.</li>
+<li><strong>Equal angles, equal sides</strong> / 等角对等边 — If in a triangle two angles be equal to one another, the sides which subtend the equal angles will also be equal to one another.</li>
+<li><strong>Uniqueness lemma</strong> / 唯一性引理 — Given two straight lines constructed on a straight line from its extremities and meeting in a point, there cannot be constructed on the same straight line from its extremities, and on the same side of it, two other straight lines meeting in another point and equal to the former two respectively.</li>
+<li><strong>Side-side-side</strong> / 边边边 — If two triangles have the two sides equal to two sides respectively, and have also the base equal to the base, they will also have the angles equal which are contained by the equal straight lines.</li>
+<li><strong>Bisecting an angle</strong> / 平分角 — To bisect a given rectilineal angle.</li>
+<li><strong>Bisecting a segment</strong> / 平分线段 — To bisect a given finite straight line.</li>
+<li><strong>Perpendicular from a point on a line</strong> / 作垂线（线上一点） — To draw a straight line at right angles to a given straight line from a given point on it.</li>
+<li><strong>Perpendicular from a point off a line</strong> / 作垂线（线外一点） — To a given infinite straight line, from a given point which is not on it, to draw a perpendicular straight line.</li>
+<li><strong>Supplementary angles</strong> / 邻补角 — If a straight line set up on a straight line makes angles, it will make either two right angles or angles equal to two right angles.</li>
+<li><strong>Converse of I.13</strong> / 邻补角之逆 — If with any straight line, and at a point on it, two straight lines not lying on the same side make the adjacent angles equal to two right angles, the two straight lines will be in a straight line with one another.</li>
+<li><strong>Vertical angles</strong> / 对顶角 — If two straight lines cut one another, they make the vertical angles equal to one another.</li>
+<li><strong>Exterior angle inequality</strong> / 外角大于内对角 — In any triangle, if one of the sides be produced, the exterior angle is greater than either of the interior and opposite angles.</li>
+<li><strong>Two angles less than two right</strong> / 两角和小于两直角 — In any triangle two angles taken together in any manner are less than two right angles.</li>
+<li><strong>Greater side, greater angle</strong> / 大边对大角 — In any triangle the greater side subtends the greater angle.</li>
+<li><strong>Greater angle, greater side</strong> / 大角对大边 — In any triangle the greater angle is subtended by the greater side.</li>
+<li><strong>Triangle inequality</strong> / 三角不等式 — In any triangle two sides taken together in any manner are greater than the remaining one.</li>
+<li><strong>Lines inside a triangle</strong> / 内部线段 — If on one of the sides of a triangle, from its extremities, there be constructed two straight lines meeting within the triangle, the straight lines so constructed will be less than the remaining two sides of the triangle, but will contain a greater angle.</li>
+<li><strong>Triangle from three segments</strong> / 三边作三角形 — Out of three straight lines, which are equal to three given straight lines, to construct a triangle: thus it is necessary that two of the straight lines taken together in any manner should be greater than the remaining one.</li>
+<li><strong>Copying an angle</strong> / 移置角 — On a given straight line and at a point on it to construct a rectilineal angle equal to a given rectilineal angle.</li>
+<li><strong>Hinge theorem</strong> / 夹角大则底边大 — If two triangles have the two sides equal to two sides respectively, but have the one of the angles contained by the equal straight lines greater than the other, they will also have the base greater than the base.</li>
+<li><strong>Converse of the hinge theorem</strong> / 底边大则夹角大 — If two triangles have the two sides equal to two sides respectively, but have the base greater than the base, they will also have the one of the angles contained by the equal straight lines greater than the other.</li>
+<li><strong>Angle-side-angle</strong> / 角边角 · 角角边 — If two triangles have the two angles equal to two angles respectively, and one side equal to one side, namely, either the side adjoining the equal angles, or that subtending one of the equal angles, they will also have the remaining sides equal to the remaining sides and the remaining angle to the remaining angle.</li>
+<li><strong>Alternate angles make parallels</strong> / 错角相等则平行 — If a straight line falling on two straight lines make the alternate angles equal to one another, the straight lines will be parallel to one another.</li>
+<li><strong>Corresponding angles make parallels</strong> / 同位角相等则平行 — If a straight line falling on two straight lines make the exterior angle equal to the interior and opposite angle on the same side, or the interior angles on the same side equal to two right angles, the straight lines will be parallel to one another.</li>
+<li><strong>Angles at parallel lines</strong> / 平行线的性质 — A straight line falling on parallel straight lines makes the alternate angles equal to one another, the exterior angle equal to the interior and opposite angle, and the interior angles on the same side equal to two right angles.</li>
+<li><strong>Parallels to the same line</strong> / 平行的传递 — Straight lines parallel to the same straight line are also parallel to one another.</li>
+<li><strong>Drawing a parallel</strong> / 作平行线 — Through a given point to draw a straight line parallel to a given straight line.</li>
+<li><strong>Angle sum of a triangle</strong> / 内角和 — In any triangle, if one of the sides be produced, the exterior angle is equal to the two interior and opposite angles, and the three interior angles of the triangle are equal to two right angles.</li>
+<li><strong>Joining equal parallels</strong> / 平行四边形判定 — The straight lines joining equal and parallel straight lines at the extremities which are in the same directions respectively are themselves also equal and parallel.</li>
+<li><strong>Parallelogram properties</strong> / 平行四边形性质 — In parallelogrammic areas the opposite sides and angles are equal to one another, and the diameter bisects the areas.</li>
+<li><strong>Parallelograms on the same base</strong> / 同底平行四边形 — Parallelograms which are on the same base and in the same parallels are equal to one another.</li>
+<li><strong>Parallelograms on equal bases</strong> / 等底平行四边形 — Parallelograms which are on equal bases and in the same parallels are equal to one another.</li>
+<li><strong>Triangles on the same base</strong> / 同底三角形 — Triangles which are on the same base and in the same parallels are equal to one another.</li>
+<li><strong>Triangles on equal bases</strong> / 等底三角形 — Triangles which are on equal bases and in the same parallels are equal to one another.</li>
+<li><strong>Converse of I.37</strong> / 同底等积之逆 — Equal triangles which are on the same base and on the same side are also in the same parallels.</li>
+<li><strong>Converse of I.38</strong> / 等底等积之逆 — Equal triangles which are on equal bases and on the same side are also in the same parallels.</li>
+<li><strong>Parallelogram is double the triangle</strong> / 平行四边形是三角形二倍 — If a parallelogram have the same base with a triangle and be in the same parallels, the parallelogram is double of the triangle.</li>
+<li><strong>Parallelogram equal to a triangle</strong> / 化三角形为平行四边形 — To construct, in a given rectilineal angle, a parallelogram equal to a given triangle.</li>
+<li><strong>Complements</strong> / 补形相等 — In any parallelogram the complements of the parallelograms about the diameter are equal to one another.</li>
+<li><strong>Application of areas</strong> / 贴合面积 — To a given straight line to apply, in a given rectilineal angle, a parallelogram equal to a given triangle.</li>
+<li><strong>Parallelogram equal to a polygon</strong> / 化多边形为平行四边形 — To construct, in a given rectilineal angle, a parallelogram equal to a given rectilineal figure.</li>
+<li><strong>Constructing a square</strong> / 作正方形 — On a given straight line to describe a square.</li>
+<li><strong>Pythagorean theorem</strong> / 勾股定理 — In right-angled triangles the square on the side subtending the right angle is equal to the squares on the sides containing the right angle.</li>
+<li><strong>Converse of Pythagoras</strong> / 勾股定理之逆 — If in a triangle the square on one of the sides be equal to the squares on the remaining two sides of the triangle, the angle contained by the remaining two sides of the triangle is right.</li>
+</ol>
+<p>JavaScript is needed for the interactive figures. 交互图形需要启用 JavaScript。</p>
+</section>
+</noscript>
 <div class="app">
   <nav id="nav"></nav>
   <main>
@@ -191,6 +290,7 @@ li.cur .quote { display: block; }
 <script>
 // ---------------------------------------------------------------- text
 // All visible text lives in i18n/<code>.js, which sets I18N[code]; T is the active locale.
+const SITE = "https://elements-pink.vercel.app/";
 const LANGS = { zh: "中文", en: "English", es: "Español", fr: "Français", de: "Deutsch", ru: "Русский", ar: "العربية", hi: "हिन्दी", ja: "日本語" };
 const FONTS = {
   zh: ["\"Noto Serif SC\", \"Songti SC\", serif", "Noto+Serif+SC:wght@400;600;900"],
@@ -720,6 +820,10 @@ function buildChrome() {
   }
   document.title = U.title;
   document.querySelector('meta[name="description"]').content = U.metaDesc;
+  document.querySelector('link[rel="canonical"]').href = SITE + "?lang=" + LANG;
+  document.querySelector('meta[property="og:url"]').content = SITE + "?lang=" + LANG;
+  document.querySelector('meta[property="og:title"]').content = U.title;
+  document.querySelector('meta[property="og:description"]').content = U.metaDesc;
   document.getElementById("h1a").textContent = U.h1;
   document.getElementById("h1b").textContent = U.h1b;
   document.getElementById("tagline").textContent = U.tagline;
@@ -760,6 +864,8 @@ function route() {
   else if (r === "sandbox") mountSandbox();
   else if (m) mountProp(+m[1]);
   else { r = "p1"; mountProp(1); }
+  const pn = r.match(/^p(\d+)$/);
+  document.title = pn ? `${T.ui.prop} I.${pn[1]} · ${T.props[pn[1] - 1][1]} — ${T.ui.title}` : T.ui.title;
   nav.querySelectorAll("a").forEach(a => { if (a.dataset.r === r) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current"); });
   sel.value = r;
 }
