@@ -2,6 +2,29 @@
 I18N.fr = {
   htmlLang: "fr",
   dir: "ltr",
+  hub: {
+    title: "Éléments · Maths et sciences par la pratique",
+    desc: "Démonstrations manipulables des Éléments d'Euclide et leçons interactives en 3D de physique, chimie, biologie et géographie.",
+    home: "Accueil",
+    brand: "Éléments",
+    brandSub: "Maths et sciences par la pratique",
+    hero: "Apprendre les maths et les sciences en les faisant",
+    heroText: "Faites glisser une figure et voyez la démonstration tenir pas à pas ; menez des expériences de physique, chimie, biologie et géographie sur un banc 3D.",
+    subj: {
+      math: "Mathématiques",
+      phys: "Physique",
+      chem: "Chimie",
+      bio: "Biologie",
+      geo: "Géographie"
+    },
+    count: "{n} éléments",
+    steps: "{n} étapes",
+    euclid: "Les 48 propositions du Livre I d'Euclide, avec des constructions à la règle et au compas manipulables et des démonstrations pas à pas.",
+    start: "Commencer par la proposition I.1",
+    labDesc: "{t} : une leçon interactive en 3D de {s}, à suivre pas à pas dans le navigateur.",
+    full: "Plein écran",
+    zhOnly: "leçon en chinois"
+  },
   ui: {
     title: "Les Éléments d'Euclide · Livre I",
     h1: "Les Éléments d'Euclide",

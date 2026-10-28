@@ -5,9 +5,14 @@
   "cleanUrls": true,
   "redirects": [
     {
-      "source": "/p/1",
+      "source": "/lab/files/index",
       "destination": "/",
-      "permanent": true
+      "permanent": false
+    },
+    {
+      "source": "/lab/files/index.html",
+      "destination": "/",
+      "permanent": false
     }
   ],
   "rewrites": [
@@ -45,6 +50,17 @@
       "destination": "/_l/:lang/:page"
     },
     {
+      "source": "/lab/:slug([a-z0-9-]+)",
+      "has": [
+        {
+          "type": "query",
+          "key": "lang",
+          "value": "(?<lang>zh|en|es|fr|de|ru|ar|hi|ja)"
+        }
+      ],
+      "destination": "/_l/:lang/lab/:slug"
+    },
+    {
       "source": "/",
       "destination": "/_l/x/home"
     },
@@ -55,6 +71,10 @@
     {
       "source": "/:page(intro|sandbox|about|privacy|contact)",
       "destination": "/_l/x/:page"
+    },
+    {
+      "source": "/lab/:slug([a-z0-9-]+)",
+      "destination": "/_l/x/lab/:slug"
     }
   ],
   "headers": [

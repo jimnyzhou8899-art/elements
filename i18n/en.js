@@ -2,6 +2,29 @@
 I18N.en = {
   htmlLang: "en",
   dir: "ltr",
+  hub: {
+    title: "Elements · Hands-on math and science",
+    desc: "Draggable proofs from Euclid's Elements, plus interactive 3D lessons in physics, chemistry, biology and geography.",
+    home: "Home",
+    brand: "Elements",
+    brandSub: "Hands-on math and science",
+    hero: "Learn math and science by doing it",
+    heroText: "Drag a figure and watch a proof hold step by step; run physics, chemistry, biology and geography experiments on a 3D bench.",
+    subj: {
+      math: "Mathematics",
+      phys: "Physics",
+      chem: "Chemistry",
+      bio: "Biology",
+      geo: "Geography"
+    },
+    count: "{n} items",
+    steps: "{n} steps",
+    euclid: "All 48 propositions of Euclid's Book I, with draggable compass-and-straightedge figures and step-by-step proofs.",
+    start: "Start with Proposition I.1",
+    labDesc: "{t}: an interactive 3D {s} lesson you work through step by step in the browser.",
+    full: "Full screen",
+    zhOnly: "lesson in Chinese"
+  },
   ui: {
     title: "Euclid's Elements · Book I",
     h1: "Euclid's Elements",

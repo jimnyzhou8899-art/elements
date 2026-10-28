@@ -2,6 +2,29 @@
 I18N.es = {
   htmlLang: "es",
   dir: "ltr",
+  hub: {
+    title: "Elementos · Matemáticas y ciencias en la práctica",
+    desc: "Demostraciones arrastrables de los Elementos de Euclides y lecciones interactivas en 3D de física, química, biología y geografía.",
+    home: "Inicio",
+    brand: "Elementos",
+    brandSub: "Matemáticas y ciencias en la práctica",
+    hero: "Aprende matemáticas y ciencias haciéndolas",
+    heroText: "Arrastra una figura y mira cómo la demostración se mantiene paso a paso; haz experimentos de física, química, biología y geografía en un banco 3D.",
+    subj: {
+      math: "Matemáticas",
+      phys: "Física",
+      chem: "Química",
+      bio: "Biología",
+      geo: "Geografía"
+    },
+    count: "{n} elementos",
+    steps: "{n} pasos",
+    euclid: "Las 48 proposiciones del Libro I de Euclides, con figuras de regla y compás arrastrables y demostraciones paso a paso.",
+    start: "Empezar por la Proposición I.1",
+    labDesc: "{t}: lección interactiva en 3D de {s} que se recorre paso a paso en el navegador.",
+    full: "Pantalla completa",
+    zhOnly: "lección en chino"
+  },
   ui: {
     title: "Elementos de Euclides · Libro I",
     h1: "Elementos de Euclides",

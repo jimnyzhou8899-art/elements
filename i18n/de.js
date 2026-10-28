@@ -2,6 +2,29 @@
 I18N.de = {
   htmlLang: "de",
   dir: "ltr",
+  hub: {
+    title: "Elemente · Mathematik und Naturwissenschaften zum Anfassen",
+    desc: "Ziehbare Beweise aus Euklids Elementen sowie interaktive 3D-Lektionen in Physik, Chemie, Biologie und Geographie.",
+    home: "Startseite",
+    brand: "Elemente",
+    brandSub: "Mathematik und Naturwissenschaften zum Anfassen",
+    hero: "Mathematik und Naturwissenschaften durch Ausprobieren lernen",
+    heroText: "Ziehen Sie an einer Figur und sehen Sie, wie der Beweis Schritt für Schritt gilt; machen Sie Versuche in Physik, Chemie, Biologie und Geographie an einem 3D-Labortisch.",
+    subj: {
+      math: "Mathematik",
+      phys: "Physik",
+      chem: "Chemie",
+      bio: "Biologie",
+      geo: "Geographie"
+    },
+    count: "{n} Einträge",
+    steps: "{n} Schritte",
+    euclid: "Alle 48 Sätze aus Euklids Buch I, mit ziehbaren Zirkel-und-Lineal-Figuren und schrittweisen Beweisen.",
+    start: "Mit Satz I.1 beginnen",
+    labDesc: "{t}: eine interaktive 3D-Lektion ({s}), Schritt für Schritt im Browser.",
+    full: "Vollbild",
+    zhOnly: "Lektion auf Chinesisch"
+  },
   ui: {
     title: "Euklids Elemente · Buch I",
     h1: "Euklids Elemente",
