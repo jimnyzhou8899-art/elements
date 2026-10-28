@@ -145,8 +145,8 @@ button:focus-visible, a:focus-visible, select:focus-visible { outline: 2px solid
 .book p { margin: 0; color: var(--muted); font-size: 13px; }
 
 /* Home page: hero, then one section of cards per subject */
-:root[data-view="home"] .book, :root[data-view="home"] nav#nav, :root[data-view="home"] .navsel { display: none !important; }
-:root[data-view="home"] .app { grid-template-columns: minmax(0, 1fr); }
+:root:is([data-view="home"], [data-view="lab"]) :is(.book, nav#nav, .navsel) { display: none !important; }
+:root:is([data-view="home"], [data-view="lab"]) .app { grid-template-columns: minmax(0, 1fr); }
 .hub { max-width: 1120px; margin-inline: auto; }
 .hero { padding-block: 28px 8px; }
 .hero-t { font-size: clamp(28px, 4.4vw, 42px); font-weight: 900; line-height: 1.25; margin: 0 0 10px; letter-spacing: .02em; text-wrap: balance; }
@@ -162,6 +162,8 @@ button:focus-visible, a:focus-visible, select:focus-visible { outline: 2px solid
 .card .cd { font-size: 13.5px; color: var(--muted); line-height: 1.6; }
 .card .cm { margin-top: auto; font: 12.5px var(--sans); color: var(--c); font-weight: 600; }
 .card.feature { grid-row: span 2; }
+.card.lesson { padding-top: 0; overflow: hidden; }
+.card .cover { display: block; width: calc(100% + 32px); max-width: none; margin: 0 -16px 4px; aspect-ratio: 16 / 9; height: auto; object-fit: cover; background: var(--soft); border-bottom: 1px solid var(--rule); }
 :root[dir="rtl"] .card .arr { display: inline-block; transform: scaleX(-1); }
 .card.feature .ct { font-size: 20px; font-weight: 900; }
 .emblem { width: 120px; height: 80px; margin-bottom: 4px; }
@@ -169,6 +171,18 @@ button:focus-visible, a:focus-visible, select:focus-visible { outline: 2px solid
 .e-blue { stroke: var(--blue); } .e-red { stroke: var(--red); } .e-yel { fill: var(--f-yel); stroke: var(--yellow); stroke-width: 2.5; stroke-linejoin: round; }
 .credit { margin: 30px 0 0; padding-top: 12px; border-top: 1px solid var(--rule); font: 13px/1.7 var(--sans); color: var(--muted); }
 .credit a { color: var(--blue); }
+/* Lesson page: the lab's lesson in a frame */
+.lesson-page { max-width: 1280px; margin-inline: auto; }
+.lesson-page .crumb { margin: 0 0 2px; font: 12.5px var(--sans); }
+.lesson-page .crumb a { color: var(--c); text-decoration: none; font-weight: 600; }
+.lhead { display: flex; align-items: baseline; gap: 6px 14px; flex-wrap: wrap; margin-bottom: 12px; }
+.lhead .stmt { margin: 0; }
+.lmeta { font: 13px var(--sans); color: var(--muted); }
+.lhead .btn { margin-inline-start: auto; align-self: center; }
+.lframe { border: 1px solid var(--rule); border-top: 3px solid var(--c); border-radius: 10px; overflow: hidden; box-shadow: var(--card); background: #000; }
+.lframe iframe { display: block; width: 100%; aspect-ratio: 16 / 9; max-height: calc(100vh - 150px); min-height: 420px; border: 0; }
+.lesson-page .credit { margin-top: 14px; }
+@media (max-width: 720px) { .lframe iframe { aspect-ratio: 3 / 4; min-height: 0; max-height: calc(100vh - 120px); } }
 @media (prefers-reduced-motion: reduce) { .card { transition: none; } .card:hover { transform: none; } }
 
 .app { display: grid; grid-template-columns: 232px minmax(0, 1fr); padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); gap: 28px; }
@@ -869,15 +883,33 @@ function mountPage(name) {
 function mountHome(keep) {
   if (!keep) view.innerHTML = homeHTML(T, window.LAB || []);
 }
+function mountLab(slug, keep) {
+  if (!keep) view.innerHTML = labHTML(T, slug);
+  const frame = view.querySelector("#lesson");
+  view.querySelector("#full").onclick = () => { if (frame.requestFullscreen) frame.requestFullscreen().catch(() => {}); };
+  // The lesson's own "目录" link points at ./index.html; send it to this subject on the home page instead.
+  const hook = () => {
+    try {
+      frame.contentDocument.addEventListener("click", e => {
+        if (!e.target.closest || !e.target.closest("a.home")) return;
+        e.preventDefault();
+        navigate("home", "#" + labOf(slug)[1]);
+      }, true);
+    } catch (e) {}
+  };
+  frame.addEventListener("load", hook);
+  if (frame.contentDocument && frame.contentDocument.readyState === "complete" && frame.contentDocument.URL !== "about:blank") hook();
+}
 
 function route() {
   if (teardown) { teardown(); teardown = null; }
   const r = routeOf(location.pathname) || "home";
-  document.documentElement.dataset.view = r === "home" ? "home" : "book";
+  document.documentElement.dataset.view = r === "home" ? "home" : r.startsWith("lab/") ? "lab" : "book";
   // on the first draw, the pre-rendered view is still right if it is for this route and language
   const keep = view.dataset.r === r && document.documentElement.dataset.baked === LANG;
   delete view.dataset.r;
   if (r === "home") mountHome(keep);
+  else if (r.startsWith("lab/")) mountLab(r.slice(4), keep);
   else if (r === "intro") mountIntro();
   else if (r === "sandbox") mountSandbox();
   else if (LEGAL.includes(r)) mountPage(r);
@@ -885,7 +917,7 @@ function route() {
   setHead(r);
   document.getElementById("foot").innerHTML = footHTML(T, r);
   nav.querySelectorAll("a").forEach(a => { if (a.dataset.r === r) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current"); });
-  document.querySelectorAll("#subjects .pill").forEach(a => { if (r !== "home" && a.dataset.s === "math") a.setAttribute("aria-current", "true"); else a.removeAttribute("aria-current"); });
+  document.querySelectorAll("#subjects .pill").forEach(a => { if (r.startsWith("lab/") ? a.dataset.s === labOf(r.slice(4))[1] : r !== "home" && a.dataset.s === "math") a.setAttribute("aria-current", "true"); else a.removeAttribute("aria-current"); });
   sel.value = r;
   showAd(r);
 }
@@ -929,6 +961,9 @@ async function setLang(code, remember) {
   buildChrome();
   route();
   document.documentElement.classList.remove("swap");
+  // a home-page section (/#chem) may have been redrawn in another language after the browser jumped to it
+  const el = location.hash && document.getElementById(location.hash.slice(1));
+  if (el) el.scrollIntoView();
 }
 
 langSel.innerHTML = Object.entries(LANGS).map(([k, v]) => `<option value="${k}" lang="${k}">${v}</option>`).join("");

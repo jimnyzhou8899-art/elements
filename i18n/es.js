@@ -22,7 +22,10 @@ I18N.es = {
     euclid: "Las 48 proposiciones del Libro I de Euclides, con figuras de regla y compás arrastrables y demostraciones paso a paso.",
     start: "Empezar por la Proposición I.1",
     labName: "Tongjiang Lab (铜匠实验室)",
-    credit: "Las lecciones de física, química, biología y geografía son de {lab}, con licencia {license}, y se abren en su sitio. Están en chino."
+    credit: "Las lecciones de física, química, biología y geografía son de {lab} y se usan aquí con permiso del autor.",
+    labDesc: "{t}: lección interactiva en 3D de {s} que se recorre paso a paso en el navegador.",
+    full: "Pantalla completa",
+    zhOnly: "lección en chino"
   },
   ui: {
     title: "Elementos de Euclides · Libro I",

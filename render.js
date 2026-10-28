@@ -5,9 +5,11 @@ const READY = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19
 // 作 = problem (ends Q.E.F.), 证 = theorem (ends Q.E.D.), for I.1 … I.48
 const KINDS = "作作作证证证证证作作作作证证证证证证证证证作作证证证证证证证作证证证证证证证证证证作证作作作证证";
 const LEGAL = ["about", "privacy", "contact"];
-// Subjects on the home page. Math is Euclid (this site); the others list Tongjiang Lab's lessons (lab.js), opened on the lab's site.
+// Subjects on the home page. Math is Euclid; the others are Tongjiang Lab's lessons (lab.js, files in lab/), used with the author's permission.
 const SUBJECTS = ["math", "phys", "chem", "bio", "geo"];
 const LAB_SITE = "https://lab.tongjiang.app";
+const labOf = slug => (typeof LAB !== "undefined" ? LAB : []).find(x => x[0] === slug);
+const labTitle = (T, x) => T.htmlLang.startsWith("zh") ? x[2] : x[3];
 // Scripts that need their own serif; the rest use EB Garamond ("latin").
 const FONTS = {
   zh: ["\"Noto Serif SC\", \"Songti SC\", serif", "Noto+Serif+SC:wght@400;600;900"],
@@ -34,12 +36,15 @@ function refText(T, r) {
 }
 
 // ---------------------------------------------------------------- addresses
-// Routes are "home" (the subject index at /), "p1" … "p48", "intro", "sandbox", "about", "privacy", "contact".
+// Routes are "home" (the subject index at /), "p1" … "p48", "intro", "sandbox", "about", "privacy", "contact",
+// and "lab/<slug>" for each science lesson (/lab/haber-step).
 const pathFor = r => r === "home" ? "/" : /^p\d+$/.test(r) ? "/p/" + r.slice(1) : "/" + r;
 function routeOf(path) {
   const m = path.match(/^\/p\/(\d{1,2})\/?$/);
   if (m) return +m[1] >= 1 && +m[1] <= 48 ? "p" + +m[1] : null;
   const w = path.replace(/^\/|\/$/g, "");
+  const lm = w.match(/^lab\/([\w-]+)$/);
+  if (lm) return labOf(lm[1]) ? w : null;
   return w === "" ? "home" : ["intro", "sandbox", ...LEGAL].includes(w) ? w : null;
 }
 
@@ -47,6 +52,10 @@ function routeOf(path) {
 function headTexts(T, P, r) {
   const U = T.ui, n = /^p\d+$/.test(r) ? +r.slice(1) : 0, pg = P && P[r];
   if (r === "home") return { title: T.hub.title, desc: T.hub.desc };
+  if (r.startsWith("lab/")) {
+    const x = labOf(r.slice(4)), t = labTitle(T, x);
+    return { title: `${t} · ${T.hub.subj[x[1]]} — ${T.hub.brand}`, desc: tr(T.hub.labDesc, { t, s: T.hub.subj[x[1]] }) };
+  }
   if (n) return { title: `${U.prop} I.${n} · ${T.props[n - 1][1]} — ${U.title}`, desc: `${U.prop} I.${n}${U.colon}${strip(T.props[n - 1][0])}` };
   if (r === "intro") return { title: `${U.navIntro} — ${U.title}`, desc: U.metaDesc };
   if (r === "sandbox") return { title: `${U.navSandbox} — ${U.title}`, desc: U.metaDesc };
@@ -94,6 +103,7 @@ function homeHTML(T, lab) {
       <a class="card" href="/intro"><span class="ct">${U.navIntro}</span><span class="cd">${U.tagline}</span><span class="cm">${U.navOpen} <span class="arr">→</span></span></a>
       <a class="card" href="/sandbox"><span class="ct">${U.navSandbox}</span><span class="cd">${U.sbTitle}</span><span class="cm">${U.navHands} <span class="arr">→</span></span></a>`;
   const lessons = s => lab.filter(x => x[1] === s);
+  const credit = tr(H.credit, { lab: `<a href="${LAB_SITE}" target="_blank" rel="noopener">${H.labName}</a>` });
   return `<div class="hub">
     <section class="hero">
       <p class="eyebrow">${H.brandSub}</p>
@@ -102,8 +112,8 @@ function homeHTML(T, lab) {
     </section>
     ${section("math", 3, math)}
     ${SUBJECTS.slice(1).map(s => section(s, lessons(s).length, lessons(s).map(x =>
-      `<a class="card lesson" href="${LAB_SITE}/${x[0]}" target="_blank" rel="noopener"${zh ? "" : ` lang="en"`}><span class="ct">${zh ? x[2] : x[3]}</span><span class="cm">${tr(H.steps, { n: x[4] })} ↗</span></a>`).join(""))).join("")}
-    <p class="credit">${tr(H.credit, { lab: `<a href="${LAB_SITE}" target="_blank" rel="noopener">${H.labName}</a>`, license: `<a href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="noopener license">CC BY-NC 4.0</a>` })}</p>
+      `<a class="card lesson" href="/lab/${x[0]}"><img class="cover" src="/lab/covers/${x[0]}.webp" alt="" loading="lazy" width="800" height="450"><span class="ct"${zh ? "" : ` lang="en"`}>${labTitle(T, x)}</span><span class="cm">${tr(H.steps, { n: x[4] })} <span class="arr">→</span></span></a>`).join(""))).join("")}
+    <p class="credit">${credit}</p>
   </div>`;
 }
 function propHTML(T, n, def, texts) {
@@ -166,6 +176,18 @@ function sandboxHTML(T) {
         <ul>${U.tryItems.map(x => `<li>${fmt(x)}</li>`).join("")}</ul>
       </div>
     </div>`;
+}
+// One science lesson: the lab's self-contained HTML file in a frame, with the site's header, credit and ads around it.
+function labHTML(T, slug) {
+  const H = T.hub, x = labOf(slug), zh = T.htmlLang.startsWith("zh");
+  return `<div class="lesson-page" data-s="${x[1]}">
+    <p class="crumb"><a href="/#${x[1]}">${H.subj[x[1]]}</a></p>
+    <div class="lhead"><h1 class="stmt"${zh ? "" : ` lang="en"`}>${labTitle(T, x)}</h1>
+      <span class="lmeta">${tr(H.steps, { n: x[4] })}${zh ? "" : ` · ${H.zhOnly}`}</span>
+      <button class="btn" id="full">${H.full}</button></div>
+    <div class="lframe"><iframe id="lesson" src="/lab/files/${slug}" title="${attr(labTitle(T, x))}" allow="fullscreen" allowfullscreen loading="lazy"></iframe></div>
+    <p class="credit">${tr(H.credit, { lab: `<a href="${LAB_SITE}" target="_blank" rel="noopener">${H.labName}</a>` })}</p>
+  </div>`;
 }
 // About, privacy policy, contact. cfg = { repo, email, policyDate } from site.config.json.
 function pageHTML(T, P, name, cfg) {

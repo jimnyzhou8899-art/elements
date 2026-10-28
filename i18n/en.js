@@ -22,7 +22,10 @@ I18N.en = {
     euclid: "All 48 propositions of Euclid's Book I, with draggable compass-and-straightedge figures and step-by-step proofs.",
     start: "Start with Proposition I.1",
     labName: "Tongjiang Lab (铜匠实验室)",
-    credit: "The physics, chemistry, biology and geography lessons are made by {lab}, licensed {license}, and open on their site. The lessons are in Chinese."
+    credit: "The physics, chemistry, biology and geography lessons are made by {lab} and used here with the author's permission.",
+    labDesc: "{t}: an interactive 3D {s} lesson you work through step by step in the browser.",
+    full: "Full screen",
+    zhOnly: "lesson in Chinese"
   },
   ui: {
     title: "Euclid's Elements · Book I",

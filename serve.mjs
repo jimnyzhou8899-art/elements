@@ -7,7 +7,7 @@ import path from "node:path";
 
 const DIST = path.join(path.dirname(new URL(import.meta.url).pathname), "dist");
 const vercel = JSON.parse(fs.readFileSync(new URL("./vercel.json", import.meta.url), "utf8"));
-const TYPES = { ".html": "text/html; charset=utf-8", ".js": "text/javascript; charset=utf-8", ".svg": "image/svg+xml", ".png": "image/png", ".xml": "application/xml", ".txt": "text/plain; charset=utf-8" };
+const TYPES = { ".html": "text/html; charset=utf-8", ".js": "text/javascript; charset=utf-8", ".svg": "image/svg+xml", ".png": "image/png", ".xml": "application/xml", ".txt": "text/plain; charset=utf-8", ".webp": "image/webp", ".md": "text/markdown; charset=utf-8" };
 // path-to-regexp subset used in vercel.json: /:name(regex) and literal segments
 const compile = src => new RegExp("^" + src.replace(/:(\w+)\(([^)]*)\)/g, "(?<$1>$2)").replace(/:(\w+)/g, "(?<$1>[^/]+)") + "$");
 const subst = (dest, groups) => dest.replace(/:(\w+)/g, (m, k) => groups[k] ?? m);
