@@ -58,4 +58,4 @@ window.LAB = [
   ["circulation-step", "geo", "气压带、风带与三圈环流", "Pressure Belts, Wind Belts and the Three-Cell Circulation", 7]
 ];
 // Lessons with an English version in lab/files/en/ (written by tools/lab-i18n.js).
-window.LAB_EN = ["accel-force-step","ball-stick-step","blast-furnace-step","capacitor-step","carbon-step","cement-step","chlorine-step","coal-gas-step","currents-step","earth-motion-step","enso-step","haber-step","heating-step","hydrolysis-step","insolation-step","iron-step","karst-step","photoelectric-step","rate-step","river-step","smelting-step","sulfuric-step","tectonic-step","titration-step"];
+window.LAB_EN = ["accel-force-step","ball-stick-step","blast-furnace-step","capacitor-step","carbon-step","cement-step","chlorine-step","coal-gas-step","currents-step","earth-motion-step","enso-step","haber-step","heating-step","hydrolysis-step","insolation-step","iron-step","karst-step","photoelectric-step","plasmolysis-step","rate-step","river-step","smelting-step","sulfuric-step","tectonic-step","titration-step"];
