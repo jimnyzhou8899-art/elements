@@ -457,5 +457,8 @@
  "格子砖蓄热": "Checker bricks store heat",
  "热风去围管": "Hot blast to the bustle pipe",
  "热风温度 {$0} ℃ ≥ 1300 ℃ · 3 秒内不降回将烧穿风口（本演示预设联锁失效）": "Hot blast {$0} ℃ ≥ 1300 ℃ · tuyeres will burn through unless lowered within 3 s (this demo assumes the interlock fails)",
- "热风温度 {$0} ℃ ≤ 950 ℃ · 3 秒内不拉回将炉凉冻结（本演示预设联锁失效）": "Hot blast {$0} ℃ ≤ 950 ℃ · the hearth will chill and freeze unless raised within 3 s (this demo assumes the interlock fails)"
+ "热风温度 {$0} ℃ ≤ 950 ℃ · 3 秒内不拉回将炉凉冻结（本演示预设联锁失效）": "Hot blast {$0} ℃ ≤ 950 ℃ · the hearth will chill and freeze unless raised within 3 s (this demo assumes the interlock fails)",
+ "常考「高炉炼铁的还原剂主要是 CO 不是焦炭」：焦炭靠先变成 CO 才去还原。": "A common question: \"the main reducing agent in a blast furnace is CO, not coke\". Coke only reduces by first becoming CO.",
+ "高炉里铁的还原剂主要是": "In a blast furnace, the main reducing agent for iron is",
+ "炉料要分层交替加入，主要是因为": "The burden is charged in alternating layers mainly because"
 }
