@@ -177,7 +177,6 @@
  "CAMERA.homeBox 要写成 { min: [x, y, z], max: [x, y, z] }",
  "CAMERA.focusY={$0}：要写成区间 [下, 上]（单元步目标点高度夹在这里；只想固定一个高度就写 [h, h]）",
  "CAMERA.orbitYaw='{$0}'：目前只有 'free'（方位角限位计划在 v1.1）",
- "uniform vec3 uColor; uniform float uTime, uW, uHi, uDim, uOpacity, uDash;\n      varying vec2 vUv; varying float vFade; varying float vFace; varying vec3 vN;\n      void main(){\n        vec3 L = normalize(vec3(0.35, 0.55, 0.9));\n        float lit = 0.80 + 0.22 * abs(dot(normalize(vN), L));\n        vec3 col = uColor * lit;\n        if (vFace > 0.5) {\n          float e = min(vUv.x, 1.0 - vUv.x) * uW;                // 离边缘的世界距离\n          col *= mix(0.62, 1.0, smoothstep(0.0, 0.08, e));       // 边缘深一档（浅背板上也看得清）\n          float ch = fract((vUv.y - uTime * 0.9 - abs(vUv.x - 0.5) * min(uW, 2.0) * 0.5) / 2.4);\n          col = mix(col, vec3(1.0), 0.11 * smoothstep(0.0, 0.1, ch) * (1.0 - smoothstep(0.16, 0.3, ch)));   // 沿流向移动的 V 纹\n          if (uDash > 0.5) { float d = step(0.5, fract(vUv.y / 0.5)); col = mix(col, vec3(1.0), 0.45 * (1.0 - smoothstep(0.0, 0.09, e)) * d); }\n        } else col *= 0.78;\n        col = mix(col, vec3(1.0), 0.16 * uHi);\n        float a = uOpacity * vFade * (1.0 - 0.65 * uDim);\n        col = mix(col, vec3(dot(col, vec3(0.33))), 0.4 * uDim);\n        gl_FragColor = vec4(col, a);\n        #include <colorspace_fragment>\n      }",
  "昼",
  "夜",
  "大气上界",

@@ -44,10 +44,12 @@ function strings(code, expr = false) {
 const texts = (code, expr) => strings(code, expr).flatMap(s => [s, ...(s.exprs || []).flatMap(e => texts(e, true))]);
 // Style sheets inside the script carry Chinese only in comments, which are dropped instead of translated.
 const isCss = t => /\/\*[\s\S]*?\*\//.test(t) && /[{;]\s*[\w-]+\s*:/.test(t);
-const plain = t => isCss(t) ? t.replace(/\/\*[\s\S]*?\*\//g, "") : t;
+// Shaders (GLSL) likewise: their Chinese is only in // comments.
+const isGlsl = t => /void\s+main\s*\(/.test(t) && /gl_(Frag|Position)/.test(t);
+const plain = t => isCss(t) ? t.replace(/\/\*[\s\S]*?\*\//g, "") : isGlsl(t) ? t.replace(/\/\/[^\n]*/g, "") : t;
 // …and their content:"…" labels are listed and translated one by one.
 const CONTENT = /(content\s*:\s*)(["'])([^"'\n]*?)\2/g;
-const pieces = t => isCss(t) ? [...plain(t).matchAll(CONTENT)].map(m => m[3]).filter(x => HAN.test(x)) : [t];
+const pieces = t => isCss(t) ? [...plain(t).matchAll(CONTENT)].map(m => m[3]).filter(x => HAN.test(x)) : [plain(t)];
 const tplEsc = s => s.replace(/\\/g, "\\\\").replace(/`/g, "\\`").replace(/\$\{/g, "\\${");
 
 const [cmd, slug] = process.argv.slice(2);
@@ -68,7 +70,7 @@ if (cmd === "extract") {
     let out = code;
     for (const s of strings(code, expr).reverse()) {
       const p = plain(s.text);
-      const t = isCss(s.text) ? p.replace(CONTENT, (m, a, q, v) => HAN.test(v) && en[v] != null ? a + q + en[v].replace(/["'\\]/g, "") + q : m) : en[p];
+      const t = isCss(s.text) ? p.replace(CONTENT, (m, a, q, v) => HAN.test(v) && en[v] != null ? a + q + en[v].replace(/["'\\]/g, "") + q : m) : HAN.test(p) ? en[p] : p;
       let rep;
       if (s.kind === "lit") { if (t == null) { missing++; continue; } rep = JSON.stringify(t); }
       else {

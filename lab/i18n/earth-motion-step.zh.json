@@ -430,7 +430,6 @@
  "这是昏线——顺着自转方向它是从昼半球进入夜半球的那半圈",
  "示意声明：日地距离、太阳大小、地球半径与轨道形状（真实偏心率 0.0167，画面画成 0.08）均为示意；直射点纬度与昼长为模型计算值（近似）。底图：NASA Blue Marble。",
  "快捷键 ← → 翻步 · 1–9 跳步 · 空格 地球转停 · Q 检测 · F 全屏",
- "uniform sampler2D map; uniform vec3 sunDir; uniform float nightK; uniform float zones; varying vec2 vUv; varying vec3 vN; varying vec3 vV;\n      void main(){ vec3 t = texture2D(map, vUv).rgb;\n        float lon = vUv.x * 360.0 - 180.0;\n        float band = mod(floor((lon + 7.5) / 15.0), 2.0);\n        t = mix(t, vec3(1.0), band * 0.22 * zones);\n        float d = dot(normalize(vN), normalize(sunDir));\n        vec3 dayC = t * (0.98 + 0.22 * max(d, 0.0));\n        vec3 nightC = mix(t * 0.16, vec3(0.04, 0.07, 0.18), 0.5);\n        float k = smoothstep(-0.035, 0.045, d);\n        vec3 c = mix(mix(dayC, nightC, nightK), dayC, k);\n        // 晨昏过渡带一点暖色、白天海面一处太阳反光、白天球缘一圈淡蓝大气（时区色带步不加反光）\n        vec3 n = normalize(vN), v = normalize(vV), L = normalize(sunDir);\n        c += k * (1.0 - k) * 4.0 * vec3(0.14, 0.05, -0.02);\n        float sea = smoothstep(0.03, 0.14, t.b - max(t.r, t.g));\n        c += (1.0 - zones) * sea * k * pow(max(dot(reflect(-L, n), v), 0.0), 60.0) * vec3(0.5, 0.46, 0.38);\n        c = mix(c, vec3(0.62, 0.80, 1.0), pow(1.0 - max(dot(n, v), 0.0), 3.0) * (0.12 + 0.4 * k));\n        gl_FragColor = vec4(c, 1.0);\n        #include <tonemapping_fragment>\n        #include <colorspace_fragment>\n      }",
  "零",
  "一",
  "二",
