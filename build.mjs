@@ -17,9 +17,10 @@ const read = f => fs.readFileSync(path.join(ROOT, f), "utf8");
 const cfg = JSON.parse(read("site.config.json"));
 const SITE = cfg.site.replace(/\/+$/, "");
 // ADSENSE_CLIENT / ADSENSE_SLOT environment variables (e.g. set in Vercel) override site.config.json.
-const ad = { client: process.env.ADSENSE_CLIENT ?? (cfg.adsense || {}).client ?? "", slot: process.env.ADSENSE_SLOT ?? (cfg.adsense || {}).slot ?? "" };
+// adsense.multiplexSlot (ADSENSE_MULTIPLEX_SLOT) is a second, "autorelaxed" unit at the bottom of the page.
+const ad = { client: process.env.ADSENSE_CLIENT ?? (cfg.adsense || {}).client ?? "", slot: process.env.ADSENSE_SLOT ?? (cfg.adsense || {}).slot ?? "", multiplex: process.env.ADSENSE_MULTIPLEX_SLOT ?? (cfg.adsense || {}).multiplexSlot ?? "" };
 if (ad.client && !/^ca-pub-\d{10,20}$/.test(ad.client)) throw new Error(`adsense.client should look like ca-pub-1234567890123456, got "${ad.client}"`);
-if (ad.slot && !/^\d{5,20}$/.test(ad.slot)) throw new Error(`adsense.slot should be the ad unit's number, got "${ad.slot}"`);
+for (const k of ["slot", "multiplex"]) if (ad[k] && !/^\d{5,20}$/.test(ad[k])) throw new Error(`adsense ${k} should be the ad unit's number, got "${ad[k]}"`);
 const CFG = { repo: cfg.repo, email: cfg.contactEmail || "", policyDate: cfg.policyDate };
 
 // ---------------------------------------------------------------- load texts and render.js
@@ -97,6 +98,7 @@ function page(r, lang, inUrl, extraHead = "") {
   h = replaceOnce(h, '<div id="view">', `<div id="view" data-r="${r}">`);
   h = fill(h, "view", view);
   h = fill(h, "ad", ad.client && ad.slot ? `<p class="label">${U.ad}</p><ins class="adsbygoogle" style="display:block" data-ad-client="${ad.client}" data-ad-slot="${ad.slot}" data-ad-format="auto" data-full-width-responsive="true"></ins>` : "");
+  h = fill(h, "ad2", ad.client && ad.multiplex ? `<p class="label">${U.ad}</p><ins class="adsbygoogle" style="display:block" data-ad-format="autorelaxed" data-ad-client="${ad.client}" data-ad-slot="${ad.multiplex}"></ins>` : "");
   h = fill(h, "foot", R.footHTML(T, r));
   return h;
 }
@@ -127,4 +129,4 @@ const alts = r => CODES.map(l => `    <xhtml:link rel="alternate" hreflang="${hr
 const entries = ROUTES.flatMap(r => [null, ...CODES].map(l => `  <url>\n    <loc>${url(r, l)}</loc>\n${alts(r)}\n  </url>`));
 write("sitemap.xml", `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">\n${entries.join("\n")}\n</urlset>\n`);
 
-console.log(`dist/: ${pages + 1} pages, ${entries.length} sitemap entries, ads ${ad.client ? (ad.slot ? "on" : "script only (no slot)") : "off"}`);
+console.log(`dist/: ${pages + 1} pages, ${entries.length} sitemap entries, ads ${ad.client ? [ad.slot && "slot", ad.multiplex && "multiplex"].filter(Boolean).join(" + ") || "script only (no slot)" : "off"}`);

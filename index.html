@@ -211,6 +211,8 @@ li.cur .quote { display: block; }
 .ad { margin-top: 36px; padding-top: 8px; border-top: 1px solid var(--rule); min-height: 120px; }
 .ad .label { font-size: 11px; letter-spacing: .15em; color: var(--muted); margin: 0 0 6px; }
 .ad ins { display: block; }
+/* multiplex unit above the footer, across the page */
+.ad-bottom { margin-top: 0; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-bottom: 16px; }
 
 /* footer */
 .foot { border-top: 1px solid var(--rule); padding-block: 14px 28px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); display: flex; flex-wrap: wrap; gap: 8px 28px; font-size: 13px; }
@@ -270,6 +272,7 @@ li.cur .quote { display: block; }
     <aside class="ad" id="ad" hidden><!-- build:ad --><!-- /build:ad --></aside>
   </main>
 </div>
+<aside class="ad ad-bottom" id="ad2" hidden><!-- build:ad2 --><!-- /build:ad2 --></aside>
 <footer class="foot" id="foot"><!-- build:foot --><!-- /build:foot --></footer>
 
 <script src="/render.js"></script>
@@ -742,8 +745,7 @@ function buildChrome() {
   nav.setAttribute("aria-label", U.contents); sel.setAttribute("aria-label", U.contents);
   nav.innerHTML = navHTML(T);
   sel.innerHTML = selHTML(T);
-  const ad = document.querySelector("#ad .label");
-  if (ad) ad.textContent = U.ad;
+  document.querySelectorAll(".ad .label").forEach(l => { l.textContent = U.ad; });
 }
 
 // Title, description, canonical and hreflang for the current view. The canonical keeps ?lang= only if the address has it.
@@ -776,14 +778,16 @@ function loadVisits() {
   }).catch(() => {});
 }
 
-// Ad slot under the proof (never over the figure). build.mjs puts the AdSense unit in only once
-// site.config.json has a publisher ID and a slot ID; it is filled once per page load and not on the policy pages.
+// Ad slots: one under the proof, a multiplex unit above the footer (never over the figure). build.mjs puts each
+// AdSense unit in only once site.config.json has its ID; each is filled once per page load and not on the policy pages.
 function showAd(r) {
-  const el = document.getElementById("ad"), ins = el.querySelector("ins");
-  el.hidden = !ins || LEGAL.includes(r);
-  if (el.hidden || ins.dataset.pushed) return;
-  ins.dataset.pushed = "1";
-  try { (window.adsbygoogle = window.adsbygoogle || []).push({}); } catch (e) {}
+  for (const el of document.querySelectorAll("aside.ad")) {
+    const ins = el.querySelector("ins");
+    el.hidden = !ins || LEGAL.includes(r);
+    if (el.hidden || ins.dataset.pushed) continue;
+    ins.dataset.pushed = "1";
+    try { (window.adsbygoogle = window.adsbygoogle || []).push({}); } catch (e) {}
+  }
 }
 
 function mountPage(name) {
