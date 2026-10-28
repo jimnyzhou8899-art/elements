@@ -29,13 +29,14 @@ ctx.window = ctx;
 ctx.PROP = (n, def) => { ctx.LIVE[n] = def; };
 vm.createContext(ctx);
 const run = f => vm.runInContext(read(f), ctx, { filename: f });
+run("lab.js");
 run("render.js");
-const R = vm.runInContext("({ LANGS, READY, KINDS, LEGAL, FONTS, LATIN_FONT, tr, attr, pathFor, headTexts, navHTML, selHTML, footHTML, propHTML, introHTML, sandboxHTML, pageHTML })", ctx);
+const R = vm.runInContext("({ LANGS, READY, KINDS, LEGAL, FONTS, LATIN_FONT, tr, attr, pathFor, headTexts, navHTML, selHTML, footHTML, subjHTML, homeHTML, propHTML, introHTML, sandboxHTML, pageHTML })", ctx);
 const CODES = Object.keys(R.LANGS);
 for (const l of CODES) { run(`i18n/${l}.js`); run(`pages/${l}.js`); }
 for (let n = 1; n <= 48; n++) run(`props/p${String(n).padStart(2, "0")}.js`);
 
-const ROUTES = [...Array.from({ length: 48 }, (_, i) => "p" + (i + 1)), "intro", "sandbox", ...R.LEGAL];
+const ROUTES = ["home", ...Array.from({ length: 48 }, (_, i) => "p" + (i + 1)), "intro", "sandbox", ...R.LEGAL];
 const hreflang = l => ctx.I18N[l].htmlLang;
 const url = (r, l) => SITE + R.pathFor(r) + (l ? "?lang=" + l : "");
 const esc = s => s.replace(/&/g, "&amp;").replace(/</g, "&lt;");
@@ -76,7 +77,8 @@ function page(r, lang, inUrl, extraHead = "") {
   ].filter(Boolean).join("\n");
 
   let view;
-  if (n) view = R.propHTML(T, n, ctx.LIVE[n], ctx.LIVE[n] && (ctx.LIVE[n].text[lang] || ctx.LIVE[n].text.en));
+  if (r === "home") view = R.homeHTML(T, ctx.LAB);
+  else if (n) view = R.propHTML(T, n, ctx.LIVE[n], ctx.LIVE[n] && (ctx.LIVE[n].text[lang] || ctx.LIVE[n].text.en));
   else if (r === "intro") view = R.introHTML(T);
   else if (r === "sandbox") view = R.sandboxHTML(T);
   else view = R.pageHTML(T, P, r, CFG);
@@ -84,13 +86,16 @@ function page(r, lang, inUrl, extraHead = "") {
 
   let h = template;
   const serif = (R.FONTS[lang] || [R.LATIN_FONT])[0];
-  h = replaceOnce(h, '<html lang="zh-Hans">', `<html lang="${T.htmlLang}" dir="${T.dir || "ltr"}" data-baked="${lang}"${R.FONTS[lang] ? "" : ' class="latin"'} style="--serif: ${R.attr(serif)}">`);
+  h = replaceOnce(h, '<html lang="zh-Hans">', `<html lang="${T.htmlLang}" dir="${T.dir || "ltr"}" data-baked="${lang}" data-view="${r === "home" ? "home" : "book"}"${R.FONTS[lang] ? "" : ' class="latin"'} style="--serif: ${R.attr(serif)}">`);
   h = fill(h, "head", head);
   h = fill(h, "ads-head", ad.client ? `<meta name="google-adsense-account" content="${ad.client}">\n<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${ad.client}" crossorigin="anonymous"></script>` : "");
   // the config is a /* build:config */ comment pair inside the script
   h = h.replace(/\/\* build:config \*\/[\s\S]*?\/\* \/build:config \*\//, () => `const SITE = ${JSON.stringify(SITE)}, ADS = ${JSON.stringify({ client: ad.client || "", slot: ad.slot || "" })}, CFG = ${JSON.stringify(CFG)};`);
   h = replaceOnce(h, '<select id="lang" class="langsel"></select>', `<select id="lang" class="langsel" aria-label="${R.attr(U.language)}">${Object.entries(R.LANGS).map(([k, v]) => `<option value="${k}" lang="${k}"${k === lang ? " selected" : ""}>${v}</option>`).join("")}</select>`);
   h = replaceOnce(h, '<span id="h1a">几何原本</span> <span id="h1b" class="accent">卷一</span>', `<span id="h1a">${U.h1}</span> <span id="h1b" class="accent">${U.h1b}</span>`);
+  h = replaceOnce(h, '<span class="bname" id="brand">原本</span><span class="bsub" id="brandSub"></span>', `<span class="bname" id="brand">${T.hub.brand}</span><span class="bsub" id="brandSub">${T.hub.brandSub}</span>`);
+  h = replaceOnce(h, '<nav class="subjects" id="subjects"></nav>', `<nav class="subjects" id="subjects" aria-label="${R.attr(T.hub.home)}">${r === "home" ? R.subjHTML(T) : R.subjHTML(T).replace('data-s="math"', 'data-s="math" aria-current="true"')}</nav>`);
+  h = replaceOnce(h, '<a href="/#math" id="crumb">数学</a>', `<a href="/#math" id="crumb">${T.hub.subj.math}</a>`);
   h = replaceOnce(h, '<p id="tagline"></p>', `<p id="tagline">${U.tagline}</p>`);
   h = replaceOnce(h, '<nav id="nav">', `<nav id="nav" aria-label="${R.attr(U.contents)}">`);
   h = fill(h, "nav", nav);
@@ -105,7 +110,7 @@ function page(r, lang, inUrl, extraHead = "") {
 // ---------------------------------------------------------------- write
 fs.rmSync(OUT, { recursive: true, force: true });
 const write = (f, s) => { const p = path.join(OUT, f); fs.mkdirSync(path.dirname(p), { recursive: true }); fs.writeFileSync(p, s); };
-const fileFor = r => r === "p1" ? "home.html" : R.pathFor(r).slice(1) + ".html";
+const fileFor = r => r === "home" ? "home.html" : R.pathFor(r).slice(1) + ".html";
 // The x-default copy is pre-rendered in English: crawlers without a language preference get English from the page too.
 const DEFAULT = "en";
 let pages = 0;
@@ -113,10 +118,10 @@ for (const r of ROUTES) {
   write(`_l/x/${fileFor(r)}`, page(r, DEFAULT, false)); pages++;
   for (const l of CODES) { write(`_l/${l}/${fileFor(r)}`, page(r, l, true)); pages++; }
 }
-write("404.html", page("p1", DEFAULT, false, '<meta name="robots" content="noindex">'));
+write("404.html", page("home", DEFAULT, false, '<meta name="robots" content="noindex">'));
 
 for (const dir of ["i18n", "props", "pages"]) fs.cpSync(path.join(ROOT, dir), path.join(OUT, dir), { recursive: true });
-for (const f of ["favicon.svg", "og.png", "render.js"]) fs.copyFileSync(path.join(ROOT, f), path.join(OUT, f));
+for (const f of ["favicon.svg", "og.png", "render.js", "lab.js"]) fs.copyFileSync(path.join(ROOT, f), path.join(OUT, f));
 
 write("robots.txt", `User-agent: *\nAllow: /\nDisallow: /api/\nDisallow: /_l/\n\nSitemap: ${SITE}/sitemap.xml\n`);
 // ads.txt names the accounts allowed to sell ads on this site; f08c47fec0942fa0 is Google's own certification ID.

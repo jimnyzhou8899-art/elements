@@ -3,13 +3,6 @@
   "buildCommand": "node build.mjs",
   "outputDirectory": "dist",
   "cleanUrls": true,
-  "redirects": [
-    {
-      "source": "/p/1",
-      "destination": "/",
-      "permanent": true
-    }
-  ],
   "rewrites": [
     {
       "source": "/",

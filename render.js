@@ -5,6 +5,9 @@ const READY = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19
 // 作 = problem (ends Q.E.F.), 证 = theorem (ends Q.E.D.), for I.1 … I.48
 const KINDS = "作作作证证证证证作作作作证证证证证证证证证作作证证证证证证证作证证证证证证证证证证作证作作作证证";
 const LEGAL = ["about", "privacy", "contact"];
+// Subjects on the home page. Math is Euclid (this site); the others list Tongjiang Lab's lessons (lab.js), opened on the lab's site.
+const SUBJECTS = ["math", "phys", "chem", "bio", "geo"];
+const LAB_SITE = "https://lab.tongjiang.app";
 // Scripts that need their own serif; the rest use EB Garamond ("latin").
 const FONTS = {
   zh: ["\"Noto Serif SC\", \"Songti SC\", serif", "Noto+Serif+SC:wght@400;600;900"],
@@ -31,19 +34,20 @@ function refText(T, r) {
 }
 
 // ---------------------------------------------------------------- addresses
-// Routes are "p1" … "p48", "intro", "sandbox", "about", "privacy", "contact". I.1 is the home page.
-const pathFor = r => r === "p1" ? "/" : /^p\d+$/.test(r) ? "/p/" + r.slice(1) : "/" + r;
+// Routes are "home" (the subject index at /), "p1" … "p48", "intro", "sandbox", "about", "privacy", "contact".
+const pathFor = r => r === "home" ? "/" : /^p\d+$/.test(r) ? "/p/" + r.slice(1) : "/" + r;
 function routeOf(path) {
   const m = path.match(/^\/p\/(\d{1,2})\/?$/);
   if (m) return +m[1] >= 1 && +m[1] <= 48 ? "p" + +m[1] : null;
   const w = path.replace(/^\/|\/$/g, "");
-  return w === "" ? "p1" : ["intro", "sandbox", ...LEGAL].includes(w) ? w : null;
+  return w === "" ? "home" : ["intro", "sandbox", ...LEGAL].includes(w) ? w : null;
 }
 
 // ---------------------------------------------------------------- head
 function headTexts(T, P, r) {
   const U = T.ui, n = /^p\d+$/.test(r) ? +r.slice(1) : 0, pg = P && P[r];
-  if (n > 1) return { title: `${U.prop} I.${n} · ${T.props[n - 1][1]} — ${U.title}`, desc: `${U.prop} I.${n}${U.colon}${strip(T.props[n - 1][0])}` };
+  if (r === "home") return { title: T.hub.title, desc: T.hub.desc };
+  if (n) return { title: `${U.prop} I.${n} · ${T.props[n - 1][1]} — ${U.title}`, desc: `${U.prop} I.${n}${U.colon}${strip(T.props[n - 1][0])}` };
   if (r === "intro") return { title: `${U.navIntro} — ${U.title}`, desc: U.metaDesc };
   if (r === "sandbox") return { title: `${U.navSandbox} — ${U.title}`, desc: U.metaDesc };
   if (pg) return { title: `${pg.title} — ${U.title}`, desc: pg.desc };
@@ -59,17 +63,49 @@ function navHTML(T) {
 }
 function selHTML(T) {
   const U = T.ui;
-  return `<option value="intro">${U.navOpen}${U.colon}${U.navIntro}</option><option value="sandbox">${U.navSandbox}</option>` +
+  return `<option value="home">${T.hub.home}</option><option value="intro">${U.navOpen}${U.colon}${U.navIntro}</option><option value="sandbox">${U.navSandbox}</option>` +
     T.props.map((p, i) => `<option value="p${i + 1}">${U.prop} I.${i + 1} · ${p[1]}${READY.includes(i + 1) ? " ●" : ""}</option>`).join("") +
     LEGAL.map(k => `<option value="${k}">${U[k]}</option>`).join("");
 }
 function footHTML(T, r) {
   const path = pathFor(r);
-  return `<p class="links">${LEGAL.map(k => `<a href="/${k}">${T.ui[k]}</a>`).join("")}</p>` +
+  return `<p class="links"><a href="/">${T.hub.home}</a>${LEGAL.map(k => `<a href="/${k}">${T.ui[k]}</a>`).join("")}</p>` +
     `<p class="langs">${Object.entries(LANGS).map(([k, v]) => `<a href="${path}?lang=${k}" lang="${k}" hreflang="${k}">${v}</a>`).join("")}</p>`;
 }
 
+// Subject links in the page header; each jumps to its section of the home page.
+function subjHTML(T) {
+  return SUBJECTS.map(s => `<a href="/#${s}" class="pill" data-s="${s}">${T.hub.subj[s]}</a>`).join("");
+}
+
 // ---------------------------------------------------------------- views
+// The home page: Euclid as the math subject, then the science lessons from lab.js (window.LAB), which open on the lab's site.
+// The lessons are in Chinese; other languages show their English titles.
+function homeHTML(T, lab) {
+  const U = T.ui, H = T.hub, zh = T.htmlLang.startsWith("zh");
+  const section = (s, count, cards) => `<section class="subject" id="${s}" data-s="${s}">
+      <div class="shead"><h2>${H.subj[s]}</h2><span class="count">${tr(H.count, { n: count })}</span></div>
+      <div class="cards">${cards}</div>
+    </section>`;
+  const math = `<a class="card feature" href="${pathFor("p1")}">
+        <svg class="emblem" viewBox="0 0 120 80" aria-hidden="true"><circle cx="45" cy="52" r="26" class="e-blue"/><circle cx="75" cy="52" r="26" class="e-red"/><path d="M45 52 L75 52 L60 26 Z" class="e-yel"/></svg>
+        <span class="ct">${U.h1} · ${U.h1b}</span><span class="cd">${H.euclid}</span><span class="cm">${H.start} <span class="arr">→</span></span>
+      </a>
+      <a class="card" href="/intro"><span class="ct">${U.navIntro}</span><span class="cd">${U.tagline}</span><span class="cm">${U.navOpen} <span class="arr">→</span></span></a>
+      <a class="card" href="/sandbox"><span class="ct">${U.navSandbox}</span><span class="cd">${U.sbTitle}</span><span class="cm">${U.navHands} <span class="arr">→</span></span></a>`;
+  const lessons = s => lab.filter(x => x[1] === s);
+  return `<div class="hub">
+    <section class="hero">
+      <p class="eyebrow">${H.brandSub}</p>
+      <h1 class="hero-t">${H.hero}</h1>
+      <p class="hero-p">${H.heroText}</p>
+    </section>
+    ${section("math", 3, math)}
+    ${SUBJECTS.slice(1).map(s => section(s, lessons(s).length, lessons(s).map(x =>
+      `<a class="card lesson" href="${LAB_SITE}/${x[0]}" target="_blank" rel="noopener"${zh ? "" : ` lang="en"`}><span class="ct">${zh ? x[2] : x[3]}</span><span class="cm">${tr(H.steps, { n: x[4] })} ↗</span></a>`).join(""))).join("")}
+    <p class="credit">${tr(H.credit, { lab: `<a href="${LAB_SITE}" target="_blank" rel="noopener">${H.labName}</a>`, license: `<a href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="noopener license">CC BY-NC 4.0</a>` })}</p>
+  </div>`;
+}
 function propHTML(T, n, def, texts) {
   const U = T.ui, kind = KINDS[n - 1];
   const head = `<p class="eyebrow">${U.prop} I.${n} · <span class="kind">${kind === "作" ? U.problem : U.theorem}</span></p><h2 class="stmt">${fmt(T.props[n - 1][0])}</h2>`;

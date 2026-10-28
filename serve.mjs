@@ -1,4 +1,4 @@
-// Local preview of dist/ that answers like Vercel does with vercel.json: clean URLs, the _l/ copies, /p/1 → /, 404 page.
+// Local preview of dist/ that answers like Vercel does with vercel.json: clean URLs, the _l/ copies, 404 page.
 //   node build.mjs && node serve.mjs   →   http://localhost:8000
 // /api/visits is not served here, so the visit counter stays hidden.
 import http from "node:http";
