@@ -7,7 +7,6 @@ const KINDS = "作作作证证证证证作作作作证证证证证证证证证�
 const LEGAL = ["about", "privacy", "contact"];
 // Subjects on the home page. Math is Euclid; the others are Tongjiang Lab's lessons (lab.js, files in lab/), used with the author's permission.
 const SUBJECTS = ["math", "phys", "chem", "bio", "geo"];
-const LAB_SITE = "https://lab.tongjiang.app";
 const labOf = slug => (typeof LAB !== "undefined" ? LAB : []).find(x => x[0] === slug);
 const labTitle = (T, x) => T.htmlLang.startsWith("zh") ? x[2] : x[3];
 // Scripts that need their own serif; the rest use EB Garamond ("latin").
@@ -103,7 +102,6 @@ function homeHTML(T, lab) {
       <a class="card" href="/intro"><span class="ct">${U.navIntro}</span><span class="cd">${U.tagline}</span><span class="cm">${U.navOpen} <span class="arr">→</span></span></a>
       <a class="card" href="/sandbox"><span class="ct">${U.navSandbox}</span><span class="cd">${U.sbTitle}</span><span class="cm">${U.navHands} <span class="arr">→</span></span></a>`;
   const lessons = s => lab.filter(x => x[1] === s);
-  const credit = tr(H.credit, { lab: `<a href="${LAB_SITE}" target="_blank" rel="noopener">${H.labName}</a>` });
   return `<div class="hub">
     <section class="hero">
       <p class="eyebrow">${H.brandSub}</p>
@@ -113,7 +111,6 @@ function homeHTML(T, lab) {
     ${section("math", 3, math)}
     ${SUBJECTS.slice(1).map(s => section(s, lessons(s).length, lessons(s).map(x =>
       `<a class="card lesson" href="/lab/${x[0]}"><img class="cover" src="/lab/covers/${x[0]}.webp" alt="" loading="lazy" width="800" height="450"><span class="ct"${zh ? "" : ` lang="en"`}>${labTitle(T, x)}</span><span class="cm">${tr(H.steps, { n: x[4] })} <span class="arr">→</span></span></a>`).join(""))).join("")}
-    <p class="credit">${credit}</p>
   </div>`;
 }
 function propHTML(T, n, def, texts) {
@@ -177,7 +174,7 @@ function sandboxHTML(T) {
       </div>
     </div>`;
 }
-// One science lesson: the lab's self-contained HTML file in a frame, with the site's header, credit and ads around it.
+// One science lesson: the lab's self-contained HTML file in a frame, with the site's header and ads around it.
 function labHTML(T, slug) {
   const H = T.hub, x = labOf(slug), zh = T.htmlLang.startsWith("zh");
   return `<div class="lesson-page" data-s="${x[1]}">
@@ -186,7 +183,6 @@ function labHTML(T, slug) {
       <span class="lmeta">${tr(H.steps, { n: x[4] })}${zh ? "" : ` · ${H.zhOnly}`}</span>
       <button class="btn" id="full">${H.full}</button></div>
     <div class="lframe"><iframe id="lesson" src="/lab/files/${slug}" title="${attr(labTitle(T, x))}" allow="fullscreen" allowfullscreen loading="lazy"></iframe></div>
-    <p class="credit">${tr(H.credit, { lab: `<a href="${LAB_SITE}" target="_blank" rel="noopener">${H.labName}</a>` })}</p>
   </div>`;
 }
 // About, privacy policy, contact. cfg = { repo, email, policyDate } from site.config.json.

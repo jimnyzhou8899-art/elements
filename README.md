@@ -4,7 +4,7 @@
 [铜匠实验室](https://lab.tongjiang.app)的 54 门 3D 互动课件，在本站的 `/lab/<slug>` 页面里打开。
 
 > 铜匠实验室的课件原以 CC BY-NC 4.0（署名—非商业性使用）公开，本站已取得作者授权使用（含带广告的商业使用）。
-> 首页和每个课件页都注明出处，`lab/NOTICE.md` 写明来源和课件里打包的 three.js（MIT）许可。
+> `lab/NOTICE.md` 写明来源和课件里打包的 three.js（MIT）许可（页面上不显示出处）。
 
 ## 数学：几何原本 · 卷一
 
@@ -51,7 +51,7 @@ node build.mjs && node serve.mjs
 - 关于、隐私政策、联系页面的 9 种语言文字在 `pages/<语言代码>.js`。
 - 首页和课件页的文字在 `i18n/<语言代码>.js` 的 `hub` 里；理科课件列表在 `lab.js`（从铜匠实验室的 `catalog.json` 整理，课件是中文界面，
   中文以外的语言显示英文标题）。
-- 课件：`lab/files/<slug>.html` 是原样的单文件课件，`lab/covers/` 是封面。`/lab/<slug>` 是本站的课件页（页头、出处、广告，
+- 课件：`lab/files/<slug>.html` 是原样的单文件课件，`lab/covers/` 是封面。`/lab/<slug>` 是本站的课件页（页头、广告，
   中间用 iframe 打开课件）；课件左上角的“目录”会回到首页对应学科。
 
 ## 部署

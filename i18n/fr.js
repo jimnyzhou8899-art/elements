@@ -21,8 +21,6 @@ I18N.fr = {
     steps: "{n} étapes",
     euclid: "Les 48 propositions du Livre I d'Euclide, avec des constructions à la règle et au compas manipulables et des démonstrations pas à pas.",
     start: "Commencer par la proposition I.1",
-    labName: "Tongjiang Lab (铜匠实验室)",
-    credit: "Les leçons de physique, chimie, biologie et géographie sont réalisées par {lab} et utilisées ici avec l'autorisation de l'auteur.",
     labDesc: "{t} : une leçon interactive en 3D de {s}, à suivre pas à pas dans le navigateur.",
     full: "Plein écran",
     zhOnly: "leçon en chinois"

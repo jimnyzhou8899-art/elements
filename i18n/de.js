@@ -21,8 +21,6 @@ I18N.de = {
     steps: "{n} Schritte",
     euclid: "Alle 48 Sätze aus Euklids Buch I, mit ziehbaren Zirkel-und-Lineal-Figuren und schrittweisen Beweisen.",
     start: "Mit Satz I.1 beginnen",
-    labName: "Tongjiang Lab (铜匠实验室)",
-    credit: "Die Lektionen zu Physik, Chemie, Biologie und Geographie stammen von {lab} und werden hier mit Erlaubnis des Autors verwendet.",
     labDesc: "{t}: eine interaktive 3D-Lektion ({s}), Schritt für Schritt im Browser.",
     full: "Vollbild",
     zhOnly: "Lektion auf Chinesisch"
