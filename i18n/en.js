@@ -23,7 +23,8 @@ I18N.en = {
     start: "Start with Proposition I.1",
     labDesc: "{t}: an interactive 3D {s} lesson you work through step by step in the browser.",
     full: "Full screen",
-    zhOnly: "lesson in Chinese"
+    zhOnly: "lesson in Chinese",
+    outline: "In this lesson"
   },
   ui: {
     title: "Euclid's Elements · Book I",

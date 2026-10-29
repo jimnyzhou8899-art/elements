@@ -23,7 +23,8 @@ I18N.fr = {
     start: "Commencer par la proposition I.1",
     labDesc: "{t} : une leçon interactive en 3D de {s}, à suivre pas à pas dans le navigateur.",
     full: "Plein écran",
-    zhOnly: "leçon en chinois"
+    zhOnly: "leçon en chinois",
+    outline: "Dans cette leçon"
   },
   ui: {
     title: "Les Éléments d'Euclide · Livre I",

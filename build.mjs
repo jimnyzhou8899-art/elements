@@ -31,7 +31,7 @@ vm.createContext(ctx);
 const run = f => vm.runInContext(read(f), ctx, { filename: f });
 run("lab.js");
 run("render.js");
-const R = vm.runInContext("({ LANGS, READY, KINDS, LEGAL, FONTS, LATIN_FONT, tr, attr, pathFor, headTexts, navHTML, selHTML, footHTML, subjHTML, homeHTML, labHTML, labOf, propHTML, introHTML, sandboxHTML, pageHTML })", ctx);
+const R = vm.runInContext("({ LANGS, READY, KINDS, LEGAL, FONTS, LATIN_FONT, tr, attr, pathFor, headTexts, navHTML, selHTML, footHTML, subjHTML, homeHTML, labHTML, labOf, LAB_LANGS, canonLang, propHTML, introHTML, sandboxHTML, pageHTML })", ctx);
 const CODES = Object.keys(R.LANGS);
 for (const l of CODES) { run(`i18n/${l}.js`); run(`pages/${l}.js`); }
 for (let n = 1; n <= 48; n++) run(`props/p${String(n).padStart(2, "0")}.js`);
@@ -39,6 +39,9 @@ for (let n = 1; n <= 48; n++) run(`props/p${String(n).padStart(2, "0")}.js`);
 const ROUTES = ["home", ...Array.from({ length: 48 }, (_, i) => "p" + (i + 1)), "intro", "sandbox", ...R.LEGAL, ...ctx.LAB.map(x => "lab/" + x[0])];
 const hreflang = l => ctx.I18N[l].htmlLang;
 const url = (r, l) => SITE + R.pathFor(r) + (l ? "?lang=" + l : "");
+// the languages a route is indexed in (see canonLang in render.js)
+const langsOf = r => r.startsWith("lab/") ? R.LAB_LANGS : CODES;
+const outline = slug => { const f = `lab/outline/${slug}.json`; return fs.existsSync(path.join(ROOT, f)) ? JSON.parse(read(f)) : null; };
 const esc = s => s.replace(/&/g, "&amp;").replace(/</g, "&lt;");
 
 // ---------------------------------------------------------------- one page
@@ -76,7 +79,7 @@ function structured(r, T, title, desc, url, image) {
 function page(r, lang, inUrl, extraHead = "") {
   const T = ctx.I18N[lang], P = ctx.PAGES[lang], U = T.ui;
   const { title, desc } = R.headTexts(T, P, r);
-  const self = url(r, inUrl ? lang : null);
+  const self = url(r, inUrl ? R.canonLang(r, lang) : null);
   const n = /^p\d+$/.test(r) ? +r.slice(1) : 0;
   const lab = r.startsWith("lab/") ? R.labOf(r.slice(4)) : null;
   // a lesson shares its own cover; everything else the site card
@@ -85,7 +88,7 @@ function page(r, lang, inUrl, extraHead = "") {
     `<title>${esc(title)}</title>`,
     `<meta name="description" content="${R.attr(desc)}">`,
     `<link rel="canonical" href="${self}">`,
-    ...CODES.map(l => `<link rel="alternate" hreflang="${hreflang(l)}" data-l="${l}" href="${url(r, l)}">`),
+    ...langsOf(r).map(l => `<link rel="alternate" hreflang="${hreflang(l)}" data-l="${l}" href="${url(r, l)}">`),
     `<link rel="alternate" hreflang="x-default" data-l="" href="${url(r, null)}">`,
     `<meta property="og:title" content="${R.attr(title)}">`,
     `<meta property="og:description" content="${R.attr(desc)}">`,
@@ -109,7 +112,7 @@ function page(r, lang, inUrl, extraHead = "") {
 
   let view;
   if (r === "home") view = R.homeHTML(T, ctx.LAB);
-  else if (r.startsWith("lab/")) view = R.labHTML(T, r.slice(4));
+  else if (r.startsWith("lab/")) view = R.labHTML(T, r.slice(4), outline(r.slice(4)));
   else if (n) view = R.propHTML(T, n, ctx.LIVE[n], ctx.LIVE[n] && (ctx.LIVE[n].text[lang] || ctx.LIVE[n].text.en));
   else if (r === "intro") view = R.introHTML(T);
   else if (r === "sandbox") view = R.sandboxHTML(T);
@@ -159,15 +162,15 @@ for (const dir of ["i18n", "props", "pages", "lab"]) fs.cpSync(path.join(ROOT, d
 // google*.html: Search Console ownership verification, served as is at the site root
 for (const f of ["favicon.svg", "og.png", "render.js", "lab.js", "google7bc0d02b8ccb7f66.html"]) fs.copyFileSync(path.join(ROOT, f), path.join(OUT, f));
 
-write("robots.txt", `User-agent: *\nAllow: /\nDisallow: /api/\nDisallow: /_l/\nDisallow: /lab/files/\n\nSitemap: ${SITE}/sitemap.xml\n`);
+write("robots.txt", `User-agent: *\nAllow: /\nDisallow: /api/\nDisallow: /_l/\nDisallow: /lab/files/\nDisallow: /lab/outline/\n\nSitemap: ${SITE}/sitemap.xml\n`);
 // ads.txt names the accounts allowed to sell ads on this site; f08c47fec0942fa0 is Google's own certification ID.
 write("ads.txt", ad.client
   ? `google.com, ${ad.client.replace(/^ca-/, "")}, DIRECT, f08c47fec0942fa0\n`
   : "# Add the AdSense publisher ID (ca-pub-…) to site.config.json and rebuild; this file then lists it.\n");
 
-const alts = r => CODES.map(l => `    <xhtml:link rel="alternate" hreflang="${hreflang(l)}" href="${url(r, l)}"/>`).join("\n") +
+const alts = r => langsOf(r).map(l => `    <xhtml:link rel="alternate" hreflang="${hreflang(l)}" href="${url(r, l)}"/>`).join("\n") +
   `\n    <xhtml:link rel="alternate" hreflang="x-default" href="${url(r, null)}"/>`;
-const entries = ROUTES.flatMap(r => [null, ...CODES].map(l => `  <url>\n    <loc>${url(r, l)}</loc>\n${alts(r)}\n  </url>`));
+const entries = ROUTES.flatMap(r => [null, ...langsOf(r)].map(l => `  <url>\n    <loc>${url(r, l)}</loc>\n${alts(r)}\n  </url>`));
 write("sitemap.xml", `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">\n${entries.join("\n")}\n</urlset>\n`);
 
 console.log(`dist/: ${pages + 1} pages, ${entries.length} sitemap entries, ads ${ad.client ? [ad.slot && "slot", ad.multiplex && "multiplex"].filter(Boolean).join(" + ") || "script only (no slot)" : "off"}`);

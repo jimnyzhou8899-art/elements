@@ -23,7 +23,8 @@ I18N.de = {
     start: "Mit Satz I.1 beginnen",
     labDesc: "{t}: eine interaktive 3D-Lektion ({s}), Schritt für Schritt im Browser.",
     full: "Vollbild",
-    zhOnly: "Lektion auf Chinesisch"
+    zhOnly: "Lektion auf Chinesisch",
+    outline: "In dieser Lektion"
   },
   ui: {
     title: "Euklids Elemente · Buch I",

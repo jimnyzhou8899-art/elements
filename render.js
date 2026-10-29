@@ -176,8 +176,22 @@ function sandboxHTML(T) {
       </div>
     </div>`;
 }
+// The lesson's steps as text under its frame (from lab/outline/<slug>.json): the question each step asks, what it
+// shows, and its key points. Chinese pages get the Chinese text, the others the English one when there is any.
+const textEsc = s => s.replace(/&/g, "&amp;").replace(/</g, "&lt;");
+function outlineHTML(T, o) {
+  const zh = T.htmlLang.startsWith("zh"), steps = o && (zh ? o.zh : o.en);
+  if (!steps) return "";
+  return `<section class="outline"${zh ? "" : ` lang="en"`}><h2>${T.hub.outline}</h2><ol>${steps.map(s =>
+    `<li><h3>${textEsc(s.tag || s.q)}</h3>${s.tag ? `<p class="q">${textEsc(s.q)}</p>` : ""}${s.concl ? `<p>${textEsc(s.concl)}</p>` : ""}` +
+    (s.points.length ? `<ul>${s.points.map(p => `<li>${textEsc(p)}</li>`).join("")}</ul>` : "") + `</li>`).join("")}</ol></section>`;
+}
+// Search engines index a lesson in Chinese and English only: the other languages show the English lesson, so their
+// pages point at the English one as canonical.
+const LAB_LANGS = ["zh", "en"];
+const canonLang = (r, l) => r.startsWith("lab/") && !LAB_LANGS.includes(l) ? "en" : l;
 // One science lesson: the lab's self-contained HTML file in a frame, with the site's header and ads around it.
-function labHTML(T, slug) {
+function labHTML(T, slug, outline) {
   const H = T.hub, x = labOf(slug), zh = T.htmlLang.startsWith("zh"), en = !zh && labEn(slug);
   return `<div class="lesson-page" data-s="${x[1]}">
     <p class="crumb"><a href="/#${x[1]}">${H.subj[x[1]]}</a></p>
@@ -185,6 +199,7 @@ function labHTML(T, slug) {
       <span class="lmeta">${tr(H.steps, { n: x[4] })}${zh || en ? "" : ` · ${H.zhOnly}`}</span>
       <button class="btn" id="full">${H.full}</button></div>
     <div class="lframe"><iframe id="lesson" src="/lab/files/${en ? "en/" : ""}${slug}" title="${attr(labTitle(T, x))}" allow="fullscreen" allowfullscreen loading="lazy"></iframe></div>
+    <div id="outline">${outlineHTML(T, outline)}</div>
   </div>`;
 }
 // About, privacy policy, contact. cfg = { repo, email, policyDate } from site.config.json.
