@@ -53,12 +53,34 @@ function replaceOnce(html, from, to) {
   return html.replace(from, () => to);
 }
 
+// schema.org data: the site on the hub, a learning resource on each lesson and proposition, with a breadcrumb back home
+function structured(r, T, title, desc, url, image) {
+  const lang = T.htmlLang, home = SITE + "/", site = { "@type": "WebSite", name: T.hub.brand, url: home };
+  const crumb = name => ({ "@type": "BreadcrumbList", itemListElement: [
+    { "@type": "ListItem", position: 1, name: T.hub.home, item: home },
+    { "@type": "ListItem", position: 2, name, item: url }] });
+  const res = (name, extra) => ({ "@type": "LearningResource", name, description: desc, url, inLanguage: lang, image,
+    learningResourceType: "interactive resource", educationalLevel: "secondary school", isAccessibleForFree: true, isPartOf: site, ...extra });
+  let g;
+  if (r === "home") g = [{ ...site, description: desc, inLanguage: lang, image }];
+  else if (r.startsWith("lab/")) {
+    const x = R.labOf(r.slice(4)), name = T.htmlLang.startsWith("zh") ? x[2] : x[3];
+    g = [res(name, { about: T.hub.subj[x[1]] }), crumb(name)];
+  } else if (/^p\d+$/.test(r) || r === "intro" || r === "sandbox") {
+    g = [res(title.split(" — ")[0], { teaches: "Euclidean plane geometry", about: { "@type": "Book", name: "Elements", author: { "@type": "Person", name: "Euclid" } } }), crumb(title.split(" — ")[0])];
+  } else return "";
+  return `<script type="application/ld+json">${JSON.stringify({ "@context": "https://schema.org", "@graph": g }).replace(/</g, "\\u003c")}</script>`;
+}
+
 // lang: the language the page is pre-rendered in; inUrl: whether the address carries ?lang= (else it is the x-default copy)
 function page(r, lang, inUrl, extraHead = "") {
   const T = ctx.I18N[lang], P = ctx.PAGES[lang], U = T.ui;
   const { title, desc } = R.headTexts(T, P, r);
   const self = url(r, inUrl ? lang : null);
   const n = /^p\d+$/.test(r) ? +r.slice(1) : 0;
+  const lab = r.startsWith("lab/") ? R.labOf(r.slice(4)) : null;
+  // a lesson shares its own cover; everything else the site card
+  const [img, iw, ih] = lab ? [`${SITE}/lab/covers/${lab[0]}.webp`, 800, 450] : [`${SITE}/og.png`, 1200, 630];
   const head = [
     `<title>${esc(title)}</title>`,
     `<meta name="description" content="${R.attr(desc)}">`,
@@ -69,6 +91,15 @@ function page(r, lang, inUrl, extraHead = "") {
     `<meta property="og:description" content="${R.attr(desc)}">`,
     `<meta property="og:url" content="${self}">`,
     `<meta property="og:locale" content="${hreflang(lang).replace("-", "_")}">`,
+    `<meta property="og:type" content="website">`,
+    `<meta property="og:site_name" content="${R.attr(T.hub.brand)}">`,
+    `<meta property="og:image" content="${img}">`,
+    `<meta property="og:image:width" content="${iw}">`,
+    `<meta property="og:image:height" content="${ih}">`,
+    `<meta property="og:image:alt" content="${R.attr(title)}">`,
+    `<meta name="twitter:card" content="summary_large_image">`,
+    `<meta name="twitter:title" content="${R.attr(title)}">`,
+    `<meta name="twitter:description" content="${R.attr(desc)}">`,
     `<link rel="preload" href="/i18n/${lang}.js" as="script">`,
     n ? `<link rel="preload" href="/props/p${String(n).padStart(2, "0")}.js" as="script">` : "",
     R.LEGAL.includes(r) ? `<link rel="preload" href="/pages/${lang}.js" as="script">` : "",
@@ -89,11 +120,14 @@ function page(r, lang, inUrl, extraHead = "") {
   const serif = (R.FONTS[lang] || [R.LATIN_FONT])[0];
   h = replaceOnce(h, '<html lang="zh-Hans">', `<html lang="${T.htmlLang}" dir="${T.dir || "ltr"}" data-baked="${lang}" data-view="${r === "home" ? "home" : r.startsWith("lab/") ? "lab" : "book"}"${R.FONTS[lang] ? "" : ' class="latin"'} style="--serif: ${R.attr(serif)}">`);
   h = fill(h, "head", head);
+  h = fill(h, "ld", structured(r, T, title, desc, self, img));
   h = fill(h, "ads-head", ad.client ? `<meta name="google-adsense-account" content="${ad.client}">\n<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${ad.client}" crossorigin="anonymous"></script>` : "");
   // the config is a /* build:config */ comment pair inside the script
   h = h.replace(/\/\* build:config \*\/[\s\S]*?\/\* \/build:config \*\//, () => `const SITE = ${JSON.stringify(SITE)}, ADS = ${JSON.stringify({ client: ad.client || "", slot: ad.slot || "" })}, CFG = ${JSON.stringify(CFG)};`);
   h = replaceOnce(h, '<select id="lang" class="langsel"></select>', `<select id="lang" class="langsel" aria-label="${R.attr(U.language)}">${Object.entries(R.LANGS).map(([k, v]) => `<option value="${k}" lang="${k}"${k === lang ? " selected" : ""}>${v}</option>`).join("")}</select>`);
   h = replaceOnce(h, '<span id="h1a">几何原本</span> <span id="h1b" class="accent">卷一</span>', `<span id="h1a">${U.h1}</span> <span id="h1b" class="accent">${U.h1b}</span>`);
+  // the book header is hidden on the hub and lesson views; there it must not compete with the view's own h1
+  if (r === "home" || lab) h = replaceOnce(h, `<h1><span id="h1a">${U.h1}</span> <span id="h1b" class="accent">${U.h1b}</span></h1>`, `<p class="h1"><span id="h1a">${U.h1}</span> <span id="h1b" class="accent">${U.h1b}</span></p>`);
   h = replaceOnce(h, '<span class="bname" id="brand">原本</span><span class="bsub" id="brandSub"></span>', `<span class="bname" id="brand">${T.hub.brand}</span><span class="bsub" id="brandSub">${T.hub.brandSub}</span>`);
   h = replaceOnce(h, '<nav class="subjects" id="subjects"></nav>', `<nav class="subjects" id="subjects" aria-label="${R.attr(T.hub.home)}">${r === "home" ? R.subjHTML(T) : R.subjHTML(T).replace(`data-s="${r.startsWith("lab/") ? R.labOf(r.slice(4))[1] : "math"}"`, '$& aria-current="true"')}</nav>`);
   h = replaceOnce(h, '<a href="/#math" id="crumb">数学</a>', `<a href="/#math" id="crumb">${T.hub.subj.math}</a>`);

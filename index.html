@@ -47,12 +47,7 @@
 <!-- /build:head -->
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <meta name="theme-color" content="#f7f7f3">
-<meta property="og:type" content="website">
-<meta property="og:site_name" content="Euclid's Elements · 几何原本">
-<meta property="og:image" content="https://elements-pink.vercel.app/og.png">
-<meta property="og:image:width" content="1200">
-<meta property="og:image:height" content="630">
-<meta name="twitter:card" content="summary_large_image">
+<!-- build:ld: build.mjs writes structured data for each page -->
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -70,6 +65,7 @@
   "about": { "@type": "Book", "name": "Elements", "author": { "@type": "Person", "name": "Euclid" } }
 }
 </script>
+<!-- /build:ld -->
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -140,8 +136,8 @@ button:focus-visible, a:focus-visible, select:focus-visible { outline: 2px solid
 .book .crumb { margin: 0; width: 100%; font: 12.5px var(--sans); }
 .book .crumb a { color: var(--muted); text-decoration: none; }
 .book .crumb a:hover { color: var(--ink); }
-.book h1 { margin: 0; font-size: 26px; font-weight: 900; letter-spacing: .08em; }
-.book h1 .accent { color: var(--red); }
+.book h1, .book .h1 { margin: 0; font-size: 26px; font-weight: 900; letter-spacing: .08em; }
+.book h1 .accent, .book .h1 .accent { color: var(--red); }
 .book p { margin: 0; color: var(--muted); font-size: 13px; }
 
 /* Home page: hero, then one section of cards per subject */
@@ -308,7 +304,7 @@ li.cur .quote { display: block; }
   #nav { display: none; }
   .brand .bsub { display: none; }
   .subjects { order: 3; width: 100%; flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; margin-inline: -4px; }
-  .book h1 { font-size: 22px; }
+  .book h1, .book .h1 { font-size: 22px; }
   .navsel { display: block; width: 100%; margin: 14px 0 12px; padding: 8px; font: inherit; border: 1px solid var(--rule); border-radius: 4px; background: var(--plate); color: var(--ink); }
   .stmt { font-size: 18px; }
 }
