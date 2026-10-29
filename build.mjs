@@ -156,7 +156,8 @@ for (const r of ROUTES) {
 write("404.html", page("home", DEFAULT, false, '<meta name="robots" content="noindex">'));
 
 for (const dir of ["i18n", "props", "pages", "lab"]) fs.cpSync(path.join(ROOT, dir), path.join(OUT, dir), { recursive: true });
-for (const f of ["favicon.svg", "og.png", "render.js", "lab.js"]) fs.copyFileSync(path.join(ROOT, f), path.join(OUT, f));
+// google*.html: Search Console ownership verification, served as is at the site root
+for (const f of ["favicon.svg", "og.png", "render.js", "lab.js", "google7bc0d02b8ccb7f66.html"]) fs.copyFileSync(path.join(ROOT, f), path.join(OUT, f));
 
 write("robots.txt", `User-agent: *\nAllow: /\nDisallow: /api/\nDisallow: /_l/\nDisallow: /lab/files/\n\nSitemap: ${SITE}/sitemap.xml\n`);
 // ads.txt names the accounts allowed to sell ads on this site; f08c47fec0942fa0 is Google's own certification ID.
