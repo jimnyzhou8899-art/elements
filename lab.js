@@ -1,6 +1,6 @@
 // Science lessons listed on the home page. They are made by 铜匠实验室 (Tongjiang Lab, https://lab.tongjiang.app),
-// licensed CC BY-NC 4.0, and are not copied here: each card opens the lesson on the lab's own site.
-// [slug, subject, Chinese title, English title, steps]; the lessons themselves are in Chinese.
+// used with the author's permission; the files are in lab/files/.
+// [slug, subject, Chinese title, English title, steps]. The lessons are in Chinese; LAB_EN at the end lists those with an English file.
 window.LAB = [
   ["photoelectric-step", "phys", "光电效应", "The Photoelectric Effect", 9],
   ["capacitor-step", "phys", "观察电容器的充放电", "Observing Capacitor Charging and Discharging", 9],
@@ -57,3 +57,5 @@ window.LAB = [
   ["water-cycle-step", "geo", "水循环的过程与地理意义", "The Water Cycle and Its Geographic Significance", 9],
   ["circulation-step", "geo", "气压带、风带与三圈环流", "Pressure Belts, Wind Belts and the Three-Cell Circulation", 7]
 ];
+// Lessons with an English version in lab/files/en/ (written by tools/lab-i18n.js).
+window.LAB_EN = ["accel-force-step","ammonia-step","ball-stick-step","blast-furnace-step","bromine-step","brownian-step","capacitor-step","carbon-step","cement-step","centripetal-step","chlor-alkali-step","chlorine-step","circulation-step","coal-gas-step","conductivity-step","corrosion-step","current-field-step","currents-step","earth-motion-step","electrolysis-step","emf-step","energy-step","enso-step","enzyme-step","equilibrium-step","flame-step","galvanic-step","haber-step","heating-step","hou-soda-step","hydrolysis-step","impulse-step","insolation-step","iron-step","karst-step","mitosis-step","nitric-lab-step","photoelectric-step","plasmolysis-step","projectile-step","rate-step","river-step","self-induction-step","smelting-step","sodium-step","soil-step","sulfur-step","sulfuric-step","tectonic-step","thermal-step","titration-step","transport-step","water-cycle-step","wind-step"];

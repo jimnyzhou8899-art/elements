@@ -51,6 +51,9 @@ node build.mjs && node serve.mjs
 - 关于、隐私政策、联系页面的 9 种语言文字在 `pages/<语言代码>.js`。
 - 首页和课件页的文字在 `i18n/<语言代码>.js` 的 `hub` 里；理科课件列表在 `lab.js`（从铜匠实验室的 `catalog.json` 整理，课件是中文界面，
   中文以外的语言显示英文标题）。
+- 课件英文版：`lab/files/en/<slug>.html`，由 `tools/lab-i18n.js` 生成。`extract` 把课件脚本里的中文字符串列到
+  `lab/i18n/<slug>.zh.json`，译文写在 `lab/i18n/<slug>.en.json`（各课共用的界面文字在 `common.en.json`），`apply` 生成英文文件
+  并更新 `lab.js` 末尾的 `LAB_EN`。中文以外的语言打开有英文版的课件时用英文文件。工具需要 acorn：`npm i --no-save acorn@8`。
 - 课件：`lab/files/<slug>.html` 是原样的单文件课件，`lab/covers/` 是封面。`/lab/<slug>` 是本站的课件页（页头、广告，
   中间用 iframe 打开课件）；课件左上角的“目录”会回到首页对应学科。
 

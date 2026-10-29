@@ -9,6 +9,8 @@ const LEGAL = ["about", "privacy", "contact"];
 const SUBJECTS = ["math", "phys", "chem", "bio", "geo"];
 const labOf = slug => (typeof LAB !== "undefined" ? LAB : []).find(x => x[0] === slug);
 const labTitle = (T, x) => T.htmlLang.startsWith("zh") ? x[2] : x[3];
+// Non-Chinese visitors get the English file of a lesson when there is one (window.LAB_EN, from lab.js).
+const labEn = slug => typeof LAB_EN !== "undefined" && LAB_EN.includes(slug);
 // Scripts that need their own serif; the rest use EB Garamond ("latin").
 const FONTS = {
   zh: ["\"Noto Serif SC\", \"Songti SC\", serif", "Noto+Serif+SC:wght@400;600;900"],
@@ -176,13 +178,13 @@ function sandboxHTML(T) {
 }
 // One science lesson: the lab's self-contained HTML file in a frame, with the site's header and ads around it.
 function labHTML(T, slug) {
-  const H = T.hub, x = labOf(slug), zh = T.htmlLang.startsWith("zh");
+  const H = T.hub, x = labOf(slug), zh = T.htmlLang.startsWith("zh"), en = !zh && labEn(slug);
   return `<div class="lesson-page" data-s="${x[1]}">
     <p class="crumb"><a href="/#${x[1]}">${H.subj[x[1]]}</a></p>
     <div class="lhead"><h1 class="stmt"${zh ? "" : ` lang="en"`}>${labTitle(T, x)}</h1>
-      <span class="lmeta">${tr(H.steps, { n: x[4] })}${zh ? "" : ` · ${H.zhOnly}`}</span>
+      <span class="lmeta">${tr(H.steps, { n: x[4] })}${zh || en ? "" : ` · ${H.zhOnly}`}</span>
       <button class="btn" id="full">${H.full}</button></div>
-    <div class="lframe"><iframe id="lesson" src="/lab/files/${slug}" title="${attr(labTitle(T, x))}" allow="fullscreen" allowfullscreen loading="lazy"></iframe></div>
+    <div class="lframe"><iframe id="lesson" src="/lab/files/${en ? "en/" : ""}${slug}" title="${attr(labTitle(T, x))}" allow="fullscreen" allowfullscreen loading="lazy"></iframe></div>
   </div>`;
 }
 // About, privacy policy, contact. cfg = { repo, email, policyDate } from site.config.json.
