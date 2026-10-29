@@ -173,6 +173,14 @@ button:focus-visible, a:focus-visible, select:focus-visible { outline: 2px solid
 .lhead .stmt { margin: 0; }
 .lmeta { font: 13px var(--sans); color: var(--muted); }
 .lhead .btn { margin-inline-start: auto; align-self: center; }
+.outline { max-width: 820px; margin: 28px auto 8px; font: 15px/1.65 var(--sans); }
+.outline h2 { font-size: 20px; margin: 0 0 12px; }
+.outline > ol { padding-inline-start: 22px; margin: 0; }
+.outline > ol > li { margin-bottom: 18px; }
+.outline h3 { font-size: 16px; margin: 0 0 4px; }
+.outline .q { font-weight: 600; margin: 0 0 4px; }
+.outline p { margin: 0 0 6px; }
+.outline ul { margin: 4px 0 0; padding-inline-start: 20px; color: var(--muted); }
 .lframe { border: 1px solid var(--rule); border-top: 3px solid var(--c); border-radius: 10px; overflow: hidden; box-shadow: var(--card); background: #000; }
 .lframe iframe { display: block; width: 100%; aspect-ratio: 16 / 9; max-height: calc(100vh - 150px); min-height: 420px; border: 0; }
 @media (max-width: 720px) { .lframe iframe { aspect-ratio: 3 / 4; min-height: 0; max-height: calc(100vh - 120px); } }
@@ -825,7 +833,7 @@ function buildChrome() {
 // Title, description, canonical and hreflang for the current view. The canonical keeps ?lang= only if the address has it.
 function setHead(r) {
   const { title, desc } = headTexts(T, PAGES[LANG], r), path = pathFor(r);
-  const url = SITE + path + (new URLSearchParams(location.search).has("lang") ? "?lang=" + LANG : "");
+  const url = SITE + path + (new URLSearchParams(location.search).has("lang") ? "?lang=" + canonLang(r, LANG) : "");
   document.title = title;
   document.querySelector('meta[name="description"]').content = desc;
   document.querySelector('meta[property="og:title"]').content = title;
@@ -877,7 +885,14 @@ function mountHome(keep) {
   if (!keep) view.innerHTML = homeHTML(T, window.LAB || []);
 }
 function mountLab(slug, keep) {
-  if (!keep) view.innerHTML = labHTML(T, slug);
+  if (!keep) {
+    view.innerHTML = labHTML(T, slug);
+    const want = T;
+    fetch(`/lab/outline/${slug}.json`).then(r => r.ok ? r.json() : null).then(o => {
+      const box = view.querySelector("#outline");
+      if (o && box && T === want) box.innerHTML = outlineHTML(T, o);
+    }, () => {});
+  }
   const frame = view.querySelector("#lesson");
   view.querySelector("#full").onclick = () => { if (frame.requestFullscreen) frame.requestFullscreen().catch(() => {}); };
   // The lesson's own "目录" link points at ./index.html; send it to this subject on the home page instead.
